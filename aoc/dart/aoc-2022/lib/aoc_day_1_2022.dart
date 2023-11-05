@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 void firstFunction() {
-    var calories = File('calories');
+    var calories = File('input-day-1');
 
     List<String> lines = calories.readAsLinesSync();
     List<int> sums = [];

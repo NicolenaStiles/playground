@@ -2,7 +2,7 @@ import 'dart:io';
 
 void partOne(){
 
-    var rounds = File('rockpaperscissors');
+    var rounds = File('input-day-2');
     List<String> lines = rounds.readAsLinesSync();
 
     int totalScore = 0;
@@ -71,7 +71,7 @@ void partOne(){
 
 void partTwo() {
 
-    var rounds = File('rockpaperscissors');
+    var rounds = File('input-day-2');
     List<String> lines = rounds.readAsLinesSync();
 
     int totalScore = 0;
