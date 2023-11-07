@@ -6,12 +6,12 @@ class ElfFile {
 }
 
 class ElfDirectory {
-    String name = "";
-    int filesize = 0;
-    int depth = 0;
-    String parentName = "";
-    List<String> childDirs = [];
-    List<String> childFiles = [];
+    String name;
+    int filesize;
+    int depth;
+    String parentName;
+    Map<String,ElfDirectory> childDirs = {};
+    Map<String,ElfFile> childFiles = {};
 
     ElfDirectory(this.name, this.filesize, this.depth, this.parentName, this.childDirs, this.childFiles);
 }
@@ -25,12 +25,13 @@ void partOne() {
     // split into test and actual data
     List<String> testCmds = readIn.sublist(0, 23);
 
+    // metadata for the "filesystem" 
     String pwd = "";
     String prevDir = "";
     int currDepth = 0;
 
-    // tracks if dirs/files have been encountered yet
-    List<String> loggedList = [];
+    // tracks dirs/files 
+    Map disk = {};
     // tracks the filesystem depth structure
     List<List<String>> tracker = [];
     for(var c in testCmds) {
@@ -50,25 +51,33 @@ void partOne() {
                     pwd = cmd[2];
                     if (tracker.isEmpty) {
                         tracker.add([pwd]);
+                        disk[pwd] = ElfDirectory(pwd, 0, currDepth, prevDir, {}, {}); 
                     } else {
                         currDepth++;
                         if (tracker.length - 1 < currDepth) {
+                            disk[pwd] = ElfDirectory(pwd, 0, currDepth, prevDir, {}, {}); 
                             tracker.add([pwd]);
                         } else {
                             if (!tracker[currDepth].contains(pwd)) {
+                                disk[pwd] = ElfDirectory(pwd, 0, currDepth, prevDir, {}, {}); 
                                 tracker[currDepth].add(pwd);
                             }
                         }
                     }
                 }
-            // cmd: ls
-            } else {
+            }        
+        } else if (cmd[0] == "dir") {
+            // this is wrong. ignore this.
+            if (!disk[pwd].childDirs.containsKey(cmd[1])) {
 
             }
+        } else {
+
         }
     }
     // DEBUG
     for (var d in tracker) {
         print(d);
     }
+    print(disk.keys);
 }
