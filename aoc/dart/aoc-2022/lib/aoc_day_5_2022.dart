@@ -15,23 +15,36 @@ class CrateLayout {
                     stacks[i].add(currEntry);
                 }
             }
-        }
 
-   } 
+        } 
+    }
 
+    // Move a single crate at a time
     // [# of crates, from, to]
-    // indexes for from/to need to be decreased by 1
-    void moveCrates(List<int> moves) {
+    void moveCrate(List<int> moves) {
+       int stackFrom = moves[1] - 1;
+       int stackTo = moves[2] - 1;
        for (int i = 1; i <= moves[0]; i++) {
-           int stackFrom = moves[1] - 1;
-           int stackTo = moves[2] - 1;
            String temp = stacks[stackFrom].removeLast();
            stacks[stackTo].add(temp);
         }
     }
+
+    // Move an entire stack of crates all at once
+    // [# of crates, from, to]
+    void moveCrates(List<int> moves) {
+       int stackFrom = moves[1] - 1;
+       int stackTo = moves[2] - 1;
+       List<String> stackTemp = [];
+       for (int i = 1; i <= moves[0]; i++) {
+           String temp = stacks[stackFrom].removeLast();
+           stackTemp.add(temp);
+        }
+        stacks[stackTo].addAll(stackTemp.reversed.toList());
+    }
 }
 
-void partOne() {
+void partOneTwo() {
 
     // assumptions at the outset
     int boxDataEnd = 8;
@@ -46,9 +59,6 @@ void partOne() {
     List<String> boxData = boxAndMoveData.sublist(0,boxDataEnd);
     List<String> moveData = boxAndMoveData.sublist(moveDataStart, boxAndMoveData.length);
 
-    // use CrateLayout as base data structure for trackin'
-    var crates = CrateLayout(numStacks, boxData);
-
     // parse move data into lists of ints
     List<List<int>> moveInstructions = [];
     final re = RegExp(r'\D+');
@@ -59,11 +69,14 @@ void partOne() {
         moveInstructions.add(moves);
     } 
 
-    print(moveInstructions[4]);
-
+    // PART ONE
     // apply move instructions to the crates
+
+    // use CrateLayout as base data structure for trackin'
+    var crates = CrateLayout(numStacks, boxData);
+
     for (var entry in moveInstructions) {
-        crates.moveCrates(entry);
+        crates.moveCrate(entry);
     }
 
     // print crates on top of each at the end?
@@ -72,4 +85,19 @@ void partOne() {
         finalTops += stack.last;
     }
     print(finalTops);
+
+    // PART TWO
+    var cratesTwo = CrateLayout(numStacks, boxData);
+
+    for (var entry in moveInstructions) {
+        cratesTwo.moveCrates(entry);
+    }
+
+    // print crates on top of each at the end?
+    String finalTopsTwo = "";
+    for (var stack in cratesTwo.stacks) {
+        finalTopsTwo += stack.last;
+    }
+    print(finalTopsTwo);
+
 }

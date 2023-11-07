@@ -29,7 +29,7 @@ void main() {
         break;
      case 5:
         print("Hello and welcome to Day Five of AOC 2022!");
-        day_5.partOne();
+        day_5.partOneTwo();
       default:
         print("Oops! You need to select a day in AOC 2022 to test.");
     }
