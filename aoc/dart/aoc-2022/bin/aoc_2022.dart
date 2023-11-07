@@ -3,10 +3,11 @@ import 'package:aoc_2022/aoc_day_2_2022.dart' as day_2;
 import 'package:aoc_2022/aoc_day_3_2022.dart' as day_3;
 import 'package:aoc_2022/aoc_day_4_2022.dart' as day_4;
 import 'package:aoc_2022/aoc_day_5_2022.dart' as day_5;
+import 'package:aoc_2022/aoc_day_6_2022.dart' as day_6;
 
 void main() {
 
-  int daySelection = 5;
+  int daySelection = 6;
   
   switch (daySelection) {
       case 1: 
@@ -30,6 +31,9 @@ void main() {
      case 5:
         print("Hello and welcome to Day Five of AOC 2022!");
         day_5.partOneTwo();
+     case 6:
+        print("Hello and welcome to Day Six of AOC 2022!");
+        day_6.partOneTwo();
       default:
         print("Oops! You need to select a day in AOC 2022 to test.");
     }
