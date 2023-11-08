@@ -51,15 +51,12 @@ void partOne() {
                     pwd = cmd[2];
                     if (tracker.isEmpty) {
                         tracker.add([pwd]);
-                        disk[pwd] = ElfDirectory(pwd, 0, currDepth, prevDir, {}, {}); 
                     } else {
                         currDepth++;
                         if (tracker.length - 1 < currDepth) {
-                            disk[pwd] = ElfDirectory(pwd, 0, currDepth, prevDir, {}, {}); 
                             tracker.add([pwd]);
                         } else {
                             if (!tracker[currDepth].contains(pwd)) {
-                                disk[pwd] = ElfDirectory(pwd, 0, currDepth, prevDir, {}, {}); 
                                 tracker[currDepth].add(pwd);
                             }
                         }
