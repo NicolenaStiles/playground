@@ -2,12 +2,16 @@ import 'dart:io';
 
 void partOne() {
     // load from file
+    var inputTest = File('input-day-7-test');
     var inputFile = File('input-day-7');
-    List<String> readIn = inputFile.readAsLinesSync();
 
-    // DEBUG ONLY
-    // split into test and actual data
-    List<String> testCmds = readIn.sublist(0, 23);
+    bool isDebug = false;
+    List<String> readIn = [];
+    if (isDebug) {
+        readIn = inputTest.readAsLinesSync();
+    } else {
+       readIn = inputFile.readAsLinesSync();
+    }
 
     // metadata for the "filesystem" 
     String pwd = "";
@@ -15,7 +19,7 @@ void partOne() {
 
     // load dirs and files onto disk 
     Map disk = {};
-    for(var c in testCmds) {
+    for(var c in readIn) {
         List<String> cmd = c.split(" ");
         if (cmd[0] == "\$") {
             // cmd: cd
@@ -23,10 +27,11 @@ void partOne() {
                 // cmd: cd UP
                 if (cmd[2] == "..") {
                     List<String> parsePwd = pwd.split(re);
-                    pwd = pwd.replaceAll("${parsePwd[parsePwd.length - 2]}/", '');
+                    String exitingDir = "${parsePwd[parsePwd.length - 2]}/";
+                    pwd = pwd.substring(0, pwd.lastIndexOf(exitingDir));
                 // cmd: cd DOWN
                 } else {
-                    // first pass: pwd == "/"
+                    // first pass: pwd == ""
                     if (pwd.isEmpty) {
                         pwd = cmd[2];
                         disk[pwd] = 0;
