@@ -1,6 +1,6 @@
 import 'dart:io';
 
-void partOne() {
+Map loadDisk() {
     // load from file
     var inputTest = File('input-day-7-test');
     var inputFile = File('input-day-7');
@@ -69,6 +69,14 @@ void partOne() {
         }
     }
 
+    // disk now loaded; return and exit
+    return disk;
+}
+
+void partOne() {
+
+    Map disk = loadDisk();
+
     // find dirs with filesize <= 100000 and sum those values
     num filesizeSum = 0;
     for(String d in disk.keys) {
@@ -79,4 +87,29 @@ void partOne() {
         }
     }
     print(filesizeSum);
+}
+
+void partTwo () {
+    // given constants:
+    int filesystemMax = 70000000;
+    int neededFreespace = 30000000;
+    Map disk = loadDisk();
+
+    num currentUnused = filesystemMax - disk["/"]!;
+
+    String currMinDirname = "";
+    int currMinDirsize = disk["/"];
+
+    // find smallest directory that can be deleted to free up space
+    for (String d in disk.keys) {
+        if (d[d.length - 1] == "/") {
+            if(disk[d] + currentUnused >= neededFreespace) {
+                if(disk[d] < currMinDirsize) {
+                    currMinDirname = d;
+                    currMinDirsize = disk[d];
+                }
+            }
+        }
+    }
+    print(currMinDirsize);
 }

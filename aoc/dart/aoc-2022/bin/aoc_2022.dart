@@ -38,6 +38,7 @@ void main() {
      case 7:
         print("Hello and welcome to Day Seven of AOC 2022!");
         day_7.partOne();
+        day_7.partTwo();
       default:
         print("Oops! You need to select a day in AOC 2022 to test.");
     }
