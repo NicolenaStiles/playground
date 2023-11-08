@@ -1,80 +1,115 @@
 import 'dart:io';
 
-class ElfFile {
-    String filename = "";
-    int filesize = 0;
-}
-
-class ElfDirectory {
-    String name;
-    int filesize;
-    int depth;
-    String parentName;
-    Map<String,ElfDirectory> childDirs = {};
-    Map<String,ElfFile> childFiles = {};
-
-    ElfDirectory(this.name, this.filesize, this.depth, this.parentName, this.childDirs, this.childFiles);
-}
-
-void partOne() {
+Map loadDisk() {
     // load from file
+    var inputTest = File('input-day-7-test');
     var inputFile = File('input-day-7');
-    List<String> readIn = inputFile.readAsLinesSync();
 
-    // DEBUG ONLY
-    // split into test and actual data
-    List<String> testCmds = readIn.sublist(0, 23);
+    bool isDebug = false;
+    List<String> readIn = [];
+    if (isDebug) {
+        readIn = inputTest.readAsLinesSync();
+    } else {
+       readIn = inputFile.readAsLinesSync();
+    }
 
     // metadata for the "filesystem" 
     String pwd = "";
-    String prevDir = "";
-    int currDepth = 0;
+    final re = RegExp(r'\/');
 
-    // tracks dirs/files 
+    // load dirs and files onto disk 
     Map disk = {};
-    // tracks the filesystem depth structure
-    List<List<String>> tracker = [];
-    for(var c in testCmds) {
+    for(var c in readIn) {
         List<String> cmd = c.split(" ");
         if (cmd[0] == "\$") {
             // cmd: cd
             if(cmd[1] == "cd") {
                 // cmd: cd UP
                 if (cmd[2] == "..") {
-                    String temp = pwd;
-                    pwd = prevDir;
-                    prevDir = temp;
-                    currDepth--;
+                    List<String> parsePwd = pwd.split(re);
+                    String exitingDir = "${parsePwd[parsePwd.length - 2]}/";
+                    pwd = pwd.substring(0, pwd.lastIndexOf(exitingDir));
                 // cmd: cd DOWN
                 } else {
-                    prevDir = pwd;
-                    pwd = cmd[2];
-                    if (tracker.isEmpty) {
-                        tracker.add([pwd]);
+                    // first pass: pwd == ""
+                    if (pwd.isEmpty) {
+                        pwd = cmd[2];
+                        disk[pwd] = 0;
                     } else {
-                        currDepth++;
-                        if (tracker.length - 1 < currDepth) {
-                            tracker.add([pwd]);
-                        } else {
-                            if (!tracker[currDepth].contains(pwd)) {
-                                tracker[currDepth].add(pwd);
-                            }
+                        pwd = "$pwd${cmd[2]}/";
+                        if (!disk.containsKey(pwd)) {
+                            disk[pwd] = 0;
                         }
                     }
                 }
             }        
-        } else if (cmd[0] == "dir") {
-            // this is wrong. ignore this.
-            if (!disk[pwd].childDirs.containsKey(cmd[1])) {
-
+        } else if (cmd[0] == "dir" ) {
+            String dirName = "$pwd${cmd[1]}/";
+            if (!disk.containsKey(dirName)) {
+                disk[dirName] = 0;
             }
         } else {
-
+            String fileName = "$pwd${cmd[1]}";
+            if(!disk.containsKey(fileName)) {
+                disk[fileName] = int.parse(cmd[0]);
+            }
         }
     }
-    // DEBUG
-    for (var d in tracker) {
-        print(d);
+
+    // find files and add their file sizes to that of directories above them
+    for (String f in disk.keys) {
+        if (f[f.length - 1] != "/") {
+          String testPath = "";
+          List<String> parentDirs = f.split(re);
+          parentDirs = parentDirs.sublist(0,parentDirs.length - 1); 
+          for (String d in parentDirs) {
+            testPath += "$d/" ;
+            disk[testPath] += disk[f];
+          }
+        }
     }
-    print(disk.keys);
+
+    // disk now loaded; return and exit
+    return disk;
+}
+
+void partOne() {
+
+    Map disk = loadDisk();
+
+    // find dirs with filesize <= 100000 and sum those values
+    num filesizeSum = 0;
+    for(String d in disk.keys) {
+        if (d[d.length - 1] == "/") {
+            if(disk[d] <= 100000) {
+                filesizeSum += disk[d];
+            }
+        }
+    }
+    print(filesizeSum);
+}
+
+void partTwo () {
+    // given constants:
+    int filesystemMax = 70000000;
+    int neededFreespace = 30000000;
+    Map disk = loadDisk();
+
+    num currentUnused = filesystemMax - disk["/"]!;
+
+    String currMinDirname = "";
+    int currMinDirsize = disk["/"];
+
+    // find smallest directory that can be deleted to free up space
+    for (String d in disk.keys) {
+        if (d[d.length - 1] == "/") {
+            if(disk[d] + currentUnused >= neededFreespace) {
+                if(disk[d] < currMinDirsize) {
+                    currMinDirname = d;
+                    currMinDirsize = disk[d];
+                }
+            }
+        }
+    }
+    print(currMinDirsize);
 }
