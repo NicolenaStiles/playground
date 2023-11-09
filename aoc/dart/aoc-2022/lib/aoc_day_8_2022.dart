@@ -5,7 +5,7 @@ void partOne() {
     var inputTest = File('input-day-8-test');
     var inputFile = File('input-day-8');
 
-    bool isDebug = true;
+    bool isDebug = false;
     List<String> readIn = [];
     if (isDebug) {
         readIn = inputTest.readAsLinesSync();
