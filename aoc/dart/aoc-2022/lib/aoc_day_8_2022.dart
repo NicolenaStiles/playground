@@ -31,6 +31,15 @@ void partOne() {
     }
 
     // make sure the outside edge is marked as visible
+    for (int y = 0; y < treeHeights[0].length; y++) {
+        for (int x = 0; x < treeHeights.length; x++) {
+            if (y == 0 || x == 0) {
+                isVisible[y][x] = true;
+            } else if (y == treeHeights[0].length - 1 || x == treeHeights.length - 1) {
+                isVisible[y][x] = true;
+            }
+        }
+    }
 
     // figure out if taller in any direction
     for (int y = 1; y < treeHeights[0].length - 1; y++) {
@@ -69,4 +78,15 @@ void partOne() {
             }
         }
     }
+
+    // get total number of visible trees
+    int numVisible = 0;
+    for (int y = 0; y < treeHeights[0].length; y++) {
+        for (int x = 0; x < treeHeights.length; x++) {
+            if (isVisible[y][x]) {
+                numVisible++;
+            }
+        }
+    }
+    print(numVisible);
 }
