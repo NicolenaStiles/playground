@@ -97,7 +97,7 @@ void partTwo() {
     var inputTest = File('input-day-8-test');
     var inputFile = File('input-day-8');
 
-    bool isDebug = true;
+    bool isDebug = false;
     List<String> readIn = [];
     if (isDebug) {
         readIn = inputTest.readAsLinesSync();
@@ -131,12 +131,10 @@ void partTwo() {
             // only check if not on the upper edge
             int northScore = 0;
             if (y != 0) {
-                int currMax = 0;
                 for(int numNorth = y - 1; numNorth >= 0; numNorth--) {
-                    if (currHeight > treeHeights[numNorth][x] && treeHeights[numNorth][x] >= currMax) {
+                    if (currHeight > treeHeights[numNorth][x]) {
                         northScore++;
-                        currMax = treeHeights[numNorth][x];
-                    } else if (currHeight <= treeHeights[numNorth][x] && treeHeights[numNorth][x] >= currMax) {
+                    } else if (currHeight <= treeHeights[numNorth][x]) {
                         northScore++;
                         break;
                     } else {
@@ -151,12 +149,10 @@ void partTwo() {
             // only check if not on the lower edge
             int southScore = 0;
             if (y != treeHeights.length - 1) {
-                int currMax = 0;
                 for(int numSouth = y + 1; numSouth < treeHeights.length; numSouth++) {
-                    if (currHeight > treeHeights[numSouth][x] && treeHeights[numSouth][x] >= currMax) {
+                    if (currHeight > treeHeights[numSouth][x]) {
                         southScore++;
-                        currMax = treeHeights[numSouth][x];
-                    } else if (currHeight <= treeHeights[numSouth][x] && treeHeights[numSouth][x] >= currMax) {
+                    } else if (currHeight <= treeHeights[numSouth][x]) {
                         southScore++;
                         break;
                     } else {
@@ -171,16 +167,14 @@ void partTwo() {
             // only check if not on the left edge
             int westScore = 0;
             if (x != 0) {
-                int currMax = 0;
                 for(int numWest = x - 1; numWest >= 0; numWest--) {
-                    if (currHeight > treeHeights[y][numWest] && treeHeights[y][numWest] >= currMax) {
+                    if (currHeight > treeHeights[y][numWest] ) {
                         westScore++;
-                        currMax = treeHeights[y][numWest];
-                    } else if (currHeight <= treeHeights[y][numWest] && treeHeights[y][numWest] >= currMax) {
+                    } else if (currHeight <= treeHeights[y][numWest] ) {
                         westScore++;
                         break;
                     } else {
-
+                        break;
                     }
                 }
                 currScore.add(westScore);
@@ -191,12 +185,10 @@ void partTwo() {
             // only check if not on the left edge
             int eastScore = 0;
             if (x != treeHeights[0].length - 1) {
-                int currMax = 0;
                 for(int numEast = x + 1; numEast < treeHeights[0].length; numEast++) {
-                    if (currHeight > treeHeights[y][numEast] && treeHeights[y][numEast] >= currMax) {
+                    if (currHeight > treeHeights[y][numEast] ) {
                         eastScore++;
-                        currMax = treeHeights[y][numEast];
-                    } else if (currHeight <= treeHeights[y][numEast] && treeHeights[y][numEast] >= currMax) {
+                    } else if (currHeight <= treeHeights[y][numEast] ) {
                         eastScore++;
                         break;
                     } else {
@@ -210,6 +202,7 @@ void partTwo() {
             scenicScore[y][x] = currScore.fold(1, (p,c) => p * c);
         }
     }
+
     // finding max scenic score
     int maxScenicScore = 0;
     for (int y = 0; y < scenicScore[0].length; y++) {
