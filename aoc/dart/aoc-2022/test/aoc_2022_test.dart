@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:aoc_2022/aoc_day_9_2022.dart';
+import 'package:aoc_2022/aoc_day_10_2022.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -61,25 +63,92 @@ void main() {
 
     test('day-9-part-2', () {
         
-        /*
-        // Starting info for knots
-        int numKnots = 10;
-        List<List<int>> pos = List<List<int>>.generate(numKnots, (i) => [0,0]);
-        expect(pos.length, 10);
+    });
 
-        List<List<int>> endPos = [[]];
+    test('day-10-mini-test', () {
 
-        // trying just one test movement first...
-        for (int i = 0; i < movements[0][1]; i++) {
-            print("input positions: $pos");
-            endPos = singleMove(movements[0][0], pos);
-            pos = endPos;
+        List<String> testCommands = ['noop', 'addx 3','addx -5'];
+
+        int cycle = 1;
+        int reg = 1;
+        int timer = getTimer(testCommands.first);
+        int add = getRegAdd(testCommands.first);
+
+        while(testCommands.isNotEmpty) {
+
+            // Execute step
+            print("Cycle: $cycle Reg: $reg Executing: ${testCommands.first}");
+
+            // End of cycle
+            cycle++;
+            timer--;
+            if (timer == 0) {
+                if (testCommands.length > 1) {
+                    reg = reg + add;
+                    testCommands.removeAt(0);
+                    timer = getTimer(testCommands.first); 
+                    add = getRegAdd(testCommands.first);
+                } else {
+                    reg = reg + add;
+                    testCommands.removeAt(0);
+                }
+            }
         }
-        expect(endPos[0],[4,0]);
-        expect(endPos[1],[3,0]);
-        expect(endPos[2],[2,0]);
-        expect(endPos[3],[1,0]);
-        */
+        print("Simulation ended!");
+        print("Cycle: $cycle Reg: $reg");
+    });
 
+    test('day-10-mega-test', () {
+
+        List<String> testCommands = File('input-day-10-test').readAsLinesSync();
+
+        int cycle = 1;
+        int reg = 1;
+        int timer = getTimer(testCommands.first);
+        int add = getRegAdd(testCommands.first);
+
+        while(testCommands.isNotEmpty) {
+
+            // Execute step
+            print("Cycle: $cycle Reg: $reg Executing: ${testCommands.first}");
+            switch (cycle) {
+                case 20:
+                    expect(reg, 21);
+                    break;
+                case 60:
+                    expect(reg, 19);
+                break;
+                case 100:
+                    expect(reg, 18);
+                break;
+                case 140:
+                    expect(reg, 21);
+                break;
+                case 180:
+                    expect(reg, 16);
+                break;
+                case 220:
+                    expect(reg, 18);
+                break;
+              default:
+            }
+
+            // End of cycle
+            cycle++;
+            timer--;
+            if (timer == 0) {
+                if (testCommands.length > 1) {
+                    reg = reg + add;
+                    testCommands.removeAt(0);
+                    timer = getTimer(testCommands.first); 
+                    add = getRegAdd(testCommands.first);
+                } else {
+                    reg = reg + add;
+                    testCommands.removeAt(0);
+                }
+            }
+        }
+        print("Simulation ended!");
+        print("Cycle: $cycle Reg: $reg");
     });
 }
