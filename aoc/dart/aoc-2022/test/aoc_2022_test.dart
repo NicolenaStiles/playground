@@ -2,6 +2,35 @@ import 'package:aoc_2022/aoc_day_9_2022.dart';
 import 'package:test/test.dart';
 
 void main() {
+    test('mini-test', () {
+        print("Basic direction testing:");
+        print("UP");
+
+        String move = 'U';
+
+
+        List<List<int>> head = [[0,0],[1,1],[1,-2],[1,-1]];
+        List<List<int>> tail = [[0,0],[1,0],[1,-3],[1,0]];
+        List<List<int>> endTail = [[0,0],[1,1],[1,-2],[1,0]];
+        for(int i = 0; i < head.length; i++) {
+            List<int> currHead = head[i];
+            List<int> currTail = tail[i];
+            print("before");
+            print(currHead);
+            print(head[i]);
+            currHead = moveHead(move, currHead);
+            print("after");
+            print(currHead);
+            print(head[i]);
+            expect(currHead,[head[i][0],head[i][1]+1]);
+            currTail = moveFollower(currHead, currTail);
+            expect(currTail,endTail[i]);
+        }
+
+        move = 'D';
+        print("DOWN");
+    });
+
     test('day-9-part-1', () {
 
         // reading in data as usual
