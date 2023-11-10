@@ -13,14 +13,169 @@ List<List> readInput(String filename){
     return movements;
 }
 
+List<List<int>> moveUp(List<int> head, List<int> tail) {
+    List<int> currentHead = head;
+    List<int> currentTail = tail;
+    if (!(currentHead[0] == currentTail[0] && currentHead[1] == currentTail[1])) {
+        if(currentTail[1] < currentHead[1]) {
+            if(currentTail[0] > currentHead[0]) {
+                currentTail[0]--;
+            } else if (currentTail[0] < currentHead[0]) {
+                currentTail[0]++;
+            }
+            currentTail[1]++;
+        }
+    }
+    currentHead[1]++;
+    return [currentHead, currentTail];
+}
+
+List<List<int>> moveDown(List<int> head, List<int> tail) {
+    List<int> currentHead = head;
+    List<int> currentTail = tail;
+    if (!(currentHead[0] == currentTail[0] && currentHead[1] == currentTail[1])) {
+        if(currentTail[1] > currentHead[1]) {
+            if(currentTail[0] > currentHead[0]) {
+                currentTail[0]--;
+            } else if (currentTail[0] < currentHead[0]) {
+                currentTail[0]++;
+            }
+            currentTail[1]--;
+        }
+    }
+    currentHead[1]--;
+    return [currentHead, currentTail];
+}
+
+List<List<int>> moveLeft(List<int> head, List<int> tail) {
+    List<int> currentHead = head;
+    List<int> currentTail = tail;
+    if (!(currentHead[0] == currentTail[0] && currentHead[1] == currentTail[1])) {
+        if(currentTail[0] > currentHead[0]) {
+            if(currentTail[1] > currentHead[1]) {
+                currentTail[1]--;
+            } else if (currentTail[1] < currentHead[1]) {
+                currentTail[1]++;
+            }
+            currentTail[0]--;
+        }
+    }
+    currentHead[0]--;
+    return [currentHead, currentTail];
+}
+
+List<List<int>> moveRight(List<int> head, List<int> tail) {
+    List<int> currentHead = head;
+    List<int> currentTail = tail;
+    if (!(currentHead[0] == currentTail[0] && currentHead[1] == currentTail[1])) {
+        if(currentTail[0] < currentHead[0]) {
+            if(currentTail[1] > currentHead[1]) {
+                currentTail[1]--;
+            } else if (currentTail[1] < currentHead[1]) {
+                currentTail[1]++;
+            }
+            currentTail[0]++;
+        }
+    }
+    currentHead[0]++;
+    return [currentHead, currentTail];
+}
+
+// move head and return new position
+List<int> moveHead(String move, List<int> position) {
+    List<int> currentHead = position;
+        switch (move) {
+            case 'U': 
+                currentHead[1]++;
+                break;
+
+            case 'D': 
+                currentHead[1]--;
+                break;
+
+            case 'L': 
+                currentHead[0]--;
+                break;
+
+            case 'R': 
+                currentHead[0]++;
+                break;
+
+            default:
+                print("ERROR reading movement direction!");
+        } 
+    return currentHead;
+}
+
+// move follower closer to head
+List<int> moveFollower(List<int> head, List<int> tail) {
+    List<int> currentTail = tail;
+    int diffX = head[0] - tail[0];
+    int diffY = head[1] - tail[1];
+    if(diffX.abs() > 1) {
+        if(diffX > 0) {
+            currentTail[0]++;
+        } else {
+            currentTail[0]--;
+        }
+        if(diffY != 0) {
+            if(diffY > 0) {
+                currentTail[1]++;
+            } else {
+                currentTail[1]--;
+            }
+        }
+    }
+    if(diffY.abs() > 1) {
+        if(diffY > 0) {
+            currentTail[1]++;
+        } else {
+            currentTail[1]--;
+        }
+        if(diffX != 0) {
+            if(diffX > 0) {
+                currentTail[0]--;
+            } else {
+                currentTail[0]++;
+            }
+        }
+    }
+    return currentTail;
+}
+
 // Executes a single move instruction for n knots.
 // inputs:
 // String move: string indicating which move is to be executed (U,D,L,R);
 // List<List<int>> position: list (length n) of positions (x,y) for n knots
 // output:
-//
-void singleMove(String move, List<List<int>> position) {
+// List<List<int>> of n knot positions after move is executed
+List<List<int>> singleMove(String move, List<List<int>> position) {
+    List<List<int>> newPositions = [];
+    for(int i = 0; i < position.length - 1; i++){
+        List<int> currentHead = position[i];
+        List<int> currentTail = position[i+1];
+        print("$i iteration has head: $currentHead tail: $currentTail");
 
+        switch (move) {
+
+            case 'U': 
+                break;
+
+            case 'D': 
+                break;
+
+            case 'L': 
+                break;
+
+            case 'R': 
+                break;
+
+            default:
+                print("ERROR reading movement direction!");
+        }
+    }
+
+    return newPositions;
 }
 
 // reads in a list of movements and applies them based on current head/tail pos
