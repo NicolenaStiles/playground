@@ -63,7 +63,7 @@ List<int> getBounds(List<List> movements) {
 void drawKnots(int bound, List<List<int>> pos, List<String> name) {
 
     List<List<String>> printPos = [];
-    for(int i = 0; i < bound; i++) {
+    for(int i = 0; i <= bound; i++) {
         printPos.add(List<String>.generate(bound, (e) => '.', growable: true));
     } 
 
@@ -71,7 +71,7 @@ void drawKnots(int bound, List<List<int>> pos, List<String> name) {
         String n = name[i];
         int currPosX = pos[i][0];
         int currPosY = pos[i][1];
-        printPos[currPosX][currPosY] = n;
+        printPos[currPosY][currPosX] = n;
     }
 
     for (var l in printPos.reversed.toList()) {
