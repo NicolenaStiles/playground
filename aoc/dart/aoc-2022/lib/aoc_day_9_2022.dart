@@ -15,12 +15,14 @@ List<List> readInput(String filename){
 }
 
 List<int> getBounds(List<List> movements) {
+
     int maxX = 0;
     int maxY = 0;
     int minX = 0;
     int minY = 0;
     int currX = 0;
     int currY = 0;
+
     List<int> bounds = [];
     for (var m in movements) {
         int val = m[1];
@@ -52,27 +54,33 @@ List<int> getBounds(List<List> movements) {
           default:
         }
     }
+
     bounds = [minX,minY,maxX,maxY];
     int lowerBound = bounds.reduce(min);
     int upperBound = bounds.reduce(max);
     bounds = [lowerBound,upperBound];
+
     print('Lower: $lowerBound, Upper: $upperBound');
+
     return bounds;
 }
 
 void drawKnots(int bound, List<List<int>> pos, List<String> name) {
 
     List<List<String>> printPos = [];
-    for(int i = 0; i <= bound; i++) {
-        printPos.add(List<String>.generate(bound, (e) => '.', growable: true));
+
+    for(int i = 0; i <= bound * 2; i++) {
+        printPos.add(List<String>.generate(bound * 2, (e) => '.', growable: true));
     } 
 
     for (int i = 0; i < name.length; i++) {
         String n = name[i];
         int currPosX = pos[i][0];
         int currPosY = pos[i][1];
-        printPos[currPosY][currPosX] = n;
+        printPos[currPosY+bound][currPosX+bound] = n;
     }
+
+    printPos[bound][bound] = 's';
 
     for (var l in printPos.reversed.toList()) {
         print(l.join());
@@ -81,7 +89,9 @@ void drawKnots(int bound, List<List<int>> pos, List<String> name) {
 
 // move head and return new position
 List<int> moveHead(String move, List<int> position) {
+
     List<int> currentHead = position;
+
         switch (move) {
             case 'U': 
                 currentHead[1]++;
@@ -102,7 +112,9 @@ List<int> moveHead(String move, List<int> position) {
             default:
                 print("ERROR reading movement direction!");
         } 
+
     return currentHead;
+
 }
 
 // move follower closer to head
@@ -112,33 +124,16 @@ List<int> moveFollower(List<int> head, List<int> tail) {
     int diffX = head[0] - tail[0];
     int diffY = head[1] - tail[1];
 
-    if(diffX.abs() > 1) {
-        if(diffX > 0) {
+    if(diffX.abs() > 1 || diffY.abs() > 1) {
+        if (diffX > 0) {
             currentTail[0]++;
-        } else {
+        } else if (diffX < 0) {
             currentTail[0]--;
         }
-        if(diffY != 0) {
-            if(diffY > 0) {
-                currentTail[1]++;
-            } else {
-                currentTail[1]--;
-            }
-        }
-    }
-
-    if(diffY.abs() > 1) {
-        if(diffY > 0) {
+        if (diffY > 0) {
             currentTail[1]++;
-        } else {
+        } else if (diffY < 0) {
             currentTail[1]--;
-        }
-        if(diffX != 0) {
-            if(diffX > 0) {
-                currentTail[0]--;
-            } else {
-                currentTail[0]++;
-            }
         }
     }
 
@@ -171,5 +166,39 @@ void partOne() {
     }
 
    print(pathsTail.length);
+
+}
+
+// 7750 was too high
+void partTwo() {
+
+    // reading in data as usual
+    List<List> movements = readInput('input-day-9');
+
+    // for real this time
+    List<Set> paths = [];
+    int numKnots = 10;
+    List<List<int>> currPos = [];
+    for(int i = 0; i < numKnots; i++) {
+        currPos.add([0,0]);
+        paths.add({'0,0'});
+    } 
+
+    // movement algorithim
+    for(var move in movements) {
+        for(int i = 0; i < move[1]; i++) {
+            for (int k = 0; k < numKnots; k++) {
+                if (k == 0) {
+                    currPos[k] = moveHead(move[0], currPos[k]);
+                } else {
+                    currPos[k] = moveFollower(currPos[k-1], currPos[k]);
+                }
+                String currPath = '${currPos[k][0]},${currPos[k][1]}';
+                paths[k].add(currPath);
+            }
+        }
+    }
+
+   print(paths.last.length);
 
 }

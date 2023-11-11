@@ -66,4 +66,47 @@ void main() {
         expect(pathsTail.length, 13);
 
     });
+
+    test('day-9-part-2', () {
+
+        // reading in data as usual
+        List<List> movements = readInput('input-day-9-test-2');
+        int bound = getBounds(movements)[1];
+
+        // for real this time
+        List<String> names = ['H','1','2','3','4','5','6','7','8','T'];
+        List<Set> paths = [];
+        int numKnots = 10;
+        List<List<int>> currPos = [];
+        for(int i = 0; i < numKnots; i++) {
+            currPos.add([0,0]);
+            paths.add({'0,0'});
+        } 
+
+        // movement algorithim
+        for(var move in movements) {
+            print("Current move: $move");
+            for(int i = 0; i < move[1]; i++) {
+                for (int k = 0; k < numKnots; k++) {
+
+                    if (k == 0) {
+                        currPos[0] = moveHead(move[0], currPos[k]);
+                    } else {
+                        currPos[k] = moveFollower(currPos[k-1], currPos[k]);
+                    }
+
+                    String currPath = '${currPos[k][0]},${currPos[k][1]}';
+                    paths[k].add(currPath);
+
+                }
+            }
+
+            drawKnots(bound+1, currPos, names);
+            print('----------------');
+
+        }
+
+       print(paths.last.length);
+
+    });
 }
