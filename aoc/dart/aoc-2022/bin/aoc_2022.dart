@@ -11,7 +11,7 @@ import 'package:aoc_2022/aoc_day_10_2022.dart' as day_10;
 
 void main() {
 
-  int daySelection = 9;
+  int daySelection = 10;
   
   switch (daySelection) {
       case 1: 
@@ -53,6 +53,7 @@ void main() {
     case 10:
         print("Hello and welcome to Day Nine of AOC 2022!");
         day_10.partOne();
+        day_10.partTwo();
       default:
         print("Oops! You need to select a day in AOC 2022 to test.");
     }
