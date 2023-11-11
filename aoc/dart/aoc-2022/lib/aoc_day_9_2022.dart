@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 // reads input and returns list of list of strings
 // for each line, idx represents:
@@ -11,6 +12,71 @@ List<List> readInput(String filename){
         movements.add([c.split(" ")[0] , int.parse(c.split(" ")[1])]);
     }
     return movements;
+}
+
+List<int> getBounds(List<List> movements) {
+    int maxX = 0;
+    int maxY = 0;
+    int minX = 0;
+    int minY = 0;
+    int currX = 0;
+    int currY = 0;
+    List<int> bounds = [];
+    for (var m in movements) {
+        int val = m[1];
+        switch (m[0]) {
+            case 'U':
+                currY = currY + val;
+                if (currY > maxY) {
+                    maxY = currY;
+                }
+            break;
+            case 'D':
+                currY = currY - val;
+                if (currY < minY) {
+                    minY = currY;
+                }
+            break;
+            case 'L':
+                currX = currX - val;
+                if (currX < minX) {
+                    minX = currX;
+                }
+            break;
+            case 'R':
+                currX = currX + val;
+                if (currX > maxX) {
+                    maxX = currX;
+                }
+            break;
+          default:
+        }
+    }
+    bounds = [minX,minY,maxX,maxY];
+    int lowerBound = bounds.reduce(min);
+    int upperBound = bounds.reduce(max);
+    bounds = [lowerBound,upperBound];
+    print('Lower: $lowerBound, Upper: $upperBound');
+    return bounds;
+}
+
+void drawKnots(int bound, List<List<int>> pos, List<String> name) {
+
+    List<List<String>> printPos = [];
+    for(int i = 0; i < bound; i++) {
+        printPos.add(List<String>.generate(bound, (e) => '.', growable: true));
+    } 
+
+    for (int i = 0; i < name.length; i++) {
+        String n = name[i];
+        int currPosX = pos[i][0];
+        int currPosY = pos[i][1];
+        printPos[currPosX][currPosY] = n;
+    }
+
+    for (var l in printPos.reversed.toList()) {
+        print(l.join());
+    }
 }
 
 // move head and return new position
