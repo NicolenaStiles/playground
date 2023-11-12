@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+// color declarations
+const Color bgColor = Color.fromARGB(255, 18, 32, 47);
+
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -11,26 +13,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+        title: 'Asteroids Demo',
+        theme: ThemeData.dark().copyWith(
+          scaffoldBackgroundColor: bgColor,
+          ),
+        debugShowCheckedModeBanner: false,
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -52,6 +39,58 @@ class MyHomePage extends StatefulWidget {
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class AsteroidPainter extends CustomPainter {
+
+  @override
+  void paint(Canvas canvas, Size size) {
+
+    // Define a paint object
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4.0
+      ..color = Colors.white;
+
+    final rectSketch = Path();
+    int rectSize = 50;
+
+    // Left eye
+    canvas.drawRRect(
+        RRect.fromRectAndRadius(Rect.fromLTWH(
+            (size.width / 2) - 100, 
+            (size.height / 2) - 300, 
+            200, 
+            100
+          ), Radius.circular(10)),
+        paint,
+      );
+
+    // trying to draw a triangle
+    rectSketch.moveTo(
+      (size.width / 2),
+      (size.height / 2) - rectSize
+      );
+    rectSketch.lineTo(
+      (size.width / 2) - rectSize / 2,
+      (size.height / 2) 
+    );
+    rectSketch.lineTo(
+      (size.width / 2) + rectSize / 2,
+      (size.height / 2) 
+    );
+    rectSketch.lineTo(
+      (size.width / 2),
+      (size.height / 2) - rectSize
+    );
+
+    canvas.drawPath(rectSketch, paint);
+
+  }
+
+  @override
+  bool shouldRepaint(AsteroidPainter oldDelegate) => false;
+
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -77,49 +116,37 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height - 100,
+              color: Colors.black,
+              child: CustomPaint(painter: AsteroidPainter()),
+              ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 100,
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton (
+                    onPressed: () {}, 
+                    child: const Text('Test Button 1'),
+                  ),
+                  TextButton (
+                    onPressed: () {}, 
+                    child: const Text('Test Button 2'),
+                  ),
+                ],
+              ),
+            )
           ],
-        ),
+        ), 
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
