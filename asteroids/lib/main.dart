@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -110,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  void _handleKeyDown(KeyEvent value) {
+  void _handleKeyPress(KeyEvent value) {
 
       setState(() {
                 
@@ -118,24 +119,60 @@ class _MyHomePageState extends State<MyHomePage> {
 
         if (value.runtimeType == KeyDownEvent) {
 
-          if (k == LogicalKeyboardKey.arrowUp) {
-            _upCount++;
-          } 
+          switch (k) {
 
-          if(k == LogicalKeyboardKey.arrowDown) {
-            _downCount++;
+            case LogicalKeyboardKey.arrowUp:
+              debugPrint('PRESSED: UP');
+            break;
+
+            case LogicalKeyboardKey.arrowLeft:
+              debugPrint('PRESSED: LEFT');
+            break;
+
+            case LogicalKeyboardKey.arrowRight:
+              debugPrint('PRESSED: RIGHT');
+            break;
+            
+            case LogicalKeyboardKey.space:
+              debugPrint('PRESSED: SPACE');
+            break;
+
+            case LogicalKeyboardKey.shift:
+              debugPrint('PRESSED: SHIFT');
+            break;
+
+            default:
+              debugPrint('Unrecognized key!');
           }
-
         }
 
         if (value.runtimeType == KeyRepeatEvent) {
 
-          if (k == LogicalKeyboardKey.arrowUp) {
-            _upCount++;
-          } 
+          switch (k) {
 
-          if(k == LogicalKeyboardKey.arrowDown) {
-            _downCount++;
+            case LogicalKeyboardKey.arrowUp:
+              debugPrint('PRESSED: UP');
+            break;
+
+            case LogicalKeyboardKey.arrowLeft:
+              debugPrint('PRESSED: LEFT');
+            break;
+
+            case LogicalKeyboardKey.arrowRight:
+              debugPrint('PRESSED: RIGHT');
+            break;
+            
+            case LogicalKeyboardKey.space:
+              debugPrint('PRESSED: SPACE');
+            break;
+
+            case LogicalKeyboardKey.shift:
+              debugPrint('PRESSED: SHIFT');
+            break;
+
+            default:
+              debugPrint('Unrecognized key!');
+
           }
         }
 
@@ -155,7 +192,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: KeyboardListener(
         focusNode: node, 
         onKeyEvent: (value) { 
-            _handleKeyDown(value);
+            _handleKeyPress(value);
           },
         child: Center(
           child: Column(
