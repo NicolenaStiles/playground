@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:html';
+import 'asteroid_object.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -46,12 +47,15 @@ class MyHomePage extends StatefulWidget {
 
 class AsteroidPainter extends CustomPainter {
 
+  int centerX = 0;
   int centerY = 0;
   
   @override
-  AsteroidPainter(int y) {
+  AsteroidPainter(int x,int y) {
+    centerX = x;
     centerY = y;
   }
+
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -62,40 +66,21 @@ class AsteroidPainter extends CustomPainter {
       ..strokeWidth = 4.0
       ..color = Colors.white;
 
-    final rectSketch = Path();
-    int rectSize = 50;
-
-    // trying to draw a triangle
-    rectSketch.moveTo(
-      (size.width / 2),
-      (size.height / 2) - rectSize + centerY,
-      );
-    rectSketch.lineTo(
-      (size.width / 2) - rectSize / 2,
-      (size.height / 2) + centerY,
-    );
-    rectSketch.lineTo(
-      (size.width / 2) + rectSize / 2,
-      (size.height / 2) + centerY,
-    );
-    rectSketch.lineTo(
-      (size.width / 2),
-      (size.height / 2) - rectSize + centerY,
-    );
-
-    canvas.drawPath(rectSketch, paint);
+    debugPrint('$centerX,$centerY');
+    AsteroidObject testObject = AsteroidObject(50, 50, [centerX,centerY], AsteroidObjectType.testSquare);
+    canvas.drawPath(testObject.completePath(), paint);
 
   }
 
   @override
-  bool shouldRepaint(AsteroidPainter oldDelegate) => false;
+  bool shouldRepaint(AsteroidPainter oldDelegate) => true;
 
 }
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  int _upCount = 0;
-  int _downCount = 0;
+  int _x = 0;
+  int _y = 0;
 
   var node = FocusNode();
   
@@ -123,18 +108,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
             case LogicalKeyboardKey.arrowUp:
               debugPrint('PRESSED: UP');
+              _y--;
             break;
 
             case LogicalKeyboardKey.arrowLeft:
               debugPrint('PRESSED: LEFT');
+              _x--;
             break;
 
             case LogicalKeyboardKey.arrowRight:
               debugPrint('PRESSED: RIGHT');
+              _x++;
             break;
             
             case LogicalKeyboardKey.space:
               debugPrint('PRESSED: SPACE');
+
             break;
 
             case LogicalKeyboardKey.shift:
@@ -152,14 +141,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
             case LogicalKeyboardKey.arrowUp:
               debugPrint('PRESSED: UP');
+              debugPrint('$_y');
+              _y--;
             break;
 
             case LogicalKeyboardKey.arrowLeft:
               debugPrint('PRESSED: LEFT');
+              _x--;
             break;
 
             case LogicalKeyboardKey.arrowRight:
               debugPrint('PRESSED: RIGHT');
+              _x++;
             break;
             
             case LogicalKeyboardKey.space:
@@ -195,21 +188,12 @@ class _MyHomePageState extends State<MyHomePage> {
             _handleKeyPress(value);
           },
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                height: MediaQuery.of(context).size.height / 2,
-                width: MediaQuery.of(context).size.width / 2,
-                child: Text('Press up $_upCount times!'),
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height / 2,
-                width: MediaQuery.of(context).size.width / 2,
-                child: Text('Press down $_downCount times!'),
-              ),
-            ],
-          ), 
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.black,
+            child: CustomPaint(painter: AsteroidPainter(500 + _x, 500 + _y))
+          )
         ),
       ),
     );

@@ -1,7 +1,5 @@
 // Class for bodies that move on the asteroid field
 
-import 'dart:js_interop';
-
 import 'package:flutter/material.dart';
 
 enum AsteroidObjectType {testSquare, playerShip, smallAsteroid, mediumAsteroid, largeAsteroid, alienShip, shot} 
@@ -67,7 +65,7 @@ class AsteroidObject {
     for(int v = 1; v < verticies.length; v++) {
       graphicPath.lineTo(verticies[v][0].toDouble(), verticies[v][1].toDouble());
     }
-    graphicPath.lineTo(verticies[verticies.length - 1][0].toDouble(), verticies[verticies.length - 1][1].toDouble());
+    graphicPath.lineTo(verticies[0][0].toDouble(), verticies[0][1].toDouble());
 
     return graphicPath;
   }
