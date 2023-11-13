@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 
 // color declarations
 const Color bgColor = Color.fromARGB(255, 18, 32, 47);
@@ -92,35 +93,54 @@ class AsteroidPainter extends CustomPainter {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  // store variables for drawn objects here?
-  int _counter = 0;
+  int _upCount = 0;
+  int _downCount = 0;
 
-  bool _buttonPressed = false;
-  bool _loopActive = false;
+  var node = FocusNode();
+  
+  @override
+  void initState() {
+    node.requestFocus();
+    super.initState();
+  }
 
-  void _increaseCounterWhilePressed(bool isUp) async {
+  @override
+  void dispose() {
+    node.dispose();
+    super.dispose();
+  }
 
-    if (_loopActive) return;// check if loop is active
+  void _handleKeyDown(KeyEvent value) {
 
-    _loopActive = true;
-
-    while (_buttonPressed) {
-
-      // do your thing
       setState(() {
-        if (isUp) {
-          _counter--;
-        } else {
-          _counter++;
+                
+        final k = value.logicalKey;
+
+        if (value.runtimeType == KeyDownEvent) {
+
+          if (k == LogicalKeyboardKey.arrowUp) {
+            _upCount++;
+          } 
+
+          if(k == LogicalKeyboardKey.arrowDown) {
+            _downCount++;
+          }
+
         }
+
+        if (value.runtimeType == KeyRepeatEvent) {
+
+          if (k == LogicalKeyboardKey.arrowUp) {
+            _upCount++;
+          } 
+
+          if(k == LogicalKeyboardKey.arrowDown) {
+            _downCount++;
+          }
+        }
+
       });
-
-      await Future.delayed(Duration(milliseconds: 10));
-
-    }
-
-    _loopActive = false;
-
+       
   }
 
   @override
@@ -132,58 +152,28 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height - 100,
-              color: Colors.black,
-              child: CustomPaint(painter: AsteroidPainter(_counter)),
+      body: KeyboardListener(
+        focusNode: node, 
+        onKeyEvent: (value) { 
+            _handleKeyDown(value);
+          },
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height / 2,
+                width: MediaQuery.of(context).size.width / 2,
+                child: Text('Press up $_upCount times!'),
               ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: 100,
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Down button
-                  Listener(
-                    onPointerDown: (details) {
-                      _buttonPressed = true;
-                      _increaseCounterWhilePressed(false);
-                    },
-                    onPointerUp: (details) {
-                      _buttonPressed = false;
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(color: Colors.orange, border: Border.all()),
-                      padding: const EdgeInsets.all(20.0),
-                      child: Text('Down: $_counter'),
-                    ),
-                  ),
-                  // Up button
-                  Listener(
-                    onPointerDown: (details) {
-                      _buttonPressed = true;
-                      _increaseCounterWhilePressed(true);
-                    },
-                    onPointerUp: (details) {
-                      _buttonPressed = false;
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(color: Colors.orange, border: Border.all()),
-                      padding: const EdgeInsets.all(20.0),
-                      child: Text('Up: $_counter'),
-                    ),
-                  ),
-                ],
+              Container(
+                height: MediaQuery.of(context).size.height / 2,
+                width: MediaQuery.of(context).size.width / 2,
+                child: Text('Press down $_downCount times!'),
               ),
-            )
-          ],
-        ), 
+            ],
+          ), 
+        ),
       ),
     );
   }
