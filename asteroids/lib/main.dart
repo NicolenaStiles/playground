@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -43,6 +44,13 @@ class MyHomePage extends StatefulWidget {
 
 class AsteroidPainter extends CustomPainter {
 
+  int centerY = 0;
+  
+  @override
+  AsteroidPainter(int y) {
+    centerY = y;
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
 
@@ -55,33 +63,22 @@ class AsteroidPainter extends CustomPainter {
     final rectSketch = Path();
     int rectSize = 50;
 
-    // Left eye
-    canvas.drawRRect(
-        RRect.fromRectAndRadius(Rect.fromLTWH(
-            (size.width / 2) - 100, 
-            (size.height / 2) - 300, 
-            200, 
-            100
-          ), Radius.circular(10)),
-        paint,
-      );
-
     // trying to draw a triangle
     rectSketch.moveTo(
       (size.width / 2),
-      (size.height / 2) - rectSize
+      (size.height / 2) - rectSize + centerY,
       );
     rectSketch.lineTo(
       (size.width / 2) - rectSize / 2,
-      (size.height / 2) 
+      (size.height / 2) + centerY,
     );
     rectSketch.lineTo(
       (size.width / 2) + rectSize / 2,
-      (size.height / 2) 
+      (size.height / 2) + centerY,
     );
     rectSketch.lineTo(
       (size.width / 2),
-      (size.height / 2) - rectSize
+      (size.height / 2) - rectSize + centerY,
     );
 
     canvas.drawPath(rectSketch, paint);
@@ -94,17 +91,36 @@ class AsteroidPainter extends CustomPainter {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  // store variables for drawn objects here?
   int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  bool _buttonPressed = false;
+  bool _loopActive = false;
+
+  void _increaseCounterWhilePressed(bool isUp) async {
+
+    if (_loopActive) return;// check if loop is active
+
+    _loopActive = true;
+
+    while (_buttonPressed) {
+
+      // do your thing
+      setState(() {
+        if (isUp) {
+          _counter--;
+        } else {
+          _counter++;
+        }
+      });
+
+      await Future.delayed(Duration(milliseconds: 10));
+
+    }
+
+    _loopActive = false;
+
   }
 
   @override
@@ -124,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height - 100,
               color: Colors.black,
-              child: CustomPaint(painter: AsteroidPainter()),
+              child: CustomPaint(painter: AsteroidPainter(_counter)),
               ),
             Container(
               width: MediaQuery.of(context).size.width,
@@ -133,13 +149,35 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextButton (
-                    onPressed: () {}, 
-                    child: const Text('Test Button 1'),
+                  // Down button
+                  Listener(
+                    onPointerDown: (details) {
+                      _buttonPressed = true;
+                      _increaseCounterWhilePressed(false);
+                    },
+                    onPointerUp: (details) {
+                      _buttonPressed = false;
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(color: Colors.orange, border: Border.all()),
+                      padding: const EdgeInsets.all(20.0),
+                      child: Text('Down: $_counter'),
+                    ),
                   ),
-                  TextButton (
-                    onPressed: () {}, 
-                    child: const Text('Test Button 2'),
+                  // Up button
+                  Listener(
+                    onPointerDown: (details) {
+                      _buttonPressed = true;
+                      _increaseCounterWhilePressed(true);
+                    },
+                    onPointerUp: (details) {
+                      _buttonPressed = false;
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(color: Colors.orange, border: Border.all()),
+                      padding: const EdgeInsets.all(20.0),
+                      child: Text('Up: $_counter'),
+                    ),
                   ),
                 ],
               ),
