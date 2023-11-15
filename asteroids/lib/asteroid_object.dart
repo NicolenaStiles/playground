@@ -45,19 +45,19 @@ class AsteroidObject extends PositionComponent {
       case AsteroidObjectType.playerShip:
 
         // A
-        _verticies.add([ width / 2, height]);
+        _verticies.add([ width * 0.5, 0]);
         //print(_verticies[0]);
         // B
-        _verticies.add([ width, 0 ]);
+        _verticies.add([ width, height]);
         //print(_verticies[1]);
         // C
-        _verticies.add([ (width * 0.8), (0.2 * height)  ]);
+        _verticies.add([ (width * 0.8), (height * 0.8) ]);
         //print(_verticies[2]);
         // D
-        _verticies.add([ (width * 0.2), (0.2 * height)  ]);
+        _verticies.add([ (width * 0.2), (height * 0.8) ]);
         //print(_verticies[3]);
         // E
-        _verticies.add([ 0 , 0 ]);
+        _verticies.add([ 0 , height]);
         //print(_verticies[4]);
 
         break;

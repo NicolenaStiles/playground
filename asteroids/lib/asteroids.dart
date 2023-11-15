@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'asteroid_object.dart';
 import 'package:flame/input.dart';
+import 'dart:math';
 
 List<AsteroidObject> renderTestGraphics() {
   List<AsteroidObject> renderObjects = [];
@@ -13,35 +14,33 @@ List<AsteroidObject> renderTestGraphics() {
 class Asteroids extends FlameGame with HasKeyboardHandlerComponents {
 
   static const int _speed = 200;
+  static const int _rotationSpeed = 3;
 
   late final AsteroidObject player;
 
   final Vector2 _direction = Vector2.zero();
 
   final Map<LogicalKeyboardKey, double> _keyWeights = {
-    LogicalKeyboardKey.keyW: 0,
     LogicalKeyboardKey.keyA: 0,
-    LogicalKeyboardKey.keyS: 0,
     LogicalKeyboardKey.keyD: 0,
+    LogicalKeyboardKey.keyW: 0,
   };
 
   @override
   Future<void> onLoad() async {
 
     await super.onLoad();
-    print("Viewport: ${size.x},${size.y}");
-    print("Canvas: ${canvasSize.x},${canvasSize.y}");
-    print(camera.visibleWorldRect);
 
     // player ship
     player = AsteroidObject(AsteroidObjectType.playerShip)
-      ..position = Vector2(size.x * 0.2, size.y * 0.25)
+      ..position = Vector2(size.x * 0.5, size.y * 0.5)
       ..width = 36
       ..height = 60
       ..anchor = Anchor.center;
 
     add(player);
 
+    // add keyboard handling to game
     add(
       KeyboardListenerComponent(
         keyUp: {
@@ -51,8 +50,6 @@ class Asteroids extends FlameGame with HasKeyboardHandlerComponents {
               _handleKey(LogicalKeyboardKey.keyD, false),
           LogicalKeyboardKey.keyW: (keys) =>
               _handleKey(LogicalKeyboardKey.keyW, false),
-          LogicalKeyboardKey.keyS: (keys) =>
-              _handleKey(LogicalKeyboardKey.keyS, false),
         },
         keyDown: {
           LogicalKeyboardKey.keyA: (keys) =>
@@ -61,38 +58,45 @@ class Asteroids extends FlameGame with HasKeyboardHandlerComponents {
               _handleKey(LogicalKeyboardKey.keyD, true),
           LogicalKeyboardKey.keyW: (keys) =>
               _handleKey(LogicalKeyboardKey.keyW, true),
-          LogicalKeyboardKey.keyS: (keys) =>
-              _handleKey(LogicalKeyboardKey.keyS, true),
         },
       ),
     );
   }
 
+
   @override
-    void update(double dt) {
-      super.update(dt);
+  void update(double dt) {
 
-      _direction
-        ..setValues(xInput, yInput)
-        ..normalize();
+    super.update(dt);
 
-      final displacement = _direction * (_speed * dt);
-      player.position.add(displacement);
-    }
+    // rotation update
+    player.angle += rInput * (_rotationSpeed * dt);
+    player.angle %= 2 * pi;
+
+    // movement update
+    double xInput =  forwardMovement * sin(player.angle);
+    double yInput =  forwardMovement * (0 - cos(player.angle));
+
+    _direction
+      ..setValues(xInput, yInput)
+      ..normalize();
+
+    final displacement = _direction * (_speed * dt);
+    player.position.add(displacement);
+
+  }
 
   bool _handleKey(LogicalKeyboardKey key, bool isDown) {
     _keyWeights[key] = isDown ? 1 : 0;
     return true;
   }
-
-  double get xInput =>
+  
+  double get rInput =>
     _keyWeights[LogicalKeyboardKey.keyD]! -
     _keyWeights[LogicalKeyboardKey.keyA]!;
 
-  double get yInput =>
-    _keyWeights[LogicalKeyboardKey.keyS]! -
+  double get forwardMovement =>
     _keyWeights[LogicalKeyboardKey.keyW]!;
-
 
   void renderTestGraphics() {
 
@@ -190,7 +194,6 @@ class Asteroids extends FlameGame with HasKeyboardHandlerComponents {
     smallS,medS,largeS,
     smallO,medO,largeO,
     ]);
-
   }
 }
 
