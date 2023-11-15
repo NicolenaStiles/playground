@@ -17,8 +17,10 @@ class Asteroids extends FlameGame with HasKeyboardHandlerComponents {
   static const int _rotationSpeed = 3;
 
   late final AsteroidObject player;
+  late final AsteroidObject testAsteroid;
 
   final Vector2 _direction = Vector2.zero();
+  final Vector2 _directionAsteroid = Vector2.zero();
 
   final Map<LogicalKeyboardKey, double> _keyWeights = {
     LogicalKeyboardKey.keyA: 0,
@@ -39,6 +41,15 @@ class Asteroids extends FlameGame with HasKeyboardHandlerComponents {
       ..anchor = Anchor.center;
 
     add(player);
+
+    // test asteroid
+    testAsteroid = AsteroidObject(AsteroidObjectType.asteroidS) 
+      ..position = Vector2(size.x * 0.8, 0)
+      ..width = 128
+      ..height = 128
+      ..anchor = Anchor.center;
+
+    add(testAsteroid);
 
     // add keyboard handling to game
     add(
@@ -69,6 +80,7 @@ class Asteroids extends FlameGame with HasKeyboardHandlerComponents {
 
     super.update(dt);
 
+    // for player ship
     // rotation update
     player.angle += rInput * (_rotationSpeed * dt);
     player.angle %= 2 * pi;
@@ -84,6 +96,40 @@ class Asteroids extends FlameGame with HasKeyboardHandlerComponents {
     final displacement = _direction * (_speed * dt);
     player.position.add(displacement);
 
+    // wrapping around the screen: horizontal
+    if (player.position.x > canvasSize.x) {
+      player.position.x = 0;
+    } else if (player.position.x < 0) {
+      player.position.x = canvasSize.x;
+    }
+
+    // wrapping around the screen: vertical 
+    if (player.position.y > canvasSize.y) {
+      player.position.y = 0;
+    } else if (player.position.y < 0) {
+      player.position.y = canvasSize.y;
+    }
+
+    _directionAsteroid
+      ..setValues(0,1)
+      ..normalize();
+
+    final displacementAsteroid = _directionAsteroid * (_speed * dt);
+    testAsteroid.position.add(displacementAsteroid);
+
+    // wrapping around the screen: horizontal
+    if (testAsteroid.position.x > canvasSize.x) {
+      testAsteroid.position.x = 0;
+    } else if (testAsteroid.position.x < 0) {
+      testAsteroid.position.x = canvasSize.x;
+    }
+
+    // wrapping around the screen: vertical 
+    if (testAsteroid.position.y > canvasSize.y + testAsteroid.height) {
+      testAsteroid.position.y = 0 - testAsteroid.height;
+    } else if (testAsteroid.position.y < (0 - testAsteroid.height)) {
+      testAsteroid.position.y = canvasSize.y + testAsteroid.height;
+    }
   }
 
   bool _handleKey(LogicalKeyboardKey key, bool isDown) {
