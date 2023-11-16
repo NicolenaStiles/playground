@@ -18,8 +18,11 @@ class Asteroids extends FlameGame
 
   // constants
   // player
-  static const int _speed = 200;
+  static const int _playerSpeed = 200;
   static const int _rotationSpeed = 3;
+
+  // asteroid
+  static const int _asteroidSpeed = 200;
 
   // shots
   static const int _shotSpeed = 600;
@@ -35,9 +38,7 @@ class Asteroids extends FlameGame
   // direction info for bodies
   final Vector2 _direction = Vector2.zero();
   final Vector2 _directionAsteroid = Vector2.zero();
-  // angle of shot?
-  Vector2 _directionShot = Vector2.zero();
-  double _angleShot = 0;
+  final Vector2 _directionShot = Vector2.zero();
 
   final Map<LogicalKeyboardKey, double> _keyWeights = {
     LogicalKeyboardKey.keyA: 0,
@@ -72,6 +73,7 @@ class Asteroids extends FlameGame
     add(testAsteroid);
 
     // test shot
+    // doesn't get added until relevant!
     testShot = AsteroidObject(AsteroidObjectType.shot)
       ..position = Vector2(0,0)
       ..width = 2
@@ -117,29 +119,17 @@ class Asteroids extends FlameGame
     player.angle %= 2 * pi;
 
     // movement update
-    double xInput =  forwardMovement * sin(player.angle);
-    double yInput =  forwardMovement * (0 - cos(player.angle));
+    double xInput = forwardMovement * sin(player.angle);
+    double yInput = forwardMovement * (0 - cos(player.angle));
 
     _direction
       ..setValues(xInput, yInput)
       ..normalize();
 
-    final displacement = _direction * (_speed * dt);
+    final displacement = _direction * (_playerSpeed * dt);
     player.position.add(displacement);
 
-    // wrapping around the screen: horizontal
-    if (player.position.x > canvasSize.x) {
-      player.position.x = 0;
-    } else if (player.position.x < 0) {
-      player.position.x = canvasSize.x;
-    }
-
-    // wrapping around the screen: vertical 
-    if (player.position.y > canvasSize.y) {
-      player.position.y = 0;
-    } else if (player.position.y < 0) {
-      player.position.y = canvasSize.y;
-    }
+    checkWraparound(player);
 
     // for asteroid
     // position update
@@ -147,10 +137,11 @@ class Asteroids extends FlameGame
       ..setValues(0,1)
       ..normalize();
 
-    final displacementAsteroid = _directionAsteroid * (_speed * dt);
+    final displacementAsteroid = _directionAsteroid * (_asteroidSpeed * dt);
     testAsteroid.position.add(displacementAsteroid);
 
-    // TODO: shooting? 
+    checkWraparound(testAsteroid);
+
     // Check if player can fire shot
     // jesus this logic sucks but whatever
     if(fireShot == 1) {
@@ -200,38 +191,44 @@ class Asteroids extends FlameGame
       testShot.position.add(displacementShot);
     }
 
-    // wrapping around the screen: horizontal
-    if (testAsteroid.position.x > canvasSize.x) {
-      testAsteroid.position.x = 0;
-    } else if (testAsteroid.position.x < 0) {
-      testAsteroid.position.x = canvasSize.x;
-    }
-
-    // wrapping around the screen: vertical 
-    if (testAsteroid.position.y > canvasSize.y + testAsteroid.height) {
-      testAsteroid.position.y = 0 - testAsteroid.height;
-    } else if (testAsteroid.position.y < (0 - testAsteroid.height)) {
-      testAsteroid.position.y = canvasSize.y + testAsteroid.height;
-    }
-
-    // TODO: collisions!
   }
+
+  // checks if an asteroid object is out-of-bounds and warps it if it is
+  void checkWraparound(AsteroidObject checkObj) {
+     // wrapping around the screen: horizontal
+    if (checkObj.position.x > (canvasSize.x + checkObj.width)) {
+      checkObj.position.x = 0 - checkObj.width / 2;
+    } else if ((checkObj.position.x + checkObj.width) < 0) {
+      checkObj.position.x = canvasSize.x + checkObj.width / 2;
+    }
+    // wrapping around the screen: vertical 
+    if (checkObj.position.y > (canvasSize.y + checkObj.width)) {
+      checkObj.position.y = 0 - (checkObj.height / 2);
+    } else if ((checkObj.position.y + checkObj.width) < 0) {
+      checkObj.position.y = canvasSize.y - (checkObj.height / 2);
+    }
+  }
+
 
   bool _handleKey(LogicalKeyboardKey key, bool isDown) {
     _keyWeights[key] = isDown ? 1 : 0;
     return true;
   }
-  
+
+  // rotational input: uses keys D and A
   double get rInput =>
     _keyWeights[LogicalKeyboardKey.keyD]! -
     _keyWeights[LogicalKeyboardKey.keyA]!;
 
+  // forward movement: uses W
   double get forwardMovement =>
     _keyWeights[LogicalKeyboardKey.keyW]!;
 
+  // fire shot: uses spacebar
   double get fireShot =>
     _keyWeights[LogicalKeyboardKey.space]!;
 
+  // just to test all the assets and make sure sizes/proportions work
   void renderTestGraphics() {
 
     // player ship
