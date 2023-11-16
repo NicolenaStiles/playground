@@ -1,3 +1,4 @@
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,8 @@ List<AsteroidObject> renderTestGraphics() {
 }
 
 // TODO: better understand world vs canvas vs size
-class Asteroids extends FlameGame with HasKeyboardHandlerComponents {
+class Asteroids extends FlameGame 
+  with HasKeyboardHandlerComponents, HasCollisionDetection {
 
   // constants
   static const int _speed = 200;
@@ -44,6 +46,7 @@ class Asteroids extends FlameGame with HasKeyboardHandlerComponents {
       ..height = 60
       ..anchor = Anchor.center;
 
+    player.add(RectangleHitbox());
     add(player);
 
     // test asteroid
@@ -53,6 +56,7 @@ class Asteroids extends FlameGame with HasKeyboardHandlerComponents {
       ..height = 128
       ..anchor = Anchor.center;
 
+    testAsteroid.add(RectangleHitbox());
     add(testAsteroid);
 
     // add keyboard handling to game

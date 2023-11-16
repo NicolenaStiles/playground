@@ -1,16 +1,17 @@
 // Class for bodies that move on the asteroid field
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
 enum AsteroidObjectType {testSquare, playerShip, asteroidX, asteroidS, asteroidO, alienShip, shot} 
 
-class AsteroidObject extends PositionComponent {
+class AsteroidObject extends PositionComponent with CollisionCallbacks {
 
   List<List<double>> _verticies = [];
   AsteroidObjectType objType;
 
   // Define a paint object
-  static final _paint = Paint()
+  final _paint = Paint()
     ..style = PaintingStyle.stroke
     ..strokeWidth = 2.0
     ..color = Colors.white;
@@ -18,6 +19,25 @@ class AsteroidObject extends PositionComponent {
   @override
   AsteroidObject(this.objType);
 
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (other is AsteroidObject && objType == AsteroidObjectType.asteroidS) {
+      if(other.objType == AsteroidObjectType.playerShip) {
+        _paint.color = Colors.red;
+      }
+    }
+  }
+
+  /*
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    if (other is ScreenHitbox) {
+      //...
+    } else if (other is YourOtherComponent) {
+      //...
+    }
+  }
+  */
 
   Path completePath() {
 
