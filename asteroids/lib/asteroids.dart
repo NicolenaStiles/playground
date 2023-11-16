@@ -142,10 +142,15 @@ class Asteroids extends FlameGame
 
     checkWraparound(testAsteroid);
 
+    // for user firing shot
+    handleShot(dt);
+
+  }
+
+  void handleShot(double dt) {
+
     // Check if player can fire shot
-    // jesus this logic sucks but whatever
-    if(fireShot == 1) {
-      if (_shotReady) {
+    if (_shotReady == true && (fireShot == 1)) {
         print("Shot fired!");
         // create shot object
         double shotPositionX = (player.position.x + sin(player.angle) * (player.height / 2));
@@ -158,18 +163,7 @@ class Asteroids extends FlameGame
         add(testShot);
         testShot.angle = player.angle;
         _shotReady = false;
-      } else {
-        if (_currShotDelay < _shotDelay) {
-          _currShotDelay++;
-        } else {
-          _shotReady = true;
-          _currShotDelay = 0;
-          if (contains(testShot)) {
-            remove(testShot);
-          }
-        }
-      } 
-    } else if (_shotReady == false) {
+    } else if (!_shotReady) {
       if (_currShotDelay < _shotDelay) {
         _currShotDelay++;
       } else {
@@ -189,23 +183,6 @@ class Asteroids extends FlameGame
 
       final displacementShot = _directionShot * (_shotSpeed * dt);
       testShot.position.add(displacementShot);
-    }
-
-  }
-
-  // checks if an asteroid object is out-of-bounds and warps it if it is
-  void checkWraparound(AsteroidObject checkObj) {
-     // wrapping around the screen: horizontal
-    if (checkObj.position.x > (canvasSize.x + checkObj.width)) {
-      checkObj.position.x = 0 - checkObj.width / 2;
-    } else if ((checkObj.position.x + checkObj.width) < 0) {
-      checkObj.position.x = canvasSize.x + checkObj.width / 2;
-    }
-    // wrapping around the screen: vertical 
-    if (checkObj.position.y > (canvasSize.y + checkObj.width)) {
-      checkObj.position.y = 0 - (checkObj.height / 2);
-    } else if ((checkObj.position.y + checkObj.width) < 0) {
-      checkObj.position.y = canvasSize.y - (checkObj.height / 2);
     }
   }
 
@@ -227,6 +204,22 @@ class Asteroids extends FlameGame
   // fire shot: uses spacebar
   double get fireShot =>
     _keyWeights[LogicalKeyboardKey.space]!;
+
+  // checks if an asteroid object is out-of-bounds and warps it if it is
+  void checkWraparound(AsteroidObject checkObj) {
+     // wrapping around the screen: horizontal
+    if (checkObj.position.x > (canvasSize.x + checkObj.width)) {
+      checkObj.position.x = 0 - checkObj.width / 2;
+    } else if ((checkObj.position.x + checkObj.width) < 0) {
+      checkObj.position.x = canvasSize.x + checkObj.width / 2;
+    }
+    // wrapping around the screen: vertical 
+    if (checkObj.position.y > (canvasSize.y + checkObj.width)) {
+      checkObj.position.y = 0 - (checkObj.height / 2);
+    } else if ((checkObj.position.y + checkObj.width) < 0) {
+      checkObj.position.y = canvasSize.y - (checkObj.height / 2);
+    }
+  }
 
   // just to test all the assets and make sure sizes/proportions work
   void renderTestGraphics() {
@@ -326,5 +319,5 @@ class Asteroids extends FlameGame
     smallO,medO,largeO,
     ]);
   }
-}
+} 
 
