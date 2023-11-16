@@ -1,7 +1,6 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'asteroid_object.dart';
 import 'package:flame/input.dart';
@@ -34,6 +33,7 @@ class Asteroids extends FlameGame
   late final AsteroidObject player;
   late final AsteroidObject testAsteroid;
   late final AsteroidObject testShot;
+  //List<AsteroidObject> asteroids = [];
 
   // direction info for bodies
   final Vector2 _direction = Vector2.zero();
@@ -62,11 +62,25 @@ class Asteroids extends FlameGame
     player.add(RectangleHitbox());
     add(player);
 
-    // test asteroid
-    testAsteroid = AsteroidObject(AsteroidObjectType.asteroidS) 
-      ..position = Vector2(size.x * 0.5, size.y * 0.2)
-      ..width = 32
-      ..height = 32
+    // test asteroid array
+    /*
+    for (double i = 0.2; i < 1; i = i + 0.2) {
+      asteroids.add(
+        AsteroidObject(AsteroidObjectType.asteroidS) 
+        ..position = Vector2(size.x * i, 0)
+        ..width = 32
+        ..height = 32
+        ..anchor = Anchor.center
+      );
+      asteroids.last.add(RectangleHitbox(isSolid: true));
+    }
+    addAll(asteroids);
+    */
+
+    testAsteroid = AsteroidObject(AsteroidObjectType.asteroidO) 
+      ..position = Vector2(size.x * 0.5, size.y * 0.25)
+      ..width = 128
+      ..height = 128
       ..anchor = Anchor.center;
 
     testAsteroid.add(RectangleHitbox(isSolid: true));
@@ -122,12 +136,20 @@ class Asteroids extends FlameGame
     handlePlayerMovement(dt);
     checkWraparound(player);
 
+    // for user firing shot
+    handleShot(dt);
+    checkWraparound(testShot);
+
+
+    /*
     if (!contains(testAsteroid)) {
+
       int randX = random(0, canvasSize.x.toInt());
       int randY = random(0, canvasSize.y.toInt());
       testAsteroid.position = Vector2(randX.toDouble(), 0);
       print("${testAsteroid.position}");
       add(testAsteroid);
+
     } else {
 
       _directionAsteroid
@@ -140,6 +162,17 @@ class Asteroids extends FlameGame
       checkWraparound(testAsteroid);
 
     }
+    */
+
+    /*
+    for (var rock in asteroids) {
+      _directionAsteroid
+        ..setValues(0,1)
+        ..normalize();
+      rock.position.add(_directionAsteroid * (_asteroidSpeed * dt));
+      checkWraparound(rock);
+    }
+    */
 
     // for asteroid
     // position update
@@ -153,10 +186,6 @@ class Asteroids extends FlameGame
 
     checkWraparound(testAsteroid);
     */
-
-    // for user firing shot
-    handleShot(dt);
-    checkWraparound(testShot);
 
   }
 
@@ -182,6 +211,11 @@ class Asteroids extends FlameGame
     // Check if player can fire shot
     if (_shotReady == true && (fireShot == 1)) {
         print("Shot fired!");
+        for (var e in children) {
+          if (e is AsteroidObject) {
+            print(e.objType);
+          }
+        }
         // create shot object
         double shotPositionX = (player.position.x + sin(player.angle) * (player.height / 2));
         double shotPositionY = (player.position.y - cos(player.angle) * (player.height / 2));

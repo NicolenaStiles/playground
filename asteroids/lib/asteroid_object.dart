@@ -1,11 +1,12 @@
 // Class for bodies that move on the asteroid field
+import 'package:asteroids/asteroids.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
 enum AsteroidObjectType {testSquare, playerShip, asteroidX, asteroidS, asteroidO, alienShip, shot} 
 
-class AsteroidObject extends PositionComponent with CollisionCallbacks {
+class AsteroidObject extends PositionComponent with CollisionCallbacks, HasGameRef {
 
   List<List<double>> _verticies = [];
   AsteroidObjectType objType;
@@ -21,9 +22,32 @@ class AsteroidObject extends PositionComponent with CollisionCallbacks {
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is AsteroidObject && objType == AsteroidObjectType.asteroidS) {
+    if (other is AsteroidObject && objType == AsteroidObjectType.asteroidO) {
       if(other.objType == AsteroidObjectType.shot) {
         _paint.color = Colors.red;
+        print("${position.x}");
+        print("${position.y}");
+        print("$x,$y");
+        print(absolutePositionOfAnchor(anchor));
+        print(game.size);
+        game.add(
+          AsteroidObject(AsteroidObjectType.asteroidS)
+          ..position = Vector2(position.x, position.y)
+          ..width = width / 2
+          ..height = height / 2
+          ..anchor = Anchor.center
+        );
+        /*
+        for (int i = 0; i < 2; i++) {
+          addToParent(
+            AsteroidObject(AsteroidObjectType.asteroidO)
+            ..position = Vector2(position.x, position.y)
+            ..width = width / 2
+            ..height = height / 2
+            ..anchor = Anchor.center
+          );
+        }
+        */
         other.position = Vector2(-1000, -1000);
         other.removeFromParent();
       }
@@ -33,8 +57,9 @@ class AsteroidObject extends PositionComponent with CollisionCallbacks {
   
   @override
   void onCollisionEnd(PositionComponent other) {
-    if (other is AsteroidObject && objType == AsteroidObjectType.asteroidS) {
+    if (other is AsteroidObject && objType == AsteroidObjectType.asteroidO) {
       if(other.objType == AsteroidObjectType.shot) {
+        print(children);
         _paint.color = Colors.white;
         removeFromParent();
       }
@@ -153,18 +178,16 @@ class AsteroidObject extends PositionComponent with CollisionCallbacks {
         // D
         _verticies.add([(10/16) * width, (16/16) * height]);
         // E
-        _verticies.add([(7/16) * width, (16/16) * height]);
+        _verticies.add([(7/16) * width, (9/16) * height]);
         // F
-        _verticies.add([(7/16) * width, (16/16) * height]);
+        _verticies.add([(6/16) * width, (16/16) * height]);
         // G
-        _verticies.add([(4/16) * width, (16/16) * height]);
-        // H
         _verticies.add([(0/16) * width, (10/16) * height]);
-        // I
+        // H
         _verticies.add([(5/16) * width, (8/16) * height]);
-        // J
+        // I
         _verticies.add([(0/16) * width, (6/16) * height]);
-        // K
+        // J
         _verticies.add([(5/16) * width, (0/16) * height]);
 
         break;
