@@ -11,14 +11,18 @@ List<AsteroidObject> renderTestGraphics() {
   return renderObjects;
 }
 
+// TODO: better understand world vs canvas vs size
 class Asteroids extends FlameGame with HasKeyboardHandlerComponents {
 
+  // constants
   static const int _speed = 200;
   static const int _rotationSpeed = 3;
 
+  // bodies on screen @ start
   late final AsteroidObject player;
   late final AsteroidObject testAsteroid;
 
+  // direction info for bodies
   final Vector2 _direction = Vector2.zero();
   final Vector2 _directionAsteroid = Vector2.zero();
 
@@ -110,6 +114,8 @@ class Asteroids extends FlameGame with HasKeyboardHandlerComponents {
       player.position.y = canvasSize.y;
     }
 
+    // for asteroid
+    // position update
     _directionAsteroid
       ..setValues(0,1)
       ..normalize();
@@ -130,6 +136,9 @@ class Asteroids extends FlameGame with HasKeyboardHandlerComponents {
     } else if (testAsteroid.position.y < (0 - testAsteroid.height)) {
       testAsteroid.position.y = canvasSize.y + testAsteroid.height;
     }
+
+
+    // TODO: collisions!
   }
 
   bool _handleKey(LogicalKeyboardKey key, bool isDown) {
