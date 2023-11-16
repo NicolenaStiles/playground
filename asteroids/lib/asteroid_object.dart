@@ -22,22 +22,24 @@ class AsteroidObject extends PositionComponent with CollisionCallbacks {
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is AsteroidObject && objType == AsteroidObjectType.asteroidS) {
-      if(other.objType == AsteroidObjectType.playerShip) {
+      if(other.objType == AsteroidObjectType.shot) {
         _paint.color = Colors.red;
+        other.position = Vector2(-1000, -1000);
+        other.removeFromParent();
       }
     }
   }
 
-  /*
+  
   @override
   void onCollisionEnd(PositionComponent other) {
-    if (other is ScreenHitbox) {
-      //...
-    } else if (other is YourOtherComponent) {
-      //...
+    if (other is AsteroidObject && objType == AsteroidObjectType.asteroidS) {
+      if(other.objType == AsteroidObjectType.shot) {
+        _paint.color = Colors.white;
+        removeFromParent();
+      }
     }
   }
-  */
 
   Path completePath() {
 

@@ -27,7 +27,7 @@ class Asteroids extends FlameGame
   // shots
   static const int _shotSpeed = 600;
   int _currShotDelay = 0;
-  static const int _shotDelay = 100;
+  static const int _shotDelay = 30;
   bool _shotReady = true;
 
   // bodies on screen @ start
@@ -64,12 +64,12 @@ class Asteroids extends FlameGame
 
     // test asteroid
     testAsteroid = AsteroidObject(AsteroidObjectType.asteroidS) 
-      ..position = Vector2(size.x * 0.8, 0)
-      ..width = 128
-      ..height = 128
+      ..position = Vector2(size.x * 0.5, size.y * 0.2)
+      ..width = 32
+      ..height = 32
       ..anchor = Anchor.center;
 
-    testAsteroid.add(RectangleHitbox());
+    testAsteroid.add(RectangleHitbox(isSolid: true));
     add(testAsteroid);
 
     // test shot
@@ -79,6 +79,7 @@ class Asteroids extends FlameGame
       ..width = 2
       ..height = 2
       ..anchor = Anchor.center;
+    testShot.add(RectangleHitbox(isSolid: true));
 
     // add keyboard handling to game
     add(
@@ -108,12 +109,58 @@ class Asteroids extends FlameGame
   }
 
 
+  int random(int min, int max) {
+    return min + Random().nextInt(max - min);
+  }
+
   @override
   void update(double dt) {
 
     super.update(dt);
 
     // for player ship
+    handlePlayerMovement(dt);
+    checkWraparound(player);
+
+    if (!contains(testAsteroid)) {
+      int randX = random(0, canvasSize.x.toInt());
+      int randY = random(0, canvasSize.y.toInt());
+      testAsteroid.position = Vector2(randX.toDouble(), 0);
+      print("${testAsteroid.position}");
+      add(testAsteroid);
+    } else {
+
+      _directionAsteroid
+        ..setValues(0,1)
+        ..normalize();
+
+      final displacementAsteroid = _directionAsteroid * (_asteroidSpeed * dt);
+      testAsteroid.position.add(displacementAsteroid);
+
+      checkWraparound(testAsteroid);
+
+    }
+
+    // for asteroid
+    // position update
+    /*
+    _directionAsteroid
+      ..setValues(0,1)
+      ..normalize();
+
+    final displacementAsteroid = _directionAsteroid * (_asteroidSpeed * dt);
+    testAsteroid.position.add(displacementAsteroid);
+
+    checkWraparound(testAsteroid);
+    */
+
+    // for user firing shot
+    handleShot(dt);
+    checkWraparound(testShot);
+
+  }
+
+  void handlePlayerMovement(double dt) {
     // rotation update
     player.angle += rInput * (_rotationSpeed * dt);
     player.angle %= 2 * pi;
@@ -128,23 +175,6 @@ class Asteroids extends FlameGame
 
     final displacement = _direction * (_playerSpeed * dt);
     player.position.add(displacement);
-
-    checkWraparound(player);
-
-    // for asteroid
-    // position update
-    _directionAsteroid
-      ..setValues(0,1)
-      ..normalize();
-
-    final displacementAsteroid = _directionAsteroid * (_asteroidSpeed * dt);
-    testAsteroid.position.add(displacementAsteroid);
-
-    checkWraparound(testAsteroid);
-
-    // for user firing shot
-    handleShot(dt);
-
   }
 
   void handleShot(double dt) {
