@@ -17,21 +17,33 @@ class Asteroids extends FlameGame
   with HasKeyboardHandlerComponents, HasCollisionDetection {
 
   // constants
+  // player
   static const int _speed = 200;
   static const int _rotationSpeed = 3;
+
+  // shots
+  static const int _shotSpeed = 600;
+  int _currShotDelay = 0;
+  static const int _shotDelay = 100;
+  bool _shotReady = true;
 
   // bodies on screen @ start
   late final AsteroidObject player;
   late final AsteroidObject testAsteroid;
+  late final AsteroidObject testShot;
 
   // direction info for bodies
   final Vector2 _direction = Vector2.zero();
   final Vector2 _directionAsteroid = Vector2.zero();
+  // angle of shot?
+  Vector2 _directionShot = Vector2.zero();
+  double _angleShot = 0;
 
   final Map<LogicalKeyboardKey, double> _keyWeights = {
     LogicalKeyboardKey.keyA: 0,
     LogicalKeyboardKey.keyD: 0,
     LogicalKeyboardKey.keyW: 0,
+    LogicalKeyboardKey.space: 0,
   };
 
   @override
@@ -59,6 +71,13 @@ class Asteroids extends FlameGame
     testAsteroid.add(RectangleHitbox());
     add(testAsteroid);
 
+    // test shot
+    testShot = AsteroidObject(AsteroidObjectType.shot)
+      ..position = Vector2(0,0)
+      ..width = 2
+      ..height = 2
+      ..anchor = Anchor.center;
+
     // add keyboard handling to game
     add(
       KeyboardListenerComponent(
@@ -69,6 +88,8 @@ class Asteroids extends FlameGame
               _handleKey(LogicalKeyboardKey.keyD, false),
           LogicalKeyboardKey.keyW: (keys) =>
               _handleKey(LogicalKeyboardKey.keyW, false),
+          LogicalKeyboardKey.space: (keys) =>
+              _handleKey(LogicalKeyboardKey.space, false),
         },
         keyDown: {
           LogicalKeyboardKey.keyA: (keys) =>
@@ -77,6 +98,8 @@ class Asteroids extends FlameGame
               _handleKey(LogicalKeyboardKey.keyD, true),
           LogicalKeyboardKey.keyW: (keys) =>
               _handleKey(LogicalKeyboardKey.keyW, true),
+          LogicalKeyboardKey.space: (keys) =>
+              _handleKey(LogicalKeyboardKey.space, true),
         },
       ),
     );
@@ -127,6 +150,56 @@ class Asteroids extends FlameGame
     final displacementAsteroid = _directionAsteroid * (_speed * dt);
     testAsteroid.position.add(displacementAsteroid);
 
+    // TODO: shooting? 
+    // Check if player can fire shot
+    // jesus this logic sucks but whatever
+    if(fireShot == 1) {
+      if (_shotReady) {
+        print("Shot fired!");
+        // create shot object
+        double shotPositionX = (player.position.x + sin(player.angle) * (player.height / 2));
+        double shotPositionY = (player.position.y - cos(player.angle) * (player.height / 2));
+        testShot          
+          ..position = Vector2(shotPositionX,shotPositionY)
+          ..width = 2
+          ..height = 2
+          ..anchor = Anchor.center;
+        add(testShot);
+        testShot.angle = player.angle;
+        _shotReady = false;
+      } else {
+        if (_currShotDelay < _shotDelay) {
+          _currShotDelay++;
+        } else {
+          _shotReady = true;
+          _currShotDelay = 0;
+          if (contains(testShot)) {
+            remove(testShot);
+          }
+        }
+      } 
+    } else if (_shotReady == false) {
+      if (_currShotDelay < _shotDelay) {
+        _currShotDelay++;
+      } else {
+        _shotReady = true;
+        _currShotDelay = 0;
+        if(contains(testShot)) {
+          remove(testShot);
+        }
+      }
+    }
+
+    if (contains(testShot)) {
+      // movement update
+      _directionShot
+        ..setValues(sin(testShot.angle), 0 - cos(testShot.angle))
+        ..normalize();
+
+      final displacementShot = _directionShot * (_shotSpeed * dt);
+      testShot.position.add(displacementShot);
+    }
+
     // wrapping around the screen: horizontal
     if (testAsteroid.position.x > canvasSize.x) {
       testAsteroid.position.x = 0;
@@ -140,7 +213,6 @@ class Asteroids extends FlameGame
     } else if (testAsteroid.position.y < (0 - testAsteroid.height)) {
       testAsteroid.position.y = canvasSize.y + testAsteroid.height;
     }
-
 
     // TODO: collisions!
   }
@@ -156,6 +228,9 @@ class Asteroids extends FlameGame
 
   double get forwardMovement =>
     _keyWeights[LogicalKeyboardKey.keyW]!;
+
+  double get fireShot =>
+    _keyWeights[LogicalKeyboardKey.space]!;
 
   void renderTestGraphics() {
 
