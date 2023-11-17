@@ -40,7 +40,7 @@ class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef {
         //TODO: throw error for unset size?
       break;
     }
-    anchor = Anchor.center;
+
     graphicPath = completePath();
     add(RectangleHitbox());
   }
