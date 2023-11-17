@@ -1,3 +1,4 @@
+import 'package:asteroids/components/asteroid.dart';
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
 // for messing directly with the canvas
@@ -14,13 +15,21 @@ class Shot extends PositionComponent with CollisionCallbacks {
     ..color = Colors.white;
 
   Shot() {
+    width = 2;
+    height = 2;
+    anchor = Anchor.center;
+
     graphicPath.addOval(size.toRect());
-    add(RectangleHitbox());
+    add(RectangleHitbox(isSolid: true));
   }
 
   @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-
+  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (other is Asteroid) {
+      print("Direct hit!");
+      print(intersectionPoints);
+      removeFromParent();
+    }
   }
 
   @override

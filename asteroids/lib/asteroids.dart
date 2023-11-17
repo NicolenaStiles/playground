@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:asteroids/components/shot.dart';
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
@@ -19,6 +22,9 @@ class Asteroids extends FlameGame
   static const int _asteroidSpeed = 300;
   late final Asteroid testAsteroid;
 
+  // shot
+  late final Shot testShot;
+
   @override
   Future<void> onLoad() async {
 
@@ -34,8 +40,15 @@ class Asteroids extends FlameGame
     worldMaxY = camera.viewfinder.visibleWorldRect.top;
 
     testAsteroid = Asteroid(AsteroidType.asteroidO, AsteroidSize.large) 
-      ..position = Vector2(worldMinX,0);
+      ..position = Vector2(0,worldMinY)
+      ..angle = 0 
+      ..nativeAngle = 0;
     world.add(testAsteroid);
+
+    testShot = Shot()
+    ..position = Vector2(0,0)
+    ..nativeAngle = 0;
+    world.add(testShot);
 
   }
 
@@ -45,18 +58,33 @@ class Asteroids extends FlameGame
 
     super.update(dt);
 
+    // asteroids
+    for (var c in world.children) {
+      if (c is Asteroid) {
+        double xInput = sin(c.angle);
+        double yInput = (0 - cos(c.angle));
 
-    // asteroid 1
+        _directionAsteroid
+          ..setValues(xInput,yInput)
+          ..normalize();
+
+        final displacementAsteroid = _directionAsteroid * (_asteroidSpeed * dt);
+        c.position.add(displacementAsteroid);
+
+        checkWraparound(c);
+      }
+    }
+    
+    /*
     _directionAsteroid
-      ..setValues(1,0)
+      ..setValues(0,-1)
       ..normalize();
 
     final displacementAsteroid = _directionAsteroid * (_asteroidSpeed * dt);
     testAsteroid.position.add(displacementAsteroid);
 
     checkWraparound(testAsteroid);
-
-    // test shot
+    */
 
   }
 

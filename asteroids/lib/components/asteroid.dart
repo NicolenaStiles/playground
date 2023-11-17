@@ -3,6 +3,9 @@ import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
 // for messing directly with the canvas
 import 'package:flutter/material.dart';
+// managing collisions
+import 'shot.dart';
+import 'dart:math';
 
 enum AsteroidType {asteroidX, asteroidS, asteroidO} 
 enum AsteroidSize {small, medium, large} 
@@ -20,6 +23,9 @@ class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef {
     ..style = PaintingStyle.stroke
     ..strokeWidth = 2.0
     ..color = Colors.white;
+
+  // for collisions (when shot)
+  List<Asteroid> _asteroidChildren = [];
 
   @override
   Asteroid(this.objType, this.objSize) {
@@ -42,17 +48,45 @@ class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef {
     }
 
     graphicPath = completePath();
-    add(RectangleHitbox());
+    add(RectangleHitbox(isSolid: true));
   }
 
   @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-
+  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (other is Shot) {
+      _asteroidChildren = [];
+      switch (objSize) {
+        case AsteroidSize.large:
+          // TODO: angle for children does not work every time
+          _asteroidChildren.add( 
+            Asteroid(objType, AsteroidSize.medium) 
+            ..position = Vector2((position.x - (width / 2)), position.y - (height / 2))
+            ..angle = angle + (pi / 4)
+            ..nativeAngle = 0
+          );
+          _asteroidChildren.add( 
+            Asteroid(objType, AsteroidSize.medium) 
+            ..position = Vector2((position.x + (width / 2)), position.y - (height / 2))
+            ..angle = angle - (pi / 4)
+            ..nativeAngle = 0
+          );
+        break;
+        case AsteroidSize.medium:
+        break;
+        case AsteroidSize.small:
+        break;
+        default:
+        // TODO: throw error here
+      }
+    }
   }
 
   @override
   void onCollisionEnd(PositionComponent other) {
-
+    if (other is Shot) {
+      game.world.addAll(_asteroidChildren);
+      removeFromParent();
+    }
   }
 
   @override void render(Canvas canvas) {
