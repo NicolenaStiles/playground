@@ -29,7 +29,6 @@ class AsteroidObject extends PositionComponent with CollisionCallbacks, HasGameR
         print("${position.y}");
         print("$x,$y");
         print(absolutePositionOfAnchor(anchor));
-        print(game.size);
         game.add(
           AsteroidObject(AsteroidObjectType.asteroidS)
           ..position = Vector2(position.x, position.y)
