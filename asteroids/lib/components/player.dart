@@ -13,7 +13,12 @@ class Player extends PositionComponent with CollisionCallbacks {
     ..color = Colors.white;
 
   Player(){
-    add(RectangleHitbox());
+    width = 36;
+    height = 60;
+    anchor = Anchor.center;
+    angle = 0;
+    nativeAngle = 0;
+    add(RectangleHitbox(isSolid: true));
   }
 
   //TODO: Collisions!
