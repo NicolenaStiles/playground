@@ -40,8 +40,8 @@ class Asteroids extends FlameGame
     worldMaxY = camera.viewfinder.visibleWorldRect.top;
 
     testAsteroid = Asteroid(AsteroidType.asteroidO, AsteroidSize.large) 
-      ..position = Vector2(0,worldMinY)
-      ..angle = 0 
+      ..position = Vector2(worldMinX,0)
+      ..angle = 3 * (pi / 2)
       ..nativeAngle = 0;
     world.add(testAsteroid);
 

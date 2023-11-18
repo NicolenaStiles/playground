@@ -10,6 +10,7 @@ import 'dart:math';
 enum AsteroidType {asteroidX, asteroidS, asteroidO} 
 enum AsteroidSize {small, medium, large} 
 
+// TODO: make these asteroid sizes more flexible based on screen size
 class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef {
 
   // Defining the look and size of the asteroid
@@ -27,6 +28,7 @@ class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef {
   // for collisions (when shot)
   List<Asteroid> _asteroidChildren = [];
 
+  // TODO: make size defaults generic
   @override
   Asteroid(this.objType, this.objSize) {
     switch (objSize) {
@@ -53,31 +55,12 @@ class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef {
 
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+
     if (other is Shot) {
+
       _asteroidChildren = [];
-      switch (objSize) {
-        case AsteroidSize.large:
-          // TODO: angle for children does not work every time
-          _asteroidChildren.add( 
-            Asteroid(objType, AsteroidSize.medium) 
-            ..position = Vector2((position.x - (width / 2)), position.y - (height / 2))
-            ..angle = angle + (pi / 4)
-            ..nativeAngle = 0
-          );
-          _asteroidChildren.add( 
-            Asteroid(objType, AsteroidSize.medium) 
-            ..position = Vector2((position.x + (width / 2)), position.y - (height / 2))
-            ..angle = angle - (pi / 4)
-            ..nativeAngle = 0
-          );
-        break;
-        case AsteroidSize.medium:
-        break;
-        case AsteroidSize.small:
-        break;
-        default:
-        // TODO: throw error here
-      }
+      splitAsteroid();
+
     }
   }
 
@@ -91,6 +74,73 @@ class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef {
 
   @override void render(Canvas canvas) {
     canvas.drawPath(graphicPath, _paint);
+  }
+
+  // creates two new child asteroids after collision
+  // TODO: what is default for native angle? 
+  // Do I even need to be setting that in the first place?
+  void splitAsteroid() {
+
+    switch (objSize) {
+
+      case AsteroidSize.large:
+
+        // for + pi / 4
+        double newX_A = position.x + sin(angle + (pi / 4)) * (width / 2);
+        double newY_A = position.y + (0 - cos(angle + (pi / 4)) * (height / 2));
+        // for - pi / 4
+        double newX_B = position.x + sin(angle - (pi / 4)) * (width / 2);
+        double newY_B = position.y + (0 - cos(angle - (pi / 4)) * (height / 2));
+        
+        _asteroidChildren.add( 
+          Asteroid(objType, AsteroidSize.medium) 
+          ..position = Vector2(newX_A, newY_A)
+          ..angle = angle + (pi / 4)
+          ..nativeAngle = 0
+        );
+        _asteroidChildren.add( 
+          Asteroid(objType, AsteroidSize.medium) 
+          ..position = Vector2(newX_B, newY_B)
+          ..angle = angle - (pi / 4)
+          ..nativeAngle = 0
+        );
+
+      break;
+
+      case AsteroidSize.medium:
+
+        // for + pi / 4
+        double newX_A = position.x + sin(angle + (pi / 4)) * (width / 2);
+        double newY_A = position.y + (0 - cos(angle + (pi / 4)) * (height / 2));
+        // for - pi / 4
+        double newX_B = position.x + sin(angle - (pi / 4)) * (width / 2);
+        double newY_B = position.y + (0 - cos(angle - (pi / 4)) * (height / 2));
+
+        _asteroidChildren.add( 
+          Asteroid(objType, AsteroidSize.small) 
+          ..position = Vector2(newX_A, newY_A)
+          ..angle = angle + (pi / 4)
+          ..nativeAngle = 0
+        );
+        _asteroidChildren.add( 
+          Asteroid(objType, AsteroidSize.small) 
+          ..position = Vector2(newX_B, newY_B)
+          ..angle = angle - (pi / 4)
+          ..nativeAngle = 0
+        );
+
+      break;
+
+      case AsteroidSize.small:
+        // set to black briefly before removing entirely at collision end
+        _paint.color = Colors.black;
+      break;
+
+      default:
+        // TODO: throw error for undefined asteroid size?
+
+    }
+
   }
 
   Path completePath() {
