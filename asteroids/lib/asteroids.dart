@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 // Custom componenets
 import 'components/asteroid.dart';
@@ -22,7 +23,17 @@ class Asteroids extends FlameGame
 
    // player
   static const int _playerSpeed = 200;
+  static Vector2 _playerDirection = Vector2(0,0);
+  static Vector2 _playerDisplacement = Vector2(0,0);
+  static Vector2 _playerVelocity = Vector2(0,0);
+  static Vector2 _currentVelocity = Vector2(0, 0);
+  static final Vector2 _playerAcceleration = Vector2(3,3);
+  static const double _playerDeceleration = 1;
+
   static const int _rotationSpeed = 3;
+  static double _lastImpulseAngle = 0;
+  static Vector2 _velocityInitial = Vector2(0,0);
+  static Vector2 _velocityFinal= Vector2(0,0);
   late final Player player;
 
   // asteroid
@@ -150,10 +161,11 @@ class Asteroids extends FlameGame
   }
 
   // move player's ship based on input, time slice, and speed 
+  // NOTE: these are not the same movement physics as in the OG version of 
+  // asteroids!! they've modified slightly to encorage movement and discourage
+  // camping ;)
   void movePlayer(double dt) {
 
-    final Vector2 direciton = Vector2.zero();
-    
     // rotation update
     player.angle += rInput * (_rotationSpeed * dt);
     player.angle %= 2 * pi;
@@ -162,12 +174,36 @@ class Asteroids extends FlameGame
     double xInput = forwardMovement * sin(player.angle);
     double yInput = forwardMovement * (0 - cos(player.angle));
 
-    direciton 
-      ..setValues(xInput, yInput)
-      ..normalize();
+    _playerDirection 
+    ..setValues(xInput, yInput)
+    ..normalize();
 
-    final displacement = direciton * (_playerSpeed * dt);
-    player.position.add(displacement);
+    if (forwardMovement != 0) {
+      _lastImpulseAngle = player.angle;
+      _velocityFinal = _velocityInitial + (_playerAcceleration * dt);
+      _playerDisplacement[0] = _playerDirection[0] * _velocityFinal[0];
+      _playerDisplacement[1] = _playerDirection[1] * _velocityFinal[1];
+      _velocityInitial = _velocityFinal;
+
+      player.position.add(_playerDisplacement);
+
+    } else {
+      if (_velocityFinal[0] > 0 && _velocityFinal[1] > 0) {
+
+        _velocityFinal = _velocityInitial - (_playerAcceleration * dt);
+        _playerDisplacement[0] = sin(_lastImpulseAngle) * _velocityFinal[0];
+        _playerDisplacement[1] = (0 - cos(_lastImpulseAngle)) * _velocityFinal[1];
+        _velocityInitial = _velocityFinal;
+
+        player.position.add(_playerDisplacement);
+
+      } else {
+
+        _velocityInitial = Vector2(0,0);
+        _velocityFinal= Vector2(0,0);
+
+      }
+    }
 
     checkWraparound(player);
   }
