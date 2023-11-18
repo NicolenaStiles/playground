@@ -84,7 +84,6 @@ class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef {
     switch (objSize) {
 
       case AsteroidSize.large:
-
         // for + pi / 4
         double newX_A = position.x + sin(angle + (pi / 4)) * (width / 2);
         double newY_A = position.y + (0 - cos(angle + (pi / 4)) * (height / 2));
@@ -108,7 +107,6 @@ class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef {
       break;
 
       case AsteroidSize.medium:
-
         // for + pi / 4
         double newX_A = position.x + sin(angle + (pi / 4)) * (width / 2);
         double newY_A = position.y + (0 - cos(angle + (pi / 4)) * (height / 2));

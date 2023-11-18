@@ -1,11 +1,12 @@
+// generic imports la la la
 import 'dart:math';
-
-import 'package:asteroids/components/shot.dart';
+// flame game-related stuff
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
-
+// Custom componenets
 import 'components/asteroid.dart';
+import 'package:asteroids/components/shot.dart';
 
 class Asteroids extends FlameGame 
   with HasKeyboardHandlerComponents, HasCollisionDetection {
@@ -19,7 +20,7 @@ class Asteroids extends FlameGame
 
   // asteroid
   final Vector2 _directionAsteroid = Vector2.zero();
-  static const int _asteroidSpeed = 300;
+  static const int asteroidSpeed = 300;
   late final Asteroid testAsteroid;
 
   // shot
@@ -68,23 +69,12 @@ class Asteroids extends FlameGame
           ..setValues(xInput,yInput)
           ..normalize();
 
-        final displacementAsteroid = _directionAsteroid * (_asteroidSpeed * dt);
+        final displacementAsteroid = _directionAsteroid * (asteroidSpeed * dt);
         c.position.add(displacementAsteroid);
 
         checkWraparound(c);
       }
     }
-    
-    /*
-    _directionAsteroid
-      ..setValues(0,-1)
-      ..normalize();
-
-    final displacementAsteroid = _directionAsteroid * (_asteroidSpeed * dt);
-    testAsteroid.position.add(displacementAsteroid);
-
-    checkWraparound(testAsteroid);
-    */
 
   }
 
@@ -106,6 +96,25 @@ class Asteroids extends FlameGame
     } else if ((checkObj.position.y - checkObj.height) > worldMinY) {
       checkObj.position.y = worldMaxY - (checkObj.height / 2);
     }
+  }
+
+  // moves an asteroid object based on current angle and time slice dt
+  void moveAsteroid (Asteroid rock, double dt) {
+
+    final Vector2 direciton = Vector2.zero();
+
+    double xInput = sin(rock.angle);
+    double yInput = 0 - cos(rock.angle);
+
+    direciton 
+      ..setValues(xInput,yInput)
+      ..normalize();
+
+    final displacementAsteroid = direciton * (asteroidSpeed * dt);
+    rock.position.add(displacementAsteroid);
+    // TODO: might wanna remove this if I switch to something that isn't just 
+    // asteroids looping until they get killed
+    checkWraparound(rock);
   }
 
 }
