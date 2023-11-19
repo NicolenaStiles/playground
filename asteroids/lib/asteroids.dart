@@ -1,15 +1,21 @@
-// generic imports la la la
-import 'dart:math';
 // flame game-related stuff
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // Custom componenets
 import 'components/asteroid.dart';
 import 'package:asteroids/components/shot.dart';
 import 'package:asteroids/components/player.dart';
+// utils
+import 'dart:math';
+import 'package:intl/intl.dart';
+
+// score style rendering
+final scoreStyle = TextStyle(color: Colors.white, fontSize: 48.0, fontFamily: 'Hyperspace');
+final scoreRenderer = TextPaint(style: scoreStyle);
 
 class Asteroids extends FlameGame 
   with HasKeyboardHandlerComponents, HasCollisionDetection {
@@ -20,6 +26,10 @@ class Asteroids extends FlameGame
   static double worldMinY = 0;
   static double worldMaxX = 0;
   static double worldMaxY = 0;
+
+  // game state information
+  static int score = 0;
+  static int lives = 3;
 
   // player
   // constants
@@ -52,9 +62,26 @@ class Asteroids extends FlameGame
     await super.onLoad();
 
     // setting up world constants
-
     // NOTE: DEBUG ONLY
-    add(FpsTextComponent(position: Vector2(5, canvasSize.y - 30)));
+    add(
+      FpsTextComponent(
+        position: Vector2(0, canvasSize.y),
+        anchor: Anchor.bottomLeft,
+      )
+    );
+
+    String formattedScore = score.toString().padLeft(4, '0');
+
+    // scoreboard
+    add(
+      TextComponent(
+        text: formattedScore, 
+        textRenderer: scoreRenderer,
+        anchor: Anchor.topLeft,
+        position: Vector2(0, 0)
+        )
+    );
+
 
     // TODO: find a way to get rid of warning?
     worldMinX = camera.viewfinder.visibleWorldRect.left;
@@ -126,6 +153,11 @@ class Asteroids extends FlameGame
     );
   }
 
+  // Updates for collions
+  void updateScore(int points) => score += points;
+  void updateLives() => lives--;
+    
+  // managing keyboard input
   bool _handleKey(LogicalKeyboardKey key, bool isDown) {
     _keyWeights[key] = isDown ? 1 : 0;
     return true;
@@ -166,7 +198,7 @@ class Asteroids extends FlameGame
 
   // move player's ship based on input, time slice, and speed 
   // NOTE: these are not the same movement physics as in the OG version of 
-  // asteroids!! they've modified slightly to encorage movement and discourage
+  // asteroids!! they're modified slightly to encorage movement and discourage
   // camping ;)
   // NOTE: I should probably document the math here better? but it's in my
   // paper notes for 11/18/2023 if I need to go back and check.

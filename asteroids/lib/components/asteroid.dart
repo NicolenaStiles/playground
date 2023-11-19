@@ -6,16 +6,18 @@ import 'package:flutter/material.dart';
 // managing collisions
 import 'shot.dart';
 import 'dart:math';
+import 'package:asteroids/asteroids.dart';
 
 enum AsteroidType {asteroidX, asteroidS, asteroidO} 
 enum AsteroidSize {small, medium, large} 
 
 // TODO: make these asteroid sizes more flexible based on screen size
-class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef {
+class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef<Asteroids> {
 
   // Defining the look and size of the asteroid
   AsteroidType objType;
   AsteroidSize objSize;
+  int _points = 0;
   
   // For rendering
   var graphicPath = Path();
@@ -35,14 +37,17 @@ class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef {
       case AsteroidSize.large:
         width = 128;
         height = 128;
+        _points = 200;
       break;
       case AsteroidSize.medium:
         width = 64;
         height = 64;
+        _points = 100;
       break;
       case AsteroidSize.small:
         width = 32;
         height = 32;
+        _points = 50;
       break;
       default:
         //TODO: throw error for unset size?
@@ -55,6 +60,7 @@ class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef {
 
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollisionStart(intersectionPoints, other);
 
     if (other is Shot) {
 
@@ -66,8 +72,11 @@ class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef {
 
   @override
   void onCollisionEnd(PositionComponent other) {
+    super.onCollisionEnd(other);
+
     if (other is Shot) {
       game.world.addAll(_asteroidChildren);
+      game.updateScore(_points);
       removeFromParent();
     }
   }
