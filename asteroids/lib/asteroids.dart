@@ -21,19 +21,17 @@ class Asteroids extends FlameGame
   static double worldMaxX = 0;
   static double worldMaxY = 0;
 
-   // player
-  static const int _playerSpeed = 200;
-  static Vector2 _playerDirection = Vector2(0,0);
-  static Vector2 _playerDisplacement = Vector2(0,0);
-  static Vector2 _playerVelocity = Vector2(0,0);
-  static Vector2 _currentVelocity = Vector2(0, 0);
-  static final Vector2 _playerAcceleration = Vector2(3,3);
-  static const double _playerDeceleration = 1;
-
+  // player
+  // constants
   static const int _rotationSpeed = 3;
-  static double _lastImpulseAngle = 0;
-  static Vector2 _velocityInitial = Vector2(0,0);
-  static Vector2 _velocityFinal= Vector2(0,0);
+  static final Vector2 _playerAcceleration = Vector2(3,3);
+  // math for movement behaviors
+  static Vector2 _playerVelocityInitial = Vector2(0,0);
+  static Vector2 _playerVelocityFinal= Vector2(0,0);
+  static final Vector2 _playerDisplacement = Vector2(0,0);
+  static double _playerLastImpulseAngle = 0;
+  static final Vector2 _playerDirection = Vector2(0,0);
+  // the actual component
   late final Player player;
 
   // asteroid
@@ -53,7 +51,9 @@ class Asteroids extends FlameGame
 
     await super.onLoad();
 
-    // DEBUG ONLY
+    // setting up world constants
+
+    // NOTE: DEBUG ONLY
     add(FpsTextComponent(position: Vector2(5, canvasSize.y - 30)));
 
     // TODO: find a way to get rid of warning?
@@ -62,8 +62,11 @@ class Asteroids extends FlameGame
     worldMaxX = camera.viewfinder.visibleWorldRect.right;
     worldMaxY = camera.viewfinder.visibleWorldRect.top;
 
+    // populate the world
     player = Player() 
     ..position = Vector2(0, 0);
+    // NOTE: DEBUG ONLY!!
+    player.setGodmode(true);
     world.add(player);
 
     testAsteroid = Asteroid(AsteroidType.asteroidO, AsteroidSize.large) 
@@ -72,6 +75,7 @@ class Asteroids extends FlameGame
       ..nativeAngle = 0;
     world.add(testAsteroid);
 
+    // start listening for user input
     startKeyboardListener();
 
   }
@@ -164,6 +168,8 @@ class Asteroids extends FlameGame
   // NOTE: these are not the same movement physics as in the OG version of 
   // asteroids!! they've modified slightly to encorage movement and discourage
   // camping ;)
+  // NOTE: I should probably document the math here better? but it's in my
+  // paper notes for 11/18/2023 if I need to go back and check.
   void movePlayer(double dt) {
 
     // rotation update
@@ -179,28 +185,28 @@ class Asteroids extends FlameGame
     ..normalize();
 
     if (forwardMovement != 0) {
-      _lastImpulseAngle = player.angle;
-      _velocityFinal = _velocityInitial + (_playerAcceleration * dt);
-      _playerDisplacement[0] = _playerDirection[0] * _velocityFinal[0];
-      _playerDisplacement[1] = _playerDirection[1] * _velocityFinal[1];
-      _velocityInitial = _velocityFinal;
+      _playerLastImpulseAngle = player.angle;
+      _playerVelocityFinal = _playerVelocityInitial + (_playerAcceleration * dt);
+      _playerDisplacement[0] = _playerDirection[0] * _playerVelocityFinal[0];
+      _playerDisplacement[1] = _playerDirection[1] * _playerVelocityFinal[1];
+      _playerVelocityInitial = _playerVelocityFinal;
 
       player.position.add(_playerDisplacement);
 
     } else {
-      if (_velocityFinal[0] > 0 && _velocityFinal[1] > 0) {
+      if (_playerVelocityFinal[0] > 0 && _playerVelocityFinal[1] > 0) {
 
-        _velocityFinal = _velocityInitial - (_playerAcceleration * dt);
-        _playerDisplacement[0] = sin(_lastImpulseAngle) * _velocityFinal[0];
-        _playerDisplacement[1] = (0 - cos(_lastImpulseAngle)) * _velocityFinal[1];
-        _velocityInitial = _velocityFinal;
+        _playerVelocityFinal = _playerVelocityInitial - (_playerAcceleration * dt);
+        _playerDisplacement[0] = sin(_playerLastImpulseAngle) * _playerVelocityFinal[0];
+        _playerDisplacement[1] = (0 - cos(_playerLastImpulseAngle)) * _playerVelocityFinal[1];
+        _playerVelocityInitial = _playerVelocityFinal;
 
         player.position.add(_playerDisplacement);
 
       } else {
 
-        _velocityInitial = Vector2(0,0);
-        _velocityFinal= Vector2(0,0);
+        _playerVelocityInitial = Vector2(0,0);
+        _playerVelocityFinal= Vector2(0,0);
 
       }
     }

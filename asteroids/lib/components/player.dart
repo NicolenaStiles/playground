@@ -2,8 +2,15 @@ import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
 // for messing directly with the canvas
 import 'package:flutter/material.dart';
+// managing collisions
+import 'shot.dart';
+import 'asteroid.dart';
+import 'alien.dart';
 
 class Player extends PositionComponent with CollisionCallbacks {
+
+  // NOTE: DEBUG ONLY
+  bool _godmode = false;
 
   // Define a paint object
   List<List<double>> _verticies = [];
@@ -21,20 +28,35 @@ class Player extends PositionComponent with CollisionCallbacks {
     add(RectangleHitbox(isSolid: true));
   }
 
-  //TODO: Collisions!
+  // TODO: Collisions!
   @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+    // if not invincible
+    if (!_godmode) {
+      
+    }
+    // start animation?
 
   }
 
   @override
   void onCollisionEnd(PositionComponent other) {
+    // TODO: should this logic even live here?
 
+    // remove from world
+    // remove a life
+    // respawn at 0,0 if not dead
   }
 
   @override void render(Canvas canvas) {
     canvas.drawPath(completePath(), _paint);
   }
+
+  // NOTE: 
+  // this is its own funtion because you need to be SURE you want it
+  // I really don't want this accidentally getting into production code lol
+  // not sure this is the best way to do this anyway? idk
+  void setGodmode(bool godmode) => _godmode = godmode;
   
   Path completePath() {
 
