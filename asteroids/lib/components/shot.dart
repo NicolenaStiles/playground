@@ -25,11 +25,7 @@ class Shot extends PositionComponent with CollisionCallbacks {
 
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is Asteroid) {
-      print("Direct hit!");
-      print(intersectionPoints);
       removeFromParent();
-    }
   }
 
   @override
