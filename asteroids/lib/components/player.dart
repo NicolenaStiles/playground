@@ -20,7 +20,7 @@ class Player extends PositionComponent with CollisionCallbacks, HasGameRef<Aster
     ..strokeWidth = 2.0
     ..color = Colors.white;
 
-  Player(){
+  Player({super.key}){
     width = 36;
     height = 60;
     anchor = Anchor.center;

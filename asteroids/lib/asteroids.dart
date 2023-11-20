@@ -92,31 +92,24 @@ class Asteroids extends FlameGame
     );
 
     // display lives
-    List<Player> livesList = [];
-
     for (int n = 0; n < lives; n++) {
+      String lifeKey = "life$n";
       double xPos = canvasSize.x - (((n + 1) * offset) + (n * livesWidth) + (livesWidth / 2));
-      livesList.add(
-        Player() 
+      add(
+        Player(
+          key: ComponentKey.named(lifeKey)
+        )
         ..position = Vector2(xPos, offset + (livesHeight / 2))
         ..width = livesWidth
         ..height = livesHeight
       );
     }
 
-    // NOTE: No fat arrow here, it throws an error!
-    for (Player l in livesList) {
-      l.setGodmode(true);
-    }
-
-    addAll(livesList);
-
-
     // populate the world
     player = Player() 
     ..position = Vector2(0, 0);
     // NOTE: DEBUG ONLY!!
-    player.setGodmode(true);
+    player.setGodmode(false);
     world.add(player);
 
     testAsteroid = Asteroid(AsteroidType.asteroidO, AsteroidSize.large) 
@@ -178,7 +171,15 @@ class Asteroids extends FlameGame
 
   // Updates for collions
   void updateScore(int points) => score += points;
-  void updateLives() => lives--;
+
+  void updateLives(){
+    String keyName = 'life${lives - 1}';
+    if (findByKeyName<Player>(keyName) != null) {
+      remove(findByKeyName<Player>(keyName)!);
+    }
+    lives--;
+  }
+
     
   // managing keyboard input
   bool _handleKey(LogicalKeyboardKey key, bool isDown) {
