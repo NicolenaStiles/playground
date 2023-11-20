@@ -30,6 +30,11 @@ class Asteroids extends FlameGame
   static int score = 1234;
   static int lives = 3;
 
+  // constants for displaying lives tracker
+  static const double livesWidth = 30;
+  static const double livesHeight = 42;
+  static const double offset = 8;
+
   // player
   // constants
   static const int _rotationSpeed = 6;
@@ -60,6 +65,12 @@ class Asteroids extends FlameGame
 
     await super.onLoad();
 
+    // TODO: find a way to get rid of warning?
+    worldMinX = camera.viewfinder.visibleWorldRect.left;
+    worldMinY = camera.viewfinder.visibleWorldRect.bottom;
+    worldMaxX = camera.viewfinder.visibleWorldRect.right;
+    worldMaxY = camera.viewfinder.visibleWorldRect.top;
+
     // setting up world constants
     // NOTE: DEBUG ONLY
     add(
@@ -69,9 +80,8 @@ class Asteroids extends FlameGame
       )
     );
 
+    // display score
     String formattedScore = score.toString().padLeft(4, '0');
-
-    // scoreboard
     add(
       TextComponent(
         text: formattedScore, 
@@ -81,12 +91,26 @@ class Asteroids extends FlameGame
         )
     );
 
+    // display lives
+    List<Player> livesList = [];
 
-    // TODO: find a way to get rid of warning?
-    worldMinX = camera.viewfinder.visibleWorldRect.left;
-    worldMinY = camera.viewfinder.visibleWorldRect.bottom;
-    worldMaxX = camera.viewfinder.visibleWorldRect.right;
-    worldMaxY = camera.viewfinder.visibleWorldRect.top;
+    for (int n = 0; n < lives; n++) {
+      double xPos = canvasSize.x - (((n + 1) * offset) + (n * livesWidth) + (livesWidth / 2));
+      livesList.add(
+        Player() 
+        ..position = Vector2(xPos, offset + (livesHeight / 2))
+        ..width = livesWidth
+        ..height = livesHeight
+      );
+    }
+
+    // NOTE: No fat arrow here, it throws an error!
+    for (Player l in livesList) {
+      l.setGodmode(true);
+    }
+
+    addAll(livesList);
+
 
     // populate the world
     player = Player() 

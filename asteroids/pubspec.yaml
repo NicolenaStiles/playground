@@ -32,7 +32,6 @@ dependencies:
     sdk: flutter
   flame: ^1.10.1  
   flame_forge2d: ^0.16.0
-  intl: ^0.18.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -94,7 +93,7 @@ flutter:
     - family: Hyperspace
       fonts:
         - asset: fonts/Hyperspace/HyperspaceBold-GM0g.ttf
-          weight : 500
+          weight : 100 
     - family: ProFont_NF_Regular
       fonts: 
         - asset: fonts/ProFont_NF/ProFontIIxNerdFont-Regular.ttf
