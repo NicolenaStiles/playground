@@ -77,11 +77,6 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  fonts:
-    - family: Hyperspace
-      fonts:
-        - asset: fonts/HyperspaceBold-GM0g.ttf
-          weight : 500
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf
@@ -95,3 +90,16 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  fonts:
+    - family: Hyperspace
+      fonts:
+        - asset: fonts/Hyperspace/HyperspaceBold-GM0g.ttf
+          weight : 500
+    - family: ProFont_NF_Regular
+      fonts: 
+        - asset: fonts/ProFont_NF/ProFontIIxNerdFont-Regular.ttf
+          weight: 100 
+    - family: ProFont_NF_Mono
+      fonts:
+        - asset: fonts/ProFont_NF/ProFontIIxNerdFontMono-Regular.ttf
+          weight : 300

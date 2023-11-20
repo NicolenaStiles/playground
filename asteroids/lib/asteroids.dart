@@ -11,7 +11,6 @@ import 'package:asteroids/components/shot.dart';
 import 'package:asteroids/components/player.dart';
 // utils
 import 'dart:math';
-import 'package:intl/intl.dart';
 
 // score style rendering
 final scoreStyle = TextStyle(color: Colors.white, fontSize: 48.0, fontFamily: 'Hyperspace');
@@ -28,13 +27,13 @@ class Asteroids extends FlameGame
   static double worldMaxY = 0;
 
   // game state information
-  static int score = 0;
+  static int score = 1234;
   static int lives = 3;
 
   // player
   // constants
-  static const int _rotationSpeed = 3;
-  static final Vector2 _playerAcceleration = Vector2(3,3);
+  static const int _rotationSpeed = 6;
+  static final Vector2 _playerAcceleration = Vector2(4,4);
   // math for movement behaviors
   static Vector2 _playerVelocityInitial = Vector2(0,0);
   static Vector2 _playerVelocityFinal= Vector2(0,0);
