@@ -39,6 +39,9 @@ class Asteroids extends FlameGame
   // constants
   static const int _rotationSpeed = 6;
   static final Vector2 _playerAcceleration = Vector2(4,4);
+  // respawn specs 
+  static const int respawnTimerMax = 1000;
+  static int currentRespawnTimer = 0;
   // math for movement behaviors
   static Vector2 _playerVelocityInitial = Vector2(0,0);
   static Vector2 _playerVelocityFinal= Vector2(0,0);
@@ -178,6 +181,16 @@ class Asteroids extends FlameGame
       remove(findByKeyName<Player>(keyName)!);
     }
     lives--;
+    player.setGodmode(true);
+  }
+
+  void updateInvulnerability() {
+    if (currentRespawnTimer < respawnTimerMax){
+      currentRespawnTimer++;
+    } else {
+      player.setGodmode(false);
+      currentRespawnTimer = 0;
+    }
   }
 
     
