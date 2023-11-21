@@ -3,11 +3,12 @@ import 'package:flame/collisions.dart';
 // for messing directly with the canvas
 import 'package:flutter/material.dart';
 // managing collisions
+import 'package:asteroids/asteroids.dart';
 import 'shot.dart';
 import 'asteroid.dart';
 import 'alien.dart';
 
-class Player extends PositionComponent with CollisionCallbacks {
+class Player extends PositionComponent with CollisionCallbacks, HasGameRef<Asteroids> {
 
   // NOTE: DEBUG ONLY
   bool _godmode = false;
@@ -19,7 +20,7 @@ class Player extends PositionComponent with CollisionCallbacks {
     ..strokeWidth = 2.0
     ..color = Colors.white;
 
-  Player(){
+  Player({super.key}){
     width = 36;
     height = 60;
     anchor = Anchor.center;
@@ -28,20 +29,22 @@ class Player extends PositionComponent with CollisionCallbacks {
     add(RectangleHitbox(isSolid: true));
   }
 
-  // TODO: Collisions!
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollisionStart(intersectionPoints, other);
     // if not invincible
-    if (!_godmode) {
-      
-    }
     // start animation?
 
   }
 
   @override
   void onCollisionEnd(PositionComponent other) {
-    // TODO: should this logic even live here?
+    super.onCollisionEnd(other);
+
+    if (!_godmode) {
+      gameRef.updateLives();
+      position = Vector2(0, 0);
+    }
 
     // remove from world
     // remove a life

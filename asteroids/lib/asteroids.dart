@@ -1,15 +1,20 @@
-// generic imports la la la
-import 'dart:math';
 // flame game-related stuff
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // Custom componenets
 import 'components/asteroid.dart';
 import 'package:asteroids/components/shot.dart';
 import 'package:asteroids/components/player.dart';
+// utils
+import 'dart:math';
+
+// score style rendering
+final scoreStyle = TextStyle(color: Colors.white, fontSize: 48.0, fontFamily: 'Hyperspace');
+final scoreRenderer = TextPaint(style: scoreStyle);
 
 class Asteroids extends FlameGame 
   with HasKeyboardHandlerComponents, HasCollisionDetection {
@@ -21,10 +26,22 @@ class Asteroids extends FlameGame
   static double worldMaxX = 0;
   static double worldMaxY = 0;
 
+  // game state information
+  static int score = 1234;
+  static int lives = 3;
+
+  // constants for displaying lives tracker
+  static const double livesWidth = 30;
+  static const double livesHeight = 42;
+  static const double offset = 8;
+
   // player
   // constants
-  static const int _rotationSpeed = 3;
-  static final Vector2 _playerAcceleration = Vector2(3,3);
+  static const int _rotationSpeed = 6;
+  static final Vector2 _playerAcceleration = Vector2(4,4);
+  // respawn specs 
+  static const int respawnTimerMax = 1000;
+  static int currentRespawnTimer = 0;
   // math for movement behaviors
   static Vector2 _playerVelocityInitial = Vector2(0,0);
   static Vector2 _playerVelocityFinal= Vector2(0,0);
@@ -51,22 +68,51 @@ class Asteroids extends FlameGame
 
     await super.onLoad();
 
-    // setting up world constants
-
-    // NOTE: DEBUG ONLY
-    add(FpsTextComponent(position: Vector2(5, canvasSize.y - 30)));
-
     // TODO: find a way to get rid of warning?
     worldMinX = camera.viewfinder.visibleWorldRect.left;
     worldMinY = camera.viewfinder.visibleWorldRect.bottom;
     worldMaxX = camera.viewfinder.visibleWorldRect.right;
     worldMaxY = camera.viewfinder.visibleWorldRect.top;
 
+    // setting up world constants
+    // NOTE: DEBUG ONLY
+    add(
+      FpsTextComponent(
+        position: Vector2(0, canvasSize.y),
+        anchor: Anchor.bottomLeft,
+      )
+    );
+
+    // display score
+    String formattedScore = score.toString().padLeft(4, '0');
+    add(
+      TextComponent(
+        text: formattedScore, 
+        textRenderer: scoreRenderer,
+        anchor: Anchor.topLeft,
+        position: Vector2(0, 0)
+        )
+    );
+
+    // display lives
+    for (int n = 0; n < lives; n++) {
+      String lifeKey = "life$n";
+      double xPos = canvasSize.x - (((n + 1) * offset) + (n * livesWidth) + (livesWidth / 2));
+      add(
+        Player(
+          key: ComponentKey.named(lifeKey)
+        )
+        ..position = Vector2(xPos, offset + (livesHeight / 2))
+        ..width = livesWidth
+        ..height = livesHeight
+      );
+    }
+
     // populate the world
     player = Player() 
     ..position = Vector2(0, 0);
     // NOTE: DEBUG ONLY!!
-    player.setGodmode(true);
+    player.setGodmode(false);
     world.add(player);
 
     testAsteroid = Asteroid(AsteroidType.asteroidO, AsteroidSize.large) 
@@ -126,6 +172,29 @@ class Asteroids extends FlameGame
     );
   }
 
+  // Updates for collions
+  void updateScore(int points) => score += points;
+
+  void updateLives(){
+    String keyName = 'life${lives - 1}';
+    if (findByKeyName<Player>(keyName) != null) {
+      remove(findByKeyName<Player>(keyName)!);
+    }
+    lives--;
+    player.setGodmode(true);
+  }
+
+  void updateInvulnerability() {
+    if (currentRespawnTimer < respawnTimerMax){
+      currentRespawnTimer++;
+    } else {
+      player.setGodmode(false);
+      currentRespawnTimer = 0;
+    }
+  }
+
+    
+  // managing keyboard input
   bool _handleKey(LogicalKeyboardKey key, bool isDown) {
     _keyWeights[key] = isDown ? 1 : 0;
     return true;
@@ -166,7 +235,7 @@ class Asteroids extends FlameGame
 
   // move player's ship based on input, time slice, and speed 
   // NOTE: these are not the same movement physics as in the OG version of 
-  // asteroids!! they've modified slightly to encorage movement and discourage
+  // asteroids!! they're modified slightly to encorage movement and discourage
   // camping ;)
   // NOTE: I should probably document the math here better? but it's in my
   // paper notes for 11/18/2023 if I need to go back and check.

@@ -42,3 +42,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Custom
+# avoid version-controlling fonts (put these on server or something else)
+fonts/
