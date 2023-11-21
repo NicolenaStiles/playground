@@ -2,7 +2,6 @@
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // Custom componenets
@@ -55,6 +54,15 @@ class Asteroids extends FlameGame
   static const int asteroidSpeed = 300;
   late final Asteroid testAsteroid;
 
+  // shot
+  static int shotSpeed = 800;
+  static int shotTimer = 600;       // how long bullets live
+  static int currShotCooldown = 0;  // how long since last shoot bullet
+  static int shotCooldown = 32;    // how long until shoot bullets
+  static bool shotReady = true;     // can we shoot
+
+  static TextComponent scoreboard = TextComponent();
+
   // Keyboard handler map
   final Map<LogicalKeyboardKey, double> _keyWeights = {
     LogicalKeyboardKey.keyA: 0,
@@ -85,14 +93,13 @@ class Asteroids extends FlameGame
 
     // display score
     String formattedScore = score.toString().padLeft(4, '0');
-    add(
-      TextComponent(
+    scoreboard = TextComponent(
+        key: ComponentKey.named('scoreboard'),
         text: formattedScore, 
         textRenderer: scoreRenderer,
         anchor: Anchor.topLeft,
-        position: Vector2(0, 0)
-        )
-    );
+        position: Vector2(0, 0));
+    add(scoreboard);
 
     // display lives
     for (int n = 0; n < lives; n++) {
@@ -112,7 +119,7 @@ class Asteroids extends FlameGame
     player = Player() 
     ..position = Vector2(0, 0);
     // NOTE: DEBUG ONLY!!
-    player.setGodmode(false);
+    player.setGodmode(true);
     world.add(player);
 
     testAsteroid = Asteroid(AsteroidType.asteroidO, AsteroidSize.large) 
@@ -132,16 +139,38 @@ class Asteroids extends FlameGame
 
     super.update(dt);
 
-    for (var c in world.children) {
+    // are we shooting?
+    handleShot();
 
-      if (c is Asteroid) {
+    // move around all the stuff on screen
+    for (var c in world.children) {
+      
+      if (c is Player) {
+        movePlayer(dt);
+
+      } else if (c is Asteroid) {
         moveAsteroid(c, dt);
 
-      } else if (c is Player) {
-        movePlayer(dt);
+      } else if (c is Shot) {
+        moveShot(c, dt);
+
+
       }
     }
 
+    // check if we can shoot
+    if (!shotReady && currShotCooldown < shotCooldown) {
+      currShotCooldown++;
+
+    } else {
+        shotReady = true;
+      currShotCooldown = 0;
+
+    }
+
+
+    // update scoreboard
+    scoreboard.text = score.toString().padLeft(4, '0');
   }
 
   // bring up KeyboardListener component
@@ -300,6 +329,39 @@ class Asteroids extends FlameGame
     // TODO: might wanna remove this if I switch to something that isn't just 
     // asteroids looping until they get killed
     checkWraparound(rock);
+  }
+
+  void handleShot(){
+    if (shotReady == true && fireShot == 1){
+
+      // calculate starting position for shot
+      double shotPositionX = (player.position.x + sin(player.angle) * (player.height / 2));
+      double shotPositionY = (player.position.y - cos(player.angle) * (player.height / 2));
+
+      // create shot object
+      world.add(
+        Shot()
+        ..position = Vector2(shotPositionX,shotPositionY)
+        ..angle = player.angle
+      );
+      currShotCooldown = 0;
+      shotReady = false;
+
+    }
+  }
+
+  void moveShot(Shot shot, double dt){
+
+    Vector2 directionShot = Vector2(0,0);
+    // movement update
+    directionShot
+      ..setValues(sin(shot.angle), 0 - cos(shot.angle))
+      ..normalize();
+
+    final displacementShot = directionShot * (shotSpeed * dt);
+    shot.position.add(displacementShot);
+    shot.checkTimer(shotTimer);
+ 
   }
 
 }
