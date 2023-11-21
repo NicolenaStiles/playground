@@ -55,12 +55,13 @@ class Asteroids extends FlameGame
   late final Asteroid testAsteroid;
 
   // shot
-  static int shotSpeed = 800;
+  static int shotSpeed = 800;       // how fast bullets go
   static int shotTimer = 600;       // how long bullets live
   static int currShotCooldown = 0;  // how long since last shoot bullet
-  static int shotCooldown = 32;    // how long until shoot bullets
+  static int shotCooldown = 32;     // how long until shoot bullets
   static bool shotReady = true;     // can we shoot
 
+  // scoreboard
   static TextComponent scoreboard = TextComponent();
 
   // Keyboard handler map
