@@ -16,7 +16,7 @@ class BacklitText extends StatefulWidget {
 
 class _BacklitTextState extends State<BacklitText> {
 
-  TextStyle _style = const TextStyle(fontSize: 18, color: Colors.white);
+  TextStyle _style = const TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'ProFontIIx', fontWeight: FontWeight.w100);
 
   void _swapStyle(bool hover) {
     setState(() {
@@ -31,9 +31,10 @@ class _BacklitTextState extends State<BacklitText> {
           ],
           fontSize: 18,
           color: Colors.cyan,
+          fontFamily: 'ProFontIIx',
           );
       } else {
-        _style = const TextStyle(fontSize: 18, color: Colors.white);
+        _style = const TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'ProFontIIx');
       }
     });
   }
@@ -51,10 +52,10 @@ class _BacklitTextState extends State<BacklitText> {
           },
 
           child: Container( 
-          color: Colors.black,
+          color: Colors.transparent,
           alignment: Alignment.center,
-          width: 300,
-          height: 100,
+          width: 200,
+          height: 50,
 
           child: Text( 
             widget.textEntry,
