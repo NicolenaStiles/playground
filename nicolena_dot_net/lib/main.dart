@@ -31,53 +31,96 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class MenuItem {
-  final String title;
-  
-  const MenuItem({
-    required this.title,
-
-  });
-}
-
-class MenuItemView {
-
-}
-
 class _HomePageState extends State<HomePage> {
 
-  List<Container> _navList = [];
-  List<String> _navListEntires = ['About', 'Blog', 'Stats', 'Contact'];
+  TextStyle _defaultStyle = TextStyle(fontSize: 18, color: Colors.white);
+  TextStyle _hoverStyle = TextStyle(
+                            shadows: [
+                              Shadow(
+                                blurRadius: 10,
+                                color: Colors.cyan,
+                                offset: Offset(5, 5),
+                              )
+                            ],
+                            fontSize: 18,
+                            color: Colors.cyan,
+                          );
 
-  Color _hoverColor = Colors.lime;
+  TextStyle _style1 = TextStyle(fontSize: 18, color: Colors.white);
+  TextStyle _style2 = TextStyle(fontSize: 18, color: Colors.white);
+  TextStyle _style3 = TextStyle(fontSize: 18, color: Colors.white);
 
-  TextStyle _hoverStyle = TextStyle(fontSize: 18, color: Colors.white);
-
-
-  void _changeColors(Color c) {
-    setState((){
-      _hoverColor = c;
-    }
-    );
-  }
-
-  void _changeStyle(bool _isHover) {
+  void _changeStyle(bool _isHover, int idx) {
     setState(() {
-      if (_isHover) {
-        _hoverStyle = TextStyle(
-          shadows: [
-            Shadow(
-              blurRadius: 10,
-              color: Colors.teal,
-              offset: Offset(5, 5),
-            )
-          ],
-          fontSize: 18,
-          color: Colors.teal,
-        );
+
+        if (_isHover == true) {
+
+          switch (idx) {
+
+            case 1:
+            _style1 = const TextStyle(
+                shadows: [
+                Shadow(
+                  blurRadius: 10,
+                  color: Colors.cyan,
+                  offset: Offset(0, 0),
+                  )
+                ],
+                fontSize: 18,
+                color: Colors.cyan,
+                );
+            break;
+
+            case 2:
+            _style2 = const TextStyle(
+                shadows: [
+                Shadow(
+                  blurRadius: 10,
+                  color: Colors.cyan,
+                  offset: Offset(0, 0),
+                  )
+                ],
+                fontSize: 18,
+                color: Colors.cyan,
+                );
+            break;
+
+            case 3:
+            _style3 = const TextStyle(
+                shadows: [
+                Shadow(
+                  blurRadius: 10,
+                  color: Colors.cyan,
+                  offset: Offset(0, 0),
+                  )
+                ],
+                fontSize: 18,
+                color: Colors.cyan,
+                );
+            break;
+
+            default:
+        }
       } else {
-        _hoverStyle = TextStyle(fontSize: 18, color: Colors.white);
+
+        switch (idx) {
+
+            case 1:
+            _style1 = const TextStyle(fontSize: 18, color: Colors.white);
+            break;
+
+            case 2:
+            _style2 =  const TextStyle(fontSize: 18, color: Colors.white);          
+            break;
+
+            case 3:
+            _style3 = const TextStyle(fontSize: 18, color: Colors.white);
+            break;
+
+            default:
+          }
       }
+
     });
   }
 
@@ -94,74 +137,84 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
 
-                Container(
-                  color: Colors.pink,
-                  alignment: Alignment.center,
-                  width: 200,
-                  height: 50,
-                  child: Text(
-                          'About',
-                          style: TextStyle(fontSize: 24),
-                          ),
-                ),
-
-                Container(
-                  height: 80,
-                  child: VerticalDivider(color: Colors.lime),
-                ),
-
-                Container(
-                  color: Colors.pink,
-                  alignment: Alignment.center,
-                  width: 200,
-                  height: 50,
-                  child: Text(
-                          'Blog',
-                          style: TextStyle(fontSize: 24),
-                          ),
-                ),
-
-                Container(
-                  height: 80,
-                  child: VerticalDivider(color: Colors.lime),
-                ),
-
-                Container(
-                  color: Colors.pink,
-                  alignment: Alignment.center,
-                  width: 200,
-                  height: 50,
-                  child: Text(
-                          'Contact',
-                          style: TextStyle(fontSize: 24),
-                          ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container( 
-                  color: Colors.black,
-                  alignment: Alignment.center,
-                  width: 300,
-                  height: 100,
-                  child: MouseRegion(
+                MouseRegion(
                     onEnter: (_) {                      
-                      _changeStyle(true);
+                      _changeStyle(true, 1);
                     },
 
                     onExit: (_) {
-                      _changeStyle(false);
+                      _changeStyle(false, 1);
                     },
 
-                    child: Text( 
-                      'This is the mouse area testing location!',
-                      style: _hoverStyle,
-                    )
-                  ),
+                    child: Container( 
+                      color: Colors.black,
+                      alignment: Alignment.center,
+                      width: 300,
+                      height: 100,
 
-                )
+                      child: Text( 
+                        'About',
+                        style: _style1,
+                        textAlign: TextAlign.center,
+                      )
+                    ),
+                ),
+
+                Container(
+                  height: 80,
+                  child: VerticalDivider(color: Colors.lime),
+                ),
+
+                MouseRegion(
+                    onEnter: (_) {                      
+                      _changeStyle(true, 2);
+                    },
+
+                    onExit: (_) {
+                      _changeStyle(false, 2);
+                    },
+
+                    child: Container( 
+                      color: Colors.black,
+                      alignment: Alignment.center,
+                      width: 300,
+                      height: 100,
+
+                      child: Text( 
+                        'Blog',
+                        style: _style2,
+                        textAlign: TextAlign.center,
+                      )
+                    ),
+                ),
+
+                Container(
+                  height: 80,
+                  child: VerticalDivider(color: Colors.lime),
+                ),
+
+                MouseRegion(
+                    onEnter: (_) {                      
+                      _changeStyle(true, 3);
+                    },
+
+                    onExit: (_) {
+                      _changeStyle(false, 3);
+                    },
+
+                    child: Container( 
+                      color: Colors.black,
+                      alignment: Alignment.center,
+                      width: 300,
+                      height: 100,
+
+                      child: Text( 
+                        'Contact',
+                        style: _style3,
+                        textAlign: TextAlign.center,
+                      )
+                    ),
+                ),
               ],
             ),
           ],
