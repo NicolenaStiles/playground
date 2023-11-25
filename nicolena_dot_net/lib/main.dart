@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'BacklitText.dart';
+import 'BacklitDivider.dart';
 
 void main() {
   runApp(const NicolenaDotNet());
@@ -44,7 +45,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold( 
+    return const Scaffold( 
       body: Center(
         child: Column( 
           mainAxisAlignment: MainAxisAlignment.center,
@@ -54,41 +55,9 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 BacklitText(textEntry: 'ABOUT'),
-                Container( 
-                  height: 25,
-                  width: 4,
-                  child: SizedBox(
-                    height: 25,
-                    child: VerticalDivider(color: Colors.cyan),
-                  ),
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.cyan,
-                        blurRadius: 2,
-                        offset: Offset(0,0),
-                      ),
-                    ],
-                  ),
-                ),
+                BacklitDivider(),
                 BacklitText(textEntry: 'BLOG'),
-                Container( 
-                  height: 40,
-                  width: 4,
-                  child: SizedBox(
-                    height: 40,
-                    child: VerticalDivider(color: Colors.cyan),
-                  ),
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.cyan,
-                        blurRadius: 2,
-                        offset: Offset(0,0),
-                      ),
-                    ],
-                  ),
-                ),
+                BacklitDivider(),
                 BacklitText(textEntry: 'CONTACT'),
               ],
             ),
