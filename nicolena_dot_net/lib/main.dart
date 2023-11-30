@@ -117,30 +117,40 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           children: <Widget> [
             const Text('Nicolena Dot Net', style: TextStyle(fontSize: 52, fontFamily: 'Hyperspace', fontWeight: FontWeight.w700)),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+          Column( 
+            children: [ 
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
 
-                TextButton(
-                  style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-                  ),
-                  onPressed: () { 
-                    _switchVisibleNav();   
-                  },
-                  child: const Text('Switch nav bar'),
+                    TextButton(
+                      style: ButtonStyle(
+                        foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                      ),
+                      onPressed: () { 
+                        _switchVisibleNav();   
+                      },
+                      child: const Text('Switch nav bar'),
+                    ),
+                  ],
+                ),
+                const Row ( 
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    BacklitText(textEntry: 'ABOUT'),
+                    BacklitDivider(),
+                    BacklitText(textEntry: 'BLOG'),
+                    BacklitDivider(),
+                    BacklitText(textEntry: 'CONTACT'),
+                  ],
+                ),
+                const Row ( 
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    
+                  ],
                 ),
               ],
-
-              /*
-              children: [
-                BacklitText(textEntry: 'ABOUT'),
-                BacklitDivider(),
-                BacklitText(textEntry: 'BLOG'),
-                BacklitDivider(),
-                BacklitText(textEntry: 'CONTACT'),
-              ],
-              */
             ),
           ],
         ),

@@ -1,8 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import 'ui/pages/home_page.dart';
+import 'ui/pages/about_page.dart';
+import 'ui/pages/blog_page.dart';
+import 'ui/pages/contact_page.dart';
 
 void main() {
   runApp(const MyApp());
 }
+
+final GoRouter _router = GoRouter ( 
+  routes: <RouteBase> [ 
+    GoRoute( 
+      path: '/',
+      builder: (BuildContext context, GoRouterState state) {
+        return const HomePage();
+      },
+      routes: <RouteBase> [
+        GoRoute( 
+          path: 'about',
+          builder: (BuildContext context, GoRouterState state) {
+            return const AboutPage();
+          },
+        ),
+        GoRoute( 
+          path: 'blog',
+          builder: (BuildContext context, GoRouterState state) {
+            return const BlogPage();
+          },
+        ),
+        GoRoute( 
+          path: 'contact',
+          builder: (BuildContext context, GoRouterState state) {
+            return const ContactPage();
+          },
+        ),
+      ],
+    ),
+  ],
+);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -11,127 +48,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Tutorials',
-      initialRoute: '/',
-      routes: {
-
-        '/': (context) => const HomePage(),
-        '/about': (context) => const AboutScreen(),
-        '/blog': (context) => const BlogScreen(),
-        '/contact': (context) => const ContactScreen(),
-      },
       theme: ThemeData(
-
         colorScheme: const ColorScheme.dark(),
         useMaterial3: true,
       ),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override 
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar( 
-        title: const Text('Home Page'),
-      ),
-      body: Center(
-        child: Column( 
-          children: [
-
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/about');
-              }, child: const Text('About page'),
-            ),
-
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/blog');
-              }, child: const Text('Blog'),
-            ),
-
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/contact');
-              }, child: const Text('Contact info page'),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class AboutScreen extends StatelessWidget {
-  const AboutScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold ( 
-
-      appBar: AppBar ( 
-        title: const Text('About Page'),
-      ),
-      body: Center (
-
-        child: ElevatedButton(
-          onPressed: () {
-          Navigator.pop(context);
-          }, child: const Text('Back to homepage'),
-        )
-
-      ),
-    );
-  }
-}
-
-class BlogScreen extends StatelessWidget {
-  const BlogScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold ( 
-
-      appBar: AppBar ( 
-        title: const Text('Blog Page'),
-      ),
-      body: Center (
-
-        child: ElevatedButton(
-          onPressed: () {
-          Navigator.pop(context);
-          }, child: const Text('Back to homepage'),
-        )
-
-      ),
-    );
-  }
-}
-
-class ContactScreen extends StatelessWidget {
-  const ContactScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold ( 
-
-      appBar: AppBar ( 
-        title: const Text('Contact Page'),
-      ),
-      body: Center (
-
-        child: ElevatedButton(
-          onPressed: () {
-          Navigator.pop(context);
-          }, child: const Text('Back to homepage'),
-        )
-
-      ),
+      routerConfig: _router,
     );
   }
 }
