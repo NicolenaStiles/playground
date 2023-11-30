@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package/../../common/BacklitText.dart';
+import 'package/../../common/BacklitDivider.dart';
 
 class BlogPage extends StatelessWidget {
 const BlogPage({super.key});
@@ -12,14 +14,35 @@ const BlogPage({super.key});
       appBar: AppBar ( 
         title: const Text('Blog Page'),
       ),
-      body: Center (
+      body: Center(
+        child: Column( 
+          children: [ 
+            ElevatedButton(
+              onPressed: () {
+                context.go('/');
+              }, child: const Text('Back to homepage'),
+            ),
+            const Row( 
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [ 
 
-        child: ElevatedButton(
-          onPressed: () {
-            context.go('/');
-          }, child: const Text('Back to homepage'),
+                BacklitText(textEntry : 'ABOUT', 
+                            isSelectable : true, 
+                            route  : '/about'),
+                BacklitDivider(),
+
+                BacklitText(textEntry : 'BLOG', 
+                            isSelectable : false,
+                            route : '/blog'),
+                BacklitDivider(),
+
+                BacklitText(textEntry : 'CONTACT', 
+                            isSelectable : true,
+                            route: '/contact'),
+              ],
+            ),
+          ],
         )
-
       ),
     );
   }

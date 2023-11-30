@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class BacklitText extends StatefulWidget {
 
@@ -6,10 +7,12 @@ class BacklitText extends StatefulWidget {
     super.key, 
     this.textEntry = "",
     this.isSelectable = true,
+    this.route = "",
   });
 
   final String textEntry;
   final bool isSelectable;
+  final String route;
 
   @override
   State<StatefulWidget> createState() =>  _BacklitTextState();
@@ -64,35 +67,52 @@ class _BacklitTextState extends State<BacklitText> {
   }
 
   @override 
-    Widget build(BuildContext context) {
-      _assignStyle();
-      return(
-        MouseRegion(
-          onEnter: (_) {                      
-            if (widget.isSelectable) {
-              _swapStyle(true);
-            }
-          },
+  Widget build(BuildContext context) {
+    _assignStyle();
+    return(
+      MouseRegion(
+        onEnter: (_) {                      
+          if (widget.isSelectable) {
+            _swapStyle(true);
+          }
+        },
 
-          onExit: (_) {
-            if (widget.isSelectable) {
-              _swapStyle(false);
-            }
-          },
+        onExit: (_) {
+          if (widget.isSelectable) {
+            _swapStyle(false);
+          }
+        },
 
-          child: Container( 
+        child: Container( 
+
           color: Colors.transparent,
           alignment: Alignment.center,
           width: 200,
           height: 50,
 
-          child: Text( 
-            widget.textEntry,
-            style: _style,
-            textAlign: TextAlign.center,
-            )
+          child: TextButton( 
+            onPressed: () {
+              context.go(widget.route);
+            },
+            // disabling "splash effects"
+            style: ButtonStyle(
+              overlayColor: MaterialStateProperty.resolveWith<Color>( 
+                (Set<MaterialState> states) {
+                  return Colors.transparent;
+                },
+              ),
+              splashFactory: NoSplash.splashFactory,
+            ),
+
+            // actual button text setup
+            child: Text(
+              widget.textEntry,
+              style: _style,
+              textAlign: TextAlign.center,
+            ),
           ),
-        )
+        ),
+      )
     );
   }
 }
