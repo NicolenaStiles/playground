@@ -36,6 +36,33 @@ class HomePage extends StatelessWidget {
             ),
 
             // experimental button here
+            TextButton( 
+
+              // press action
+              onPressed: () {
+                context.go('/about');
+              },
+
+              // disabling "splash effects"
+              style: ButtonStyle(
+                overlayColor: MaterialStateProperty.resolveWith<Color>( 
+                  (Set<MaterialState> states) {
+                    return Colors.transparent;
+                  },
+                ),
+                splashFactory: NoSplash.splashFactory,
+              ),
+
+              // actual button text setup
+              child: const Text(
+                'TEST BUTTON', 
+                style: TextStyle(
+                  fontSize: 18, 
+                  color: Colors.white, 
+                  fontFamily: 'ProFontIIx'
+                )
+              ),
+            ),
             
             const Column( 
               children: [ 
