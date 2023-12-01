@@ -1,9 +1,9 @@
 use std::fs::File;
 use std::io::{self, BufRead};
 
-pub fn part_one() {
+pub fn part_one(filepath: String) -> u32 {
 
-    let input_file = File::open("input/day_1/data").expect("File not found!");
+    let input_file = File::open(filepath).expect("File not found!");
     let reader = io::BufReader::new(input_file);
 
     let mut sum : u32 = 0;
@@ -12,10 +12,8 @@ pub fn part_one() {
         match line {
 
             Ok(line) => {
-                println!("{}", line);
                 let v: Vec<_> = line.match_indices(char::is_numeric).collect();
                 let double_digit = vec![v.first().unwrap().1, v.last().unwrap().1].join("");
-                println!("{:?}", double_digit);
                 sum += double_digit.parse::<u32>().unwrap();
             }
             
@@ -25,12 +23,12 @@ pub fn part_one() {
         }
     }
 
-    println!("{}", sum);
+    return sum;
 }
 
-pub fn part_two() {
+pub fn part_two(filepath: String) -> u32 {
 
-    let input_file = File::open("input/day_1/data").expect("File not found!");
+    let input_file = File::open(filepath).expect("File not found!");
     let reader = io::BufReader::new(input_file);
 
     let mut sum : u32 = 0;
@@ -68,6 +66,6 @@ pub fn part_two() {
         }
     }
 
-    println!("{}", sum);
+    return sum;
 }
 
