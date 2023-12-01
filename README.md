@@ -26,7 +26,7 @@ language optimized for Annoying People (that's me, hi, I am Annoying People)
 ### Project Breakdown
 Highly unlikely anyone but me will ever see anything in this repo, but just in 
 case, it's worth noting there is indeed a method to my madness here. <br>
-- [Advent of Code](https://adventofcode.com/)** solutions, sorted first by year and then by language
+- [Advent of Code](https://adventofcode.com/) solutions, sorted first by year and then by language
     - 2022:
         - Dart (10/25)
         - Rust (1/25)
@@ -47,7 +47,7 @@ framework and experimenting with self-contained concepts. Mostly just following
 along with the YouTube tutorials though.
     - Dart
     - Flutter
-- Nicolena Dot Net, the current WIP version of my personal website, `nicolena.net`. 
+- Nicolena Dot Net, the current WIP version of my personal website, [nicolena.net](). 
 Once this is in better working order, I'll be moving it into its own repo. 
     - Dart
     - Flame
