@@ -8,6 +8,8 @@ instead. <br>
 **Please note!!** Nothing in here is garunteed to be in any sort of working 
 order. By definition, the entire thing is very much a work in progress.
 
+|---|
+
 ### What's in the box?  
 ... an awful lot of stuff. <br>
 
@@ -18,7 +20,8 @@ platforms applications using
 - [Rust](https://rust-lang.org), a memory-safe systems-level programming 
 language optimized for Annoying People (that's me, hi, I am Annoying People)
 - Maybe some throwaway python scripts if I ever get them in here?
-<br>
+
+|---|
 
 ### Project Breakdown
 Highly unlikely anyone but me will ever see anything in this repo, but just in 
@@ -50,6 +53,8 @@ Once this is in better working order, I'll be moving it into its own repo.
     - Flame
     - Flutter
     - Maybe some backend Rust/SQL?
+
+|---|
 
 ### Tools
 [RegEx Tester](https://regex101.com/)  
