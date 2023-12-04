@@ -40,7 +40,8 @@ pub fn part_two(filepath: String) -> u32 {
 
                 // I feel like an idiot doing this.
                 // Padding in front of and behind number so I don't cause
-                // unexpected weirdness somehow
+                // unexpected weirdness somehow (like "threeeight" or some shit
+                // idk)
                 let filtered_string = line
                     .replace("zero", "z0o")
                     .replace("one", "o1e")
