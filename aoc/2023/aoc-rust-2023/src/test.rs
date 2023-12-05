@@ -1,6 +1,7 @@
 mod day_1;
 mod day_2;
 mod day_3;
+mod day_4;
 
 #[cfg(test)]
 mod tests {
@@ -30,6 +31,11 @@ mod tests {
     #[test]
     fn day_3_part_one() {
         assert_eq!(4361, day_3::part_one("input/day_3/test_1"));
+    }
+
+    #[test]
+    fn day_4_part_one() {
+        assert_eq!(13, day_4::part_one("input/day_4/test_1"));
     }
 
 }

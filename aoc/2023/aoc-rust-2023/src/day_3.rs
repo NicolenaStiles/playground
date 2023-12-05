@@ -63,9 +63,9 @@ pub fn part_one(filepath: String) -> u32 {
     }
 
     for element in filtered_lines {
-        println!("{:?}", element);
+        //println!("{:?}", element);
     }
-    println!("{:?}", symbol_idx);
+    //println!("{:?}", symbol_idx);
 
     return part_num_sum;
 }
