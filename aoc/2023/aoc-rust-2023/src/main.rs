@@ -2,6 +2,7 @@ mod day_1;
 mod day_2;
 //mod day_3;
 mod day_4;
+mod day_5;
 
 fn main() {
 
@@ -15,4 +16,6 @@ fn main() {
 
     day_4::part_one("input/day_4/data".to_string());
     day_4::part_two("input/day_4/test_1".to_string());
+
+    day_5::part_one("input/day_5/test_1".to_string());
 }
