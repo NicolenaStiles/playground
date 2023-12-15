@@ -34,3 +34,7 @@ It is also recommended that no more than 4 font sizes are used.
 | White| `Colors.white` | `0xFFFFFFFF` | Main text, graphics | 
 | Cyan | `Colors.cyan` | `0xFF00BCD4` | Main accent color |
 | Accent Cyan | `Colors.cyanAccent` | Brighter cyan for lit neon effect |
+
+
+Font for everything is `ProFontIIx`, the same NerdFont package I use for my 
+terminal. 
