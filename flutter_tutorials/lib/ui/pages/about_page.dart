@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package/../../common/BacklitText.dart';
 import 'package/../../common/BacklitDivider.dart';
 
+import 'package/../../common/center_structure_frame.dart';
+
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
@@ -16,35 +18,8 @@ class AboutPage extends StatelessWidget {
         title: const Text('About Page'),
       ),
       body: Center(
-        child: Column( 
-          children: [ 
-            ElevatedButton(
-              onPressed: () {
-                context.go('/');
-              }, child: const Text('Back to homepage'),
-            ),
-            const Row( 
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [ 
-
-                BacklitText(textEntry : 'ABOUT', 
-                            isSelectable : false, 
-                            route  : '/about'),
-                BacklitDivider(),
-
-                BacklitText(textEntry : 'BLOG', 
-                            isSelectable : true,
-                            route : '/blog'),
-                BacklitDivider(),
-
-                BacklitText(textEntry : 'CONTACT', 
-                            isSelectable : true,
-                            route: '/contact'),
-              ],
-            ),
-          ],
-        )
-      ),
+        child: CenterStructureFrame(),
+        ),
     );
   }
 }
