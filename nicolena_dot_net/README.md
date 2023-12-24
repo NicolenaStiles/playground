@@ -36,5 +36,13 @@ It is also recommended that no more than 4 font sizes are used.
 | Accent Cyan | `Colors.cyanAccent` | Brighter cyan for lit neon effect |
 
 
-Font for everything is `ProFontIIx`, the same NerdFont package I use for my 
-terminal. 
+Font for everything is `ProFontIIx Monospaced`, the same NerdFont package I use 
+for my terminal. 
+
+## Packages
+
+
+1. [Dotted Border](https://pub.dev/packages/dotted_border)
+Turns out there's no simple way to add dotted borders in Flutter! Thankfully I 
+found this package early on and it did everything I needed it to do for the tags
+right out of the box. Schweet.
