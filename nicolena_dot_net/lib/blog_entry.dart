@@ -24,21 +24,21 @@ class BlogEntry extends StatefulWidget {
 class _BlogEntryState extends State<BlogEntry>  {
 
   List<Widget> _generateTags() {
+
     return widget.tags.map((i) => 
-      new DottedBorder(
-        color: Color(0xFF00E5FF),
-        strokeWidth: 2,
-        child: Text(
-          i.toString(),
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 21,
-            fontFamily: 'ProFont IIx Nerd Font Mono',
-            fontWeight: FontWeight.w400,
-            height: 0,
-          ),
+      new Container(
+        padding: const EdgeInsets.all(4),
+        child: DottedBorder(
+          color: Color(0xFF00E5FF),
+          strokeWidth: 2,
+          padding: const EdgeInsets.all(4),
+          child: Text(
+            i.toString(),
+            style: Theme.of(context).textTheme.bodyMedium,
+          )
         )
       )).toList();
+
   }
   
   @override 
@@ -60,25 +60,19 @@ class _BlogEntryState extends State<BlogEntry>  {
                   crossAxisAlignment: CrossAxisAlignment.center, 
                   children: [
                     Expanded( 
-                      child: Text(
-                        widget.title,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 21,
-                          fontFamily: 'ProFont IIx Nerd Font Mono',
-                          fontWeight: FontWeight.w400,
-                          height: 0,
+                      child: Container( 
+                        padding: const EdgeInsets.all(4),
+                        child: Text(
+                          widget.title,
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
                     ),
-                    Text(
-                      widget.date,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 21,
-                        fontFamily: 'ProFont IIx Nerd Font Mono',
-                        fontWeight: FontWeight.w400,
-                        height: 0,
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      child: Text(
+                        widget.date,
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
                   ],
@@ -87,14 +81,11 @@ class _BlogEntryState extends State<BlogEntry>  {
                   crossAxisAlignment: CrossAxisAlignment.center, 
                   children: [
                     Expanded(
-                      child: Text(
-                        widget.subtitle,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 21,
-                          fontFamily: 'ProFont IIx Nerd Font Mono',
-                          fontWeight: FontWeight.w400,
-                          height: 0,
+                      child: Container( 
+                        padding: const EdgeInsets.all(4),
+                        child: Text(
+                          widget.subtitle,
+                          style: Theme.of(context).textTheme.labelMedium,
                         ),
                       ),
                     ),

@@ -46,3 +46,11 @@ for my terminal.
 Turns out there's no simple way to add dotted borders in Flutter! Thankfully I 
 found this package early on and it did everything I needed it to do for the tags
 right out of the box. Schweet.
+
+
+2. [Flutter Markdown](https://pub.dev/packages/flutter_markdown)
+Main markdown rendering engine for blog entries. Need to write my own
+stylesheet, but otherwise, this absolutely slaps and is exactly what I needed.
+
+3. [Go Router](https://pub.dev/packages/go_router)
+This is how I'm gonna get the links to work.

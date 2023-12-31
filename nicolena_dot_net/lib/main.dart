@@ -3,7 +3,8 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'blog_entry.dart';
+import 'screens/blog_screen.dart';
+import 'theme.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,6 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Nicolena Dot Net Demo',
+      theme: websiteTheme,
       debugShowCheckedModeBanner: false,
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -46,6 +48,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    return BlogScreen();
+    /*
+    // testing for blog entry screen
+    return BlogEntryScreen(
+      title: titles[0],
+      date: dates[0],
+      subtitle: subtitles[0],
+      tags: ['tag 1', 'tag 2', 'tag 3', 'tag 4'],
+    );
+    */
+
+    /*
     return Scaffold( 
       body: Center( 
         child: Container( 
@@ -58,26 +73,50 @@ class _MyHomePageState extends State<MyHomePage> {
             )
           ),
           child: Center( 
-            child: ListView.separated( 
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(8),
-              itemCount: titles.length,
-              itemBuilder: (BuildContext context, int index) {
-                return BlogEntry(
-                  title: titles[index],
-                  date: dates[index],
-                  subtitle: subtitles[index],
-                  tags: ['tag 1', 'tag 2', 'tag 3', 'tag 4'],
-                );
-              },
-              separatorBuilder: (BuildContext context, int index) => Divider(
-                // TODO: fix this, it's such a hack omg
-                color: Colors.white.withOpacity(0),
-              ),
-            )
+            child: Column( 
+              children: [
+                // Page Title
+                Align( 
+                  alignment: Alignment.centerLeft,
+                    child: Text(
+                      'BLOG',
+                        style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                ),
+                // Page Description
+                Align( 
+                  alignment: Alignment.centerLeft,
+                    child: Text(
+                      'This is a collection of all my blog entires.',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                ),
+                // List of blog entries
+                Center( 
+                  child: ListView.separated( 
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.all(8),
+                    itemCount: titles.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return BlogEntry(
+                        title: titles[index],
+                        date: dates[index],
+                        subtitle: subtitles[index],
+                        tags: ['tag 1', 'tag 2', 'tag 3', 'tag 4'],
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) => Divider(
+                      // TODO: fix this, it's such a hack omg
+                      color: Colors.white.withOpacity(0),
+                    ),
+                  )
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
+    */
   }
 }
