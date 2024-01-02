@@ -35,12 +35,13 @@ class _BlogScreenState extends State<BlogScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
 
           children: [
+
             // Header
             NavHeader(),
       
             // spacing/padding
             const SizedBox(
-              height: 10,
+              height: 18,
             ),
 
             // Body

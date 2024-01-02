@@ -168,11 +168,31 @@ class NavHeader extends StatelessWidget {
     return Container( 
 
       padding: const EdgeInsets.all(4),
-      decoration: ShapeDecoration(
-        color: Colors.black.withOpacity(1),
-        shape: const RoundedRectangleBorder( 
-          side: BorderSide(width: 2, color: Color(0xFF00B8D4)),
-        )
+      decoration: const BoxDecoration(
+        // color: Color(0x0000E5FF),
+        // color: Colors.cyan,
+        border: Border(
+          left: BorderSide(
+            color: Colors.cyan,
+            width: 6,
+            strokeAlign: BorderSide.strokeAlignInside,
+          ),
+          top: BorderSide(
+            color: Colors.cyan,
+            width: 6,
+            strokeAlign: BorderSide.strokeAlignInside,
+          ),
+          right: BorderSide(
+            color: Colors.cyan,
+            width: 1,
+            strokeAlign: BorderSide.strokeAlignInside,
+          ),
+          bottom: BorderSide(
+            color: Colors.cyan,
+            width: 1,
+            strokeAlign: BorderSide.strokeAlignInside,
+          ),
+        ),
       ),
 
       child: const Row( 
