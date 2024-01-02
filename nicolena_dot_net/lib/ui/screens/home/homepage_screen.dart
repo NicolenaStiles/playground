@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../theme.dart';
-import '../common/backlit_text.dart';
-import '../common/backlit_divider.dart';
+import '../../common/backlit_divider.dart';
+import '../../common/backlit_text.dart';
 
 class HomepageScreen extends StatelessWidget {
 

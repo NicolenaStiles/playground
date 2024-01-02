@@ -7,10 +7,10 @@ import 'package:go_router/go_router.dart';
 
 import 'theme.dart';
 
-import 'screens/homepage_screen.dart';
-import 'screens/about_screen.dart';
-import 'screens/blog_screen.dart';
-import 'screens/contact_screen.dart';
+import 'ui/screens/home/homepage_screen.dart';
+import 'ui/screens/about/about_screen.dart';
+import 'ui/screens/blog/blog_screen.dart';
+import 'ui/screens/contact/contact_screen.dart';
 
 void main() => runApp(MyApp());
 

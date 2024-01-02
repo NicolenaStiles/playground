@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import '../common/core_border.dart';
-import '../blog_entry.dart';
-import '../common/nav_header.dart';
+
+import '../../common/core_border.dart';
+import '../../common/nav_header.dart';
+import '../../common/body_border.dart';
+
+import 'blog_entry.dart';
+
 
 class BlogScreen extends StatefulWidget {
 

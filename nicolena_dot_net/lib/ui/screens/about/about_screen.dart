@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
-import '../common/core_border.dart';
-import '../common/body_border.dart';
-import '../common/nav_header.dart';
 
-class ContactScreen extends StatefulWidget {
+import '../../common/core_border.dart';
+import '../../common/nav_header.dart';
+import '../../common/body_border.dart';
 
-  const ContactScreen({
+class AboutScreen extends StatefulWidget {
+
+  const AboutScreen({
     super.key,
   });
 
   @override 
-  State<StatefulWidget> createState() => _ContactScreenState();
+  State<StatefulWidget> createState() => _AboutScreenState();
 
 }
 
-class _ContactScreenState extends State<ContactScreen> {
+class _AboutScreenState extends State<AboutScreen> {
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,7 @@ class _ContactScreenState extends State<ContactScreen> {
               content: Center( 
                 child: Column( 
                   children: [
-                    Text('Hello this is the Contact page!'),
+                    Text('Hello this is the About page!'),
                   ]
                 )
               )
