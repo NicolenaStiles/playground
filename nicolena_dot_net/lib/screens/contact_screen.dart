@@ -3,18 +3,18 @@ import '../common/core_border.dart';
 import '../common/body_border.dart';
 import '../common/nav_header.dart';
 
-class AboutScreen extends StatefulWidget {
+class ContactScreen extends StatefulWidget {
 
-  const AboutScreen({
+  const ContactScreen({
     super.key,
   });
 
   @override 
-  State<StatefulWidget> createState() => _AboutScreenState();
+  State<StatefulWidget> createState() => _ContactScreenState();
 
 }
 
-class _AboutScreenState extends State<AboutScreen> {
+class _ContactScreenState extends State<ContactScreen> {
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class _AboutScreenState extends State<AboutScreen> {
               content: Center( 
                 child: Column( 
                   children: [
-                    Text('Hello this is the About page!'),
+                    Text('Hello this is the Contact page!'),
                   ]
                 )
               )
