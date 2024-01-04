@@ -18,35 +18,34 @@ class HomepageScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
 
-          Text(
-            'NICOLENA DOT NET',
-            style: TextStyle(fontSize: 36),
+            Text(
+              'NICOLENA DOT NET',
+               style: Theme.of(context).textTheme.displaySmall,
+            ),
 
-          ),
 
+            const Row( 
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
 
-          Row( 
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+                BacklitText(textEntry: 'ABOUT', 
+                            fontSize: 24,
+                            isSelectable: true,
+                            route: '/about'),
 
-              BacklitText(textEntry: 'ABOUT', 
-                          fontSize: 24,
-                          isSelectable: true,
-                          route: '/about'),
+                BacklitDivider(),
 
-              BacklitDivider(),
+                BacklitText(textEntry: 'BLOG', 
+                            fontSize: 24,
+                            isSelectable: true,
+                            route: '/blog'),
 
-              BacklitText(textEntry: 'BLOG', 
-                          fontSize: 24,
-                          isSelectable: true,
-                          route: '/blog'),
+                BacklitDivider(),
 
-              BacklitDivider(),
-
-              BacklitText(textEntry: 'CONTACT', 
-                          fontSize: 24,
-                          isSelectable: true,
-                          route: '/contact'),
+                BacklitText(textEntry: 'CONTACT', 
+                            fontSize: 24,
+                            isSelectable: true,
+                            route: '/contact'),
 
             ],
           ),

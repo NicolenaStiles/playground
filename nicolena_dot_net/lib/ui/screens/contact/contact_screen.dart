@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../common/core_border.dart';
 import '../../common/nav_header.dart';
 import '../../common/body_border.dart';
+import '../../common/tab_header.dart';
 
 class ContactScreen extends StatefulWidget {
 
@@ -38,7 +39,7 @@ class _ContactScreenState extends State<ContactScreen> {
               content: Center( 
                 child: Column( 
                   children: [
-                    Text('Hello this is the Contact page!'),
+                    TabHeader(tabHeaderText: '//CONTACT'),
                   ]
                 )
               )

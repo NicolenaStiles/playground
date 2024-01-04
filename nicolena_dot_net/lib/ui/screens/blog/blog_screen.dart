@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../common/core_border.dart';
 import '../../common/nav_header.dart';
 import '../../common/body_border.dart';
+import '../../common/tab_header.dart';
 
 import 'blog_entry.dart';
 
@@ -33,6 +34,7 @@ class _BlogScreenState extends State<BlogScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return CoreBorder(
         content: Column ( 
           mainAxisAlignment: MainAxisAlignment.start,
@@ -49,30 +51,19 @@ class _BlogScreenState extends State<BlogScreen> {
             ),
 
             // Body
-            Container( 
-              padding: const EdgeInsets.all(10),
-              decoration: ShapeDecoration(
-                color: Colors.white.withOpacity(0),
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    width: 6,
-                    strokeAlign: BorderSide.strokeAlignOutside,
-                    color: Color(0xFF00E5FF),
-                  ),
-                ),
-              ),
-              child: Center( 
+            BodyBorder(
+              content: Center( 
                 child: Column( 
                   children: [
-                    // Page Title
-                    Align( 
-                      alignment: Alignment.centerLeft,
-                        child: Text(
-                          'BLOG',
-                            style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                    ),
+
                     // Page Description
+                    TabHeader(tabHeaderText: '//BLOG'),
+                      
+                    // spacing/padding
+                    const SizedBox(
+                      height: 18,
+                    ),
+
                     Align( 
                       alignment: Alignment.centerLeft,
                         child: Text(
@@ -80,6 +71,7 @@ class _BlogScreenState extends State<BlogScreen> {
                             style: Theme.of(context).textTheme.bodyMedium,
                         ),
                     ),
+
                     // List of blog entries
                     Center( 
                       child: ListView.separated( 

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../common/core_border.dart';
 import '../../common/nav_header.dart';
 import '../../common/body_border.dart';
+import '../../common/tab_header.dart';
+import 'selectable_blog_entry.dart';
 
 class AboutScreen extends StatefulWidget {
 
@@ -38,7 +40,10 @@ class _AboutScreenState extends State<AboutScreen> {
               content: Center( 
                 child: Column( 
                   children: [
-                    Text('Hello this is the About page!'),
+                    TabHeader(tabHeaderText: '//ABOUT'),
+
+                    SelectableBlogEntry(route: 'oops',)
+
                   ]
                 )
               )
