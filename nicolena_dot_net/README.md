@@ -52,5 +52,10 @@ right out of the box. Schweet.
 Main markdown rendering engine for blog entries. Need to write my own
 stylesheet, but otherwise, this absolutely slaps and is exactly what I needed.
 
+
 3. [Go Router](https://pub.dev/packages/go_router)
 This is how I'm gonna get the links to work.
+
+
+4. [Riverpod](https://pub.dev/packages/riverpod)
+For state management. And no, I have no idea what I'm doing with this.

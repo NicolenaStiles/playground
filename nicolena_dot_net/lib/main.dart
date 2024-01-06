@@ -12,6 +12,8 @@ import 'ui/screens/about/about_screen.dart';
 import 'ui/screens/blog/blog_screen.dart';
 import 'ui/screens/contact/contact_screen.dart';
 
+import 'api/blog.dart';
+
 void main() => runApp(MyApp());
 
 final GoRouter _router = GoRouter ( 
@@ -53,6 +55,8 @@ class MyApp extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+
+    var testBlog = await Blog.create();
 
     return MaterialApp.router(
       title: 'Nicolena Dot Net Demo',
