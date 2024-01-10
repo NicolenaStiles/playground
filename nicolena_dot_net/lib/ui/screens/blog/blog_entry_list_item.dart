@@ -2,27 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:go_router/go_router.dart';
 
-import 'blog_post_screen.dart';
+import 'package:nicolena_dot_net/api/blog_post.dart';
 
 class BlogEntryListItem extends StatefulWidget {
 
   const BlogEntryListItem({ 
     super.key,
-
-    this.route = "",
-
-    this.title = "",
-    this.date = "",
-    this.subtitle = "",
-    this.tags = const [],
+    required this.blogPost,
   });
 
-  final String route;
-
-  final String title;
-  final String date;
-  final String subtitle;
-  final List<String> tags;
+  final BlogPost blogPost;
 
   @override
   State<StatefulWidget> createState() => _BlogEntryListItemState();
@@ -75,8 +64,8 @@ class _BlogEntryListItemState extends State<BlogEntryListItem> {
 
   List<Widget> _generateTags() {
 
-    return widget.tags.map((i) => 
-      new Container(
+    return widget.blogPost.tags!.map((i) => 
+      Container(
         padding: const EdgeInsets.all(4),
         child: DottedBorder(
           color: const Color(0xFF00E5FF),
@@ -104,7 +93,7 @@ class _BlogEntryListItemState extends State<BlogEntryListItem> {
 
         child: GestureDetector( 
           onTap: () {
-            context.go(widget.route);
+            context.go('/blog/${widget.blogPost.uRL!}');
           },
           child: Container(
             padding: const EdgeInsets.all(4),
@@ -120,7 +109,7 @@ class _BlogEntryListItemState extends State<BlogEntryListItem> {
                         child: Container( 
                           padding: const EdgeInsets.all(4),
                           child: Text(
-                            widget.title,
+                            widget.blogPost.title!,
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ),
@@ -128,7 +117,7 @@ class _BlogEntryListItemState extends State<BlogEntryListItem> {
                       Container(
                         padding: const EdgeInsets.all(4),
                         child: Text(
-                          widget.date,
+                          widget.blogPost.date!,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
@@ -141,7 +130,7 @@ class _BlogEntryListItemState extends State<BlogEntryListItem> {
                         child: Container( 
                           padding: const EdgeInsets.all(4),
                           child: Text(
-                            widget.subtitle,
+                            widget.blogPost.subtitle!,
                             style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ),

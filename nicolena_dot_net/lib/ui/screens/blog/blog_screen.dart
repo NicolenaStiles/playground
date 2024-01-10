@@ -6,13 +6,16 @@ import '../../common/body_border.dart';
 import '../../common/tab_header.dart';
 
 import 'blog_entry_list_view.dart';
+import 'package:nicolena_dot_net/api/blog_post.dart';
 
 class BlogScreen extends StatefulWidget {
 
   const BlogScreen({
     super.key,
+    required this.posts,
   });
 
+  final List<BlogPost> posts;
 
   @override 
   State<StatefulWidget> createState() => _BlogScreenState();
@@ -62,7 +65,7 @@ class _BlogScreenState extends State<BlogScreen> {
                     ),
 
                     // List of blog entries
-                    BlogEntryListView(),
+                    BlogEntryListView(posts: widget.posts),
                   ],
                 ),
               ),

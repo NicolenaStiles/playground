@@ -4,20 +4,16 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../../theme.dart';
 
+import 'package:nicolena_dot_net/api/blog_post.dart';
+
 class BlogPostScreen extends StatefulWidget {
 
   const BlogPostScreen({ 
     super.key,
-    this.title = "",
-    this.date = "",
-    this.subtitle = "",
-    this.tags = const [],
+    required this.blogPost,
   });
 
-  final String title;
-  final String date;
-  final String subtitle;
-  final List<String> tags;
+  final BlogPost blogPost;
 
   @override
   State<StatefulWidget> createState() => _BlogPostScreenState();
@@ -48,11 +44,11 @@ class _BlogPostScreenState extends State<BlogPostScreen> {
 
   List<Widget> _generateTags() {
 
-    return widget.tags.map((i) => 
-      new Container(
+    return widget.blogPost.tags!.map((i) => 
+      Container(
         padding: const EdgeInsets.all(4),
         child: DottedBorder(
-          color: Color(0xFF00E5FF),
+          color: const Color(0xFF00E5FF),
           strokeWidth: 2,
           padding: const EdgeInsets.all(4),
           child: Text(
@@ -86,7 +82,7 @@ class _BlogPostScreenState extends State<BlogPostScreen> {
                       child: Container( 
                         padding: const EdgeInsets.all(4),
                         child: Text(
-                          widget.title,
+                          widget.blogPost.title!,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
@@ -97,7 +93,7 @@ class _BlogPostScreenState extends State<BlogPostScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     child: Text(
-                      widget.date,
+                      widget.blogPost.date!,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
@@ -108,7 +104,7 @@ class _BlogPostScreenState extends State<BlogPostScreen> {
                   child: Container( 
                     padding: const EdgeInsets.all(4),
                     child: Text(
-                      widget.subtitle,
+                      widget.blogPost.subtitle!,
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ),
