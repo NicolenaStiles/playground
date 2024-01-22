@@ -62,16 +62,19 @@ class _GameAppState extends State<GameApp> {
                           child: GameWidget(
                             game: game,
                             overlayBuilderMap: {
+
                               PlayState.welcome.name: (context, game) =>
                                   const OverlayScreen(
                                     title: 'Tap to play!',
                                     subtitle: 'Use arrow keys or touchscreen to move.',
                                   ),
+
                               PlayState.gameOver.name: (context, game) =>
                                   const OverlayScreen(
                                     title: 'Yikes, you suck!!',
                                     subtitle: '(Tap to try again?)',
                                   ),
+
                               PlayState.won.name: (context, game) =>
                                   const OverlayScreen(
                                     title: 'Winner Winner, Chicken Dinner!!',
