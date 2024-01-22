@@ -14,12 +14,13 @@ class BodyBorder extends StatelessWidget {
 
     return Container( 
       padding: const EdgeInsets.all(10),
+      clipBehavior: Clip.antiAlias,
       decoration: ShapeDecoration(
         color: Colors.white.withOpacity(0),
         shape: RoundedRectangleBorder(
           side: BorderSide(
-            width: 6,
-            strokeAlign: BorderSide.strokeAlignOutside,
+            width: 4,
+            strokeAlign: BorderSide.strokeAlignInside,
             color: Color(0xFF00E5FF),
           ),
         ),

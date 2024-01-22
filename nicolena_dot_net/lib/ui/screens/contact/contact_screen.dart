@@ -20,7 +20,7 @@ class _ContactScreenState extends State<ContactScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CoreBorder(
+    return const CoreBorder(
         content: Column ( 
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,7 +31,7 @@ class _ContactScreenState extends State<ContactScreen> {
             NavHeader(),
       
             // spacing/padding
-            const SizedBox(
+            SizedBox(
               height: 18,
             ),
 

@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 // Custom componenets
 import 'components/asteroid.dart';
 import 'package:asteroids/components/shot.dart';
@@ -154,8 +155,6 @@ class Asteroids extends FlameGame
 
       } else if (c is Shot) {
         moveShot(c, dt);
-
-
       }
     }
 

@@ -1,0 +1,22 @@
+name: definitely_not_breakout
+description: "Testing out hosting on Github Pages with a small game."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.2.3 <4.0.0'
+
+dependencies:
+  flame: ^1.11.0
+  flutter:
+    sdk: flutter
+  flutter_animate: ^4.2.0
+  google_fonts: ^6.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true

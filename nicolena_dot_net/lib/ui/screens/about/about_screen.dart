@@ -21,7 +21,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CoreBorder(
+    return const CoreBorder(
         content: Column ( 
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,7 +32,7 @@ class _AboutScreenState extends State<AboutScreen> {
             NavHeader(),
       
             // spacing/padding
-            const SizedBox(
+            SizedBox(
               height: 18,
             ),
 

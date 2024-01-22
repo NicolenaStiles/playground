@@ -13,8 +13,8 @@ import 'theme.dart';
 import 'ui/screens/home/homepage_screen.dart';
 import 'ui/screens/about/about_screen.dart';
 import 'ui/screens/blog/blog_screen.dart';
-import 'ui/screens/contact/contact_screen.dart';
 import 'ui/screens/blog/blog_post_screen.dart';
+import 'ui/screens/contact/contact_screen.dart';
 
 import 'package:nicolena_dot_net/api/blog_post.dart';
 
