@@ -6,6 +6,8 @@ import '../../common/body_border.dart';
 import '../../common/tab_header.dart';
 import 'selectable_blog_entry.dart';
 
+import 'package:parallax_rain/parallax_rain.dart';
+
 class AboutScreen extends StatefulWidget {
 
   const AboutScreen({
@@ -21,35 +23,51 @@ class _AboutScreenState extends State<AboutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const CoreBorder(
-        content: Column ( 
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold( 
+      body: Stack (
+          children: <Widget>[
 
-          children: [
+              ParallaxRain( 
+                dropColors: [
+                  Colors.cyan,
+                ],
+                trail: true,
+                dropFallSpeed: 1,
+                numberOfDrops: 100,
+              ),
 
-            // Header
-            NavHeader(),
-      
-            // spacing/padding
-            SizedBox(
-              height: 18,
-            ),
+              const CoreBorder(
+              content: Column ( 
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
 
-            BodyBorder(
-              content: Center( 
-                child: Column( 
-                  children: [
-                    TabHeader(tabHeaderText: '//ABOUT'),
+                children: [
 
-                    SelectableBlogEntry(route: 'oops',)
+                  // Header
+                  NavHeader(),
+            
+                  // spacing/padding
+                  SizedBox(
+                    height: 18,
+                  ),
 
-                  ]
-                )
-              )
-            )
+                  BodyBorder(
+                    content: Center( 
+                      child: Column( 
+                        children: [
+                          TabHeader(tabHeaderText: '//ABOUT'),
 
-          ],
+                          SelectableBlogEntry(route: 'oops',)
+
+                        ]
+                      )
+                    )
+                  )
+
+                ],
+              ),
+              ),
+        ]
         ),
     );
   }

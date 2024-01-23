@@ -19,6 +19,7 @@ dependencies:
   toml: ^0.15.0
   flutter_riverpod: ^2.4.9
   riverpod_annotation: ^2.3.3
+  parallax_rain: ^1.1.0
 
   cupertino_icons: ^1.0.2
 

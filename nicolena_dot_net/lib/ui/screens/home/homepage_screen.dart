@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:parallax_rain/parallax_rain.dart';
 
 import '../../common/backlit_divider.dart';
 import '../../common/backlit_text.dart';
@@ -14,42 +15,58 @@ class HomepageScreen extends StatelessWidget {
 
     return Scaffold( 
       body: Center( 
-        child: Column( 
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+        child: Stack( 
+          children: <Widget>[
 
-            Text(
-              'NICOLENA DOT NET',
-               style: Theme.of(context).textTheme.displaySmall,
-            ),
+              ParallaxRain( 
+                dropColors: [
+                  Colors.cyan,
+                ],
+                trail: true,
+                dropFallSpeed: 1,
+                numberOfDrops: 100,
+              ),
 
 
-            const Row( 
+            Column( 
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
 
-                BacklitText(textEntry: 'ABOUT', 
-                            fontSize: 24,
-                            isSelectable: true,
-                            route: '/about'),
+                Text(
+                  'NICOLENA DOT NET',
+                   style: Theme.of(context).textTheme.displaySmall,
+                ),
 
-                BacklitDivider(),
 
-                BacklitText(textEntry: 'BLOG', 
-                            fontSize: 24,
-                            isSelectable: true,
-                            route: '/blog'),
+                const Row( 
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
 
-                BacklitDivider(),
+                    BacklitText(textEntry: 'ABOUT', 
+                                fontSize: 24,
+                                isSelectable: true,
+                                route: '/about'),
 
-                BacklitText(textEntry: 'CONTACT', 
-                            fontSize: 24,
-                            isSelectable: true,
-                            route: '/contact'),
+                    BacklitDivider(),
 
-            ],
-          ),
+                    BacklitText(textEntry: 'BLOG', 
+                                fontSize: 24,
+                                isSelectable: true,
+                                route: '/blog'),
+
+                    BacklitDivider(),
+
+                    BacklitText(textEntry: 'CONTACT', 
+                                fontSize: 24,
+                                isSelectable: true,
+                                route: '/contact'),
+
+                ],
+              ),
+              ],
+            ),
           ],
+
         ),
       ),
 

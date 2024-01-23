@@ -240,7 +240,7 @@ class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef<Ast
         break;
 
       default:
-        //TODO: throw error for undefined asteroid type
+        // TODO: throw error for undefined asteroid type
         break;
 
     }
