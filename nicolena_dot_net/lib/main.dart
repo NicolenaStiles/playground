@@ -18,7 +18,6 @@ import 'ui/screens/contact/contact_screen.dart';
 
 import 'package:nicolena_dot_net/api/blog_post.dart';
 
-
 Future<String> _loadAssetData() async {
   return await rootBundle.loadString('assets/blog/BlogManifest.json');
 }
@@ -47,8 +46,8 @@ void main() {
         GoRoute(
           name: post.uRL!,
           path: post.uRL!,
-          builder: (BuildContext context, GoRouterState state) =>
-            BlogPostScreen(blogPost: post)
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+            NoTransitionPage(child: BlogPostScreen(blogPost: post))
         )
       );
     }
@@ -57,30 +56,33 @@ void main() {
       routes: <RouteBase> [ 
         GoRoute( 
           path: '/',
-          builder: (BuildContext context, GoRouterState state) {
-            return const HomepageScreen();
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return const NoTransitionPage(child: HomepageScreen());
           },
+
           routes: <RouteBase> [
             GoRoute( 
               name: 'about',
               path: 'about',
-              builder: (BuildContext context, GoRouterState state) {
-                return const AboutScreen();
+              pageBuilder: (BuildContext context, GoRouterState state) {
+                return const NoTransitionPage(child: AboutScreen());
               },
             ),
+
             GoRoute( 
               name: 'blog',
               path: 'blog',
-              builder: (BuildContext context, GoRouterState state) {
-                return BlogScreen(posts: data.posts); 
+              pageBuilder: (BuildContext context, GoRouterState state) {
+                return NoTransitionPage(child: BlogScreen(posts: data.posts));
               },
               routes: blogRoutes,
             ),
+
             GoRoute( 
               name: 'contact',
               path: 'contact',
-              builder: (BuildContext context, GoRouterState state) {
-                return const ContactScreen();
+              pageBuilder: (BuildContext context, GoRouterState state) {
+                return const NoTransitionPage(child: ContactScreen());
               },
             ),
           ],
@@ -90,10 +92,10 @@ void main() {
 
     runApp(
       MaterialApp.router(
-      title: 'Nicolena Dot Net Demo',
-      theme: websiteTheme,
-      debugShowCheckedModeBanner: false,
-        routerConfig: _routes,
+        title: 'Nicolena Dot Net Demo',
+        theme: websiteTheme,
+        debugShowCheckedModeBanner: false,
+          routerConfig: _routes,
       ));
 
   });
