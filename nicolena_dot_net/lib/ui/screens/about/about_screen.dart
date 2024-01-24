@@ -23,52 +23,36 @@ class _AboutScreenState extends State<AboutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold( 
-      body: Stack (
-          children: <Widget>[
+    return const CoreBorder(
+      content: Column ( 
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
 
-              ParallaxRain( 
-                dropColors: [
-                  Colors.cyan,
-                ],
-                trail: true,
-                dropFallSpeed: 1,
-                numberOfDrops: 100,
-              ),
+        children: [
 
-              const CoreBorder(
-              content: Column ( 
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+          // Header
+          NavHeader(),
+    
+          // spacing/padding
+          SizedBox(
+            height: 18,
+          ),
 
+          BodyBorder(
+            content: Center( 
+              child: Column( 
                 children: [
+                  TabHeader(tabHeaderText: '//ABOUT'),
 
-                  // Header
-                  NavHeader(),
-            
-                  // spacing/padding
-                  SizedBox(
-                    height: 18,
-                  ),
+                  SelectableBlogEntry(route: 'oops',)
 
-                  BodyBorder(
-                    content: Center( 
-                      child: Column( 
-                        children: [
-                          TabHeader(tabHeaderText: '//ABOUT'),
+                ]
+              )
+            )
+          )
 
-                          SelectableBlogEntry(route: 'oops',)
-
-                        ]
-                      )
-                    )
-                  )
-
-                ],
-              ),
-              ),
-        ]
-        ),
+        ],
+      ),
     );
   }
 }

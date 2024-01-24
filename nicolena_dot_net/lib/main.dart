@@ -16,6 +16,8 @@ import 'ui/screens/blog/blog_screen.dart';
 import 'ui/screens/blog/blog_post_screen.dart';
 import 'ui/screens/contact/contact_screen.dart';
 
+import 'package:parallax_rain/parallax_rain.dart';
+
 import 'package:nicolena_dot_net/api/blog_post.dart';
 
 Future<String> _loadAssetData() async {
@@ -53,40 +55,64 @@ void main() {
     }
 
     _routes = GoRouter ( 
-      routes: <RouteBase> [ 
-        GoRoute( 
-          path: '/',
-          pageBuilder: (BuildContext context, GoRouterState state) {
-            return const NoTransitionPage(child: HomepageScreen());
+      initialLocation: '/',
+      routes: [ 
+        ShellRoute( 
+          builder: ( 
+            BuildContext context,
+            GoRouterState state,
+            Widget child,
+          ) {
+            return Scaffold( 
+              body: ParallaxRain( 
+                dropColors: const [
+                        Colors.cyan,
+                      ],
+                      trail: true,
+                      rainIsInBackground: true,
+                      dropFallSpeed: 1,
+                      numberOfDrops: 200,
+                      child: child,
+                    ),
+            );
           },
 
-          routes: <RouteBase> [
+          routes: <RouteBase> [ 
             GoRoute( 
-              name: 'about',
-              path: 'about',
+              path: '/',
               pageBuilder: (BuildContext context, GoRouterState state) {
-                return const NoTransitionPage(child: AboutScreen());
+                return const NoTransitionPage(child: HomepageScreen());
               },
-            ),
 
-            GoRoute( 
-              name: 'blog',
-              path: 'blog',
-              pageBuilder: (BuildContext context, GoRouterState state) {
-                return NoTransitionPage(child: BlogScreen(posts: data.posts));
-              },
-              routes: blogRoutes,
-            ),
+              routes: <RouteBase> [
+                GoRoute( 
+                  name: 'about',
+                  path: 'about',
+                  pageBuilder: (BuildContext context, GoRouterState state) {
+                    return const NoTransitionPage(child: AboutScreen());
+                  },
+                ),
 
-            GoRoute( 
-              name: 'contact',
-              path: 'contact',
-              pageBuilder: (BuildContext context, GoRouterState state) {
-                return const NoTransitionPage(child: ContactScreen());
-              },
+                GoRoute( 
+                  name: 'blog',
+                  path: 'blog',
+                  pageBuilder: (BuildContext context, GoRouterState state) {
+                    return NoTransitionPage(child: BlogScreen(posts: data.posts));
+                  },
+                  routes: blogRoutes,
+                ),
+
+                GoRoute( 
+                  name: 'contact',
+                  path: 'contact',
+                  pageBuilder: (BuildContext context, GoRouterState state) {
+                    return const NoTransitionPage(child: ContactScreen());
+                  },
+                ),
+              ],
             ),
           ],
-        ),
+        )
       ],
     );
 
