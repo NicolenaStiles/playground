@@ -11,9 +11,9 @@ const gameWidth = 300.0;
 const double playerWidthDesktop = 36;
 const double playerHeightDesktop = 60;
 
-const int rotationSpeed = 6;
-Vector2 playerAcceleration = Vector2(4,4);
-const int playerMaxSpeed = 400;
+const double playerRotationSpeed = 0.06;    // tested, seems fine
+Vector2 playerAcceleration = Vector2(4,4);  // untested
+const int playerMaxSpeed = 400;             // untested
 
 // shot
 const int shotRadiusDesktop = 1;

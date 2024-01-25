@@ -3,8 +3,10 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
+
+import 'package:flutter/widgets.dart';
+import 'package:flutter/services.dart';
 
 // configuration
 import 'config.dart' as game_settings;
@@ -13,17 +15,7 @@ import 'config.dart' as game_settings;
 import 'components/components.dart';
 
 class Asteroids extends FlameGame
-  with HasKeyboardHandlerComponents, HasCollisionDetection {
-
-  /*
-  Asteroids()
-    : super( 
-      camera: CameraComponent.withFixedResolution(
-        width: game_settings.gameWidth, 
-        height: game_settings.gameHeight 
-      ),
-    );
-  */
+  with KeyboardEvents, HasCollisionDetection {
 
   double get width => size.x;
   double get height => size.y;
@@ -40,6 +32,37 @@ class Asteroids extends FlameGame
       position: size / 2, 
     ));
 
+
+  }
+  
+  @override
+  KeyEventResult onKeyEvent( 
+    RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    super.onKeyEvent(event, keysPressed);
+
+    final isKeyDown = event is RawKeyDownEvent;
+    final isKeyUp = event is RawKeyUpEvent;
+
+    if (event.repeat) {
+      return KeyEventResult.handled;
+    }
+
+    if (isKeyDown) {
+      switch (event.logicalKey) {
+        case LogicalKeyboardKey.keyA: 
+          world.children.query<Player>().first.rotateLeft = true;
+        case LogicalKeyboardKey.keyD: 
+          world.children.query<Player>().first.rotateRight = true;
+      } 
+    } else if (isKeyUp) {
+      switch (event.logicalKey) {
+        case LogicalKeyboardKey.keyA: 
+          world.children.query<Player>().first.rotateLeft = false;
+        case LogicalKeyboardKey.keyD: 
+          world.children.query<Player>().first.rotateRight = false;
+      }
+    }
+    return KeyEventResult.handled;
   }
 
 }

@@ -1,5 +1,6 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
 
 import '../asteroids.dart';
@@ -18,6 +19,8 @@ class Player extends PositionComponent with CollisionCallbacks,
   );
 
   //final Vector2 velocity;
+  bool rotateLeft = false;
+  bool rotateRight = false;
 
   // Rendering
   List<List<double>> _verticies = [];
@@ -57,10 +60,24 @@ class Player extends PositionComponent with CollisionCallbacks,
     return graphicPath;
   }
 
+  // handling rotation
+  void rotateBy(double dr) {
+    add(RotateEffect.by(
+      dr, 
+      EffectController(duration: 0) 
+    ));
+  }
 
   @override
   void update(double dt) {
     super.update(dt);
+    print(angle);
+
+    if (rotateRight) {
+      rotateBy(game_settings.playerRotationSpeed);
+    } else if (rotateLeft) {
+      rotateBy(-game_settings.playerRotationSpeed);
+    }
   }
 
 }
