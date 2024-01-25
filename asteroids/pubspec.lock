@@ -61,18 +61,18 @@ packages:
     dependency: "direct main"
     description:
       name: flame
-      sha256: b6bb76224fc29fd5eea25d66cda6e322e3678bdedc1f65956c6151326a6a798b
+      sha256: "61c42b966a6b1f44ee093194e6701d45b14fdda1859c14fe68a39489454bfbd4"
       url: "https://pub.dev"
     source: hosted
-    version: "1.10.1"
+    version: "1.14.0"
   flame_forge2d:
     dependency: "direct main"
     description:
       name: flame_forge2d
-      sha256: "85a65e481dfc47870c95b32543f536b9aae4cfb2e7d74bef804661c808068a4e"
+      sha256: "9914d836dfb0cf642300a1640d82488707ab4d230cbb6aa6e14228c9d4de3379"
       url: "https://pub.dev"
     source: hosted
-    version: "0.16.0"
+    version: "0.16.0+4"
   flutter:
     dependency: "direct main"
     description: flutter

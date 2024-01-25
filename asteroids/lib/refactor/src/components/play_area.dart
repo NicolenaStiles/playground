@@ -2,22 +2,27 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+
 import 'package:flutter/material.dart';
 
-import '../src/brick_breaker.dart';
+import '../asteroids.dart';
 
 class PlayArea extends RectangleComponent 
-  with HasGameReference<BrickBreaker> {
+  with HasGameReference<Asteroids> {
+
   PlayArea()
     : super( 
-      paint: Paint()..color = const Color(0xfff2e8cf), // background color
+      paint: Paint()..color = Colors.black,
       children: [RectangleHitbox()],
     );
 
   @override
   FutureOr<void> onLoad() async {
     super.onLoad();
-    size = Vector2(game.width, game.height);
+    // TODO: change padding here (currently magic number 50) 
+    // this is just some arbitrary shit. 
+    size = Vector2(game.width + 50, game.height + 50);
   }
-}
 
+
+}

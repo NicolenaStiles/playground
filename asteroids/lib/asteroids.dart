@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'components/asteroid.dart';
 import 'package:asteroids/components/shot.dart';
 import 'package:asteroids/components/player.dart';
+
 // utils
 import 'dart:math';
 
@@ -268,6 +269,8 @@ class Asteroids extends FlameGame
   // camping ;)
   // NOTE: I should probably document the math here better? but it's in my
   // paper notes for 11/18/2023 if I need to go back and check.
+  // TODO: add hyperdrive 
+
   void movePlayer(double dt) {
 
     // rotation update

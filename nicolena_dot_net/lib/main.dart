@@ -66,14 +66,15 @@ void main() {
             return Scaffold( 
               body: ParallaxRain( 
                 dropColors: const [
-                        Colors.cyan,
-                      ],
-                      trail: true,
-                      rainIsInBackground: true,
-                      dropFallSpeed: 1,
-                      numberOfDrops: 200,
-                      child: child,
-                    ),
+                  Colors.cyan,
+                ],
+                trail: true,
+                rainIsInBackground: true,
+                dropFallSpeed: 1,
+                numberOfDrops: 250,
+                trailStartFraction: 0.35,
+                child: child,
+              ),
             );
           },
 
