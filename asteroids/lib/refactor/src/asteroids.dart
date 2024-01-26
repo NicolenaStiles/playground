@@ -28,20 +28,18 @@ class Asteroids extends FlameGame
 
     world.add(PlayArea());
 
+    /*
     world.add(Asteroid(
       objType: AsteroidType.asteroidX,
       objSize: AsteroidSize.large,
       velocity: 100.0,
       position: size / 2, 
     ));
-
-    /*
-    world.add(Player(
-      velocity: Vector2(0.0, 0.0),
-      position: size / 2, 
-    ));
     */
 
+    world.add(Player(
+      position: size / 2, 
+    ));
 
   }
   

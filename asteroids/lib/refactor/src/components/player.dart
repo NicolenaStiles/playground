@@ -14,7 +14,6 @@ class Player extends PositionComponent with CollisionCallbacks,
   HasGameRef<Asteroids> {
 
   Player({
-    required this.velocity,
     required super.position,
   }) : super ( 
         anchor: Anchor.center,
@@ -28,8 +27,11 @@ class Player extends PositionComponent with CollisionCallbacks,
   bool rotateRight = false;
 
   // movement math
-  final Vector2 velocity;
-  //Vector2 acceleration;
+  double _playerLastImpulseAngle = 0;
+  Vector2 _playerVelocityInitial = Vector2(0,0);
+  Vector2 _playerVelocityFinal= Vector2(0,0);
+  final Vector2 _playerDisplacement = Vector2(0,0);
+  final Vector2 _playerDirection = Vector2(0,0);
 
   // Rendering
   List<List<double>> _verticies = [];
@@ -77,30 +79,61 @@ class Player extends PositionComponent with CollisionCallbacks,
     ));
   }
 
-  void moveBy(double dx) {
+  void movePlayer(double dt) {
 
     double xMove = sin(angle);
     double yMove = 0 - cos(angle);
 
-    Vector2 playerDirection = Vector2(xMove, yMove);
-    playerDirection.normalize();
+    _playerDirection 
+    ..setValues(xMove,yMove)
+    ..normalize();
 
-    add(MoveByEffect(
-      Vector2( 
-        (position.x + dx).clamp(width / 2, game.width - width / 2),
-        (position.y + dx).clamp(width / 2, game.width - width / 2),
-      ),
-      EffectController(duration: 0.1)
-    ));
+    if (moveForward) {
+
+      _playerLastImpulseAngle = angle;
+      _playerVelocityFinal = _playerVelocityInitial + (game_settings.playerAcceleration * dt);
+      _playerDisplacement[0] = _playerDirection[0] * _playerVelocityFinal[0];
+      _playerDisplacement[1] = _playerDirection[1] * _playerVelocityFinal[1];
+      _playerVelocityInitial = _playerVelocityFinal;
+
+      add(MoveByEffect(
+        Vector2( 
+          _playerDisplacement[0],
+          _playerDisplacement[1]
+        ),
+        EffectController(duration: 0))
+      );
+
+    } else {
+
+      if (_playerVelocityFinal[0] > 0 && _playerVelocityFinal[1] > 0) {
+
+        _playerVelocityFinal = _playerVelocityInitial - (game_settings.playerAcceleration * dt);
+        _playerDisplacement[0] = sin(_playerLastImpulseAngle) * _playerVelocityFinal[0];
+        _playerDisplacement[1] = (0 - cos(_playerLastImpulseAngle)) * _playerVelocityFinal[1];
+        _playerVelocityInitial = _playerVelocityFinal;
+
+        add(MoveByEffect(
+          Vector2( 
+            _playerDisplacement[0],
+            _playerDisplacement[1]
+          ),
+          EffectController(duration: 0))
+        );
+
+      } else {
+
+        _playerVelocityInitial = Vector2(0,0);
+        _playerVelocityFinal= Vector2(0,0);
+
+      }
+    }
+
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-
-    if (moveForward) {
-      moveBy(dt);
-    }
 
     // rotation
     if (rotateRight) {
@@ -108,6 +141,10 @@ class Player extends PositionComponent with CollisionCallbacks,
     } else if (rotateLeft) {
       rotateBy(-game_settings.playerRotationSpeed);
     }
+
+    // movement
+    movePlayer(dt);
+
   }
 
 }
