@@ -2,6 +2,7 @@ import 'package:flame/game.dart';
 
 // NOTE: these are temp values for debugging viewport stuff. 
 // the actual asteroids game will be fullscreen (probably)
+// THESE VALUES ARE NOT USED IN CURRENT IMPLEMENTAITON
 // TODO: adjust these to work better with mobile players?
 const gameHeight = 200.0;
 const gameWidth = 300.0;
@@ -16,11 +17,10 @@ Vector2 playerAcceleration = Vector2(4,4);  // untested
 const int playerMaxSpeed = 400;             // untested
 
 // shot
-const int shotRadiusDesktop = 1;
-const int shotSpeed = 800;        // how fast bullets go
-const int shotTimer = 600;        // how long bullets live
-const int currShotCooldown = 0;   // how long since last shoot bullet
-const int shotCooldown = 32;      // how long until shoot bullets
+const double shotRadiusDesktop = 1;
+const double shotSpeed = 600;        // how fast bullets go
+const double shotTimer = 100;        // how long bullets live
+const double shotCooldown = 64;      // how long until shoot bullets
 
 // asteroids
 const double largeAsteroidDesktop = 128.0; 

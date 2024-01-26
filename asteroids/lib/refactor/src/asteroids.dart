@@ -41,6 +41,8 @@ class Asteroids extends FlameGame
       position: size / 2, 
     ));
 
+    debugMode = true;
+
   }
   
   @override
@@ -65,6 +67,10 @@ class Asteroids extends FlameGame
           world.children.query<Player>().first.rotateLeft = true;
         case LogicalKeyboardKey.keyD: 
           world.children.query<Player>().first.rotateRight = true;
+        // shooting
+        case LogicalKeyboardKey.space: 
+          world.children.query<Player>().first.fireShot = true;
+
       } 
     } else if (isKeyUp) {
       switch (event.logicalKey) {
@@ -76,6 +82,9 @@ class Asteroids extends FlameGame
           world.children.query<Player>().first.rotateLeft = false;
         case LogicalKeyboardKey.keyD: 
           world.children.query<Player>().first.rotateRight = false;
+        // shooting
+        case LogicalKeyboardKey.space: 
+          world.children.query<Player>().first.fireShot = false;
       }
     }
     return KeyEventResult.handled;

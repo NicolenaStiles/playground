@@ -1,6 +1,9 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
+
+import 'dart:math';
 
 import '../config.dart' as game_settings;
 import '../components/components.dart';
@@ -9,21 +12,18 @@ class Shot extends CircleComponent
   with CollisionCallbacks {
 
   Shot({
-    required this.velocity,
     required super.position,
-    required double radius,
+    required super.angle,
   }) : super(
-            radius: radius,
+            radius: game_settings.shotRadiusDesktop,
             anchor: Anchor.center,
             paint: Paint()
               ..color = Colors.white
               ..style = PaintingStyle.fill,
-            children: [CircleHitbox()],
+            children: [CircleHitbox(radius: game_settings.shotRadiusDesktop)],
  );
 
   int _timer = 0;
-  final Vector2 velocity;
-  int _currShotCooldown = 0;
   //int _timeToLive;
   //bool shotReady = true;
 
@@ -39,10 +39,40 @@ class Shot extends CircleComponent
 
   }
 
+  void moveBy(double dt) {
+
+    final Vector2 direciton = Vector2.zero();
+
+    double xMove = sin(angle);
+    double yMove = 0 - cos(angle);
+
+    direciton 
+      ..setValues(xMove,yMove)
+      ..normalize();
+
+    final shotDisplacement = direciton * (game_settings.shotSpeed * dt);
+
+    add(MoveByEffect(
+      Vector2( 
+        shotDisplacement[0],
+        shotDisplacement[1]
+      ),
+      EffectController(duration: 0))
+    );
+
+  }
+
   @override
   void update(double dt) {
     super.update(dt);
-    position += velocity * dt;
+
+    if (_timer < game_settings.shotTimer) {
+      moveBy(dt);
+      _timer++;
+    } else {
+      removeFromParent();
+    }
+
   }
 }
 

@@ -33,6 +33,11 @@ class Player extends PositionComponent with CollisionCallbacks,
   final Vector2 _playerDisplacement = Vector2(0,0);
   final Vector2 _playerDirection = Vector2(0,0);
 
+  // handling shot
+  bool fireShot = false;
+  bool _shotReady = true;
+  int _currShotCooldown = 0;
+
   // Rendering
   List<List<double>> _verticies = [];
   final _paint = Paint()
@@ -131,6 +136,35 @@ class Player extends PositionComponent with CollisionCallbacks,
 
   }
 
+  void shootShot(fireShot) {
+
+    // fire shot: add object to the world
+    if (fireShot && _shotReady) {
+      // calculate starting position for shot
+      double shotPositionX = (position.x + sin(angle) * (height / 2));
+      double shotPositionY = (position.y - cos(angle) * (height / 2));
+
+      // create shot object
+      game.world.add(
+        Shot(
+          position : Vector2(shotPositionX,shotPositionY),
+          angle : angle
+        )
+      );
+      _shotReady = false;
+      _currShotCooldown = 0;
+    } 
+
+    // check if we can shoot
+    if (!_shotReady && _currShotCooldown < game_settings.shotCooldown) {
+      _currShotCooldown++;
+    } else {
+      _shotReady = true;
+      _currShotCooldown = 0;
+    }
+
+  }
+
   @override
   void update(double dt) {
     super.update(dt);
@@ -144,6 +178,8 @@ class Player extends PositionComponent with CollisionCallbacks,
 
     // movement
     movePlayer(dt);
+
+    shootShot(fireShot);
 
   }
 
