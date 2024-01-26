@@ -1,6 +1,9 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
+
+import 'dart:math';
 
 import '../asteroids.dart';
 import '../config.dart' as game_settings;
@@ -43,8 +46,7 @@ class Asteroid extends PositionComponent
 
   AsteroidSize objSize;
   AsteroidType objType;
-
-  final Vector2 velocity;
+  final double velocity;
 
   // Rendering
   var graphicPath = Path();
@@ -165,10 +167,33 @@ class Asteroid extends PositionComponent
     canvas.drawPath(completePath(), _paint);
   }
 
+  void moveBy(double dt) {
+
+    final Vector2 direciton = Vector2.zero();
+
+    double xMove = sin(angle);
+    double yMove = 0 - cos(angle);
+
+    direciton 
+      ..setValues(xMove,yMove)
+      ..normalize();
+
+    final asteroidDisplacement = direciton * (velocity * dt);
+
+    add(MoveByEffect(
+      Vector2( 
+        asteroidDisplacement[0],
+        asteroidDisplacement[1]
+      ),
+      EffectController(duration: 0.1))
+    );
+
+  }
+
   @override
   void update(double dt) {
     super.update(dt);
-    position += velocity * dt;
+    moveBy(dt);
   }
 
 }

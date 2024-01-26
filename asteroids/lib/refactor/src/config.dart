@@ -26,6 +26,7 @@ const int shotCooldown = 32;      // how long until shoot bullets
 const double largeAsteroidDesktop = 128.0; 
 const double mediumAsteroidDesktop = 64.0; 
 const double smallAsteroidDesktop = 32.0; 
+// TODO: change this into an upper and lower bound instead
 const double asteroidSpeed = 300.0;
 
 // WARN : I pulled these numbers out of my ass
