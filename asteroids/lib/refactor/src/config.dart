@@ -23,10 +23,10 @@ const int currShotCooldown = 0;   // how long since last shoot bullet
 const int shotCooldown = 32;      // how long until shoot bullets
 
 // asteroids
-const largeAsteroidDesktop = 128; 
-const mediumAsteroidDesktop = 64; 
-const smallAsteroidDesktop = 32; 
-const asteroidSpeed = 300;
+const double largeAsteroidDesktop = 128.0; 
+const double mediumAsteroidDesktop = 64.0; 
+const double smallAsteroidDesktop = 32.0; 
+const double asteroidSpeed = 300.0;
 
 // WARN : I pulled these numbers out of my ass
 const alienWidthDesktop = 60;

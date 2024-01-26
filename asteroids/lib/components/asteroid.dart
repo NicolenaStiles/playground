@@ -63,10 +63,8 @@ class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef<Ast
     super.onCollisionStart(intersectionPoints, other);
 
     if (other is Shot) {
-
       _asteroidChildren = [];
       splitAsteroid();
-
     }
   }
 

@@ -1,7 +1,10 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+
 import 'package:flutter/material.dart';
+
+import 'dart:math';
 
 import '../asteroids.dart';
 import '../config.dart' as game_settings;
@@ -11,16 +14,22 @@ class Player extends PositionComponent with CollisionCallbacks,
   HasGameRef<Asteroids> {
 
   Player({
-    //required this.velocity,
+    required this.velocity,
     required super.position,
   }) : super ( 
         anchor: Anchor.center,
-        size: Vector2(game_settings.playerWidthDesktop, game_settings.playerHeightDesktop),
+        size: Vector2(game_settings.playerWidthDesktop, 
+                      game_settings.playerHeightDesktop),
   );
 
-  //final Vector2 velocity;
+  // movement input
+  bool moveForward = false;
   bool rotateLeft = false;
   bool rotateRight = false;
+
+  // movement math
+  final Vector2 velocity;
+  //Vector2 acceleration;
 
   // Rendering
   List<List<double>> _verticies = [];
@@ -68,11 +77,32 @@ class Player extends PositionComponent with CollisionCallbacks,
     ));
   }
 
+  void moveBy(double dx) {
+
+    double xMove = sin(angle);
+    double yMove = 0 - cos(angle);
+
+    Vector2 playerDirection = Vector2(xMove, yMove);
+    playerDirection.normalize();
+
+    add(MoveByEffect(
+      Vector2( 
+        (position.x + dx).clamp(width / 2, game.width - width / 2),
+        (position.y + dx).clamp(width / 2, game.width - width / 2),
+      ),
+      EffectController(duration: 0.1)
+    ));
+  }
+
   @override
   void update(double dt) {
     super.update(dt);
-    print(angle);
 
+    if (moveForward) {
+      moveBy(dt);
+    }
+
+    // rotation
     if (rotateRight) {
       rotateBy(game_settings.playerRotationSpeed);
     } else if (rotateLeft) {

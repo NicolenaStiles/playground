@@ -28,9 +28,19 @@ class Asteroids extends FlameGame
 
     world.add(PlayArea());
 
-    world.add(Player(
+    world.add(Asteroid(
+      velocity: Vector2(0, 0), 
+      objType: AsteroidType.asteroidX,
+      objSize: AsteroidSize.large,
       position: size / 2, 
     ));
+
+    /*
+    world.add(Player(
+      velocity: Vector2(0.0, 0.0),
+      position: size / 2, 
+    ));
+    */
 
 
   }
@@ -49,6 +59,10 @@ class Asteroids extends FlameGame
 
     if (isKeyDown) {
       switch (event.logicalKey) {
+        // movement
+        case LogicalKeyboardKey.keyW: 
+          world.children.query<Player>().first.moveForward = true;
+        // rotation
         case LogicalKeyboardKey.keyA: 
           world.children.query<Player>().first.rotateLeft = true;
         case LogicalKeyboardKey.keyD: 
@@ -56,6 +70,10 @@ class Asteroids extends FlameGame
       } 
     } else if (isKeyUp) {
       switch (event.logicalKey) {
+        // movement
+        case LogicalKeyboardKey.keyW: 
+          world.children.query<Player>().first.moveForward = false;
+        // rotation
         case LogicalKeyboardKey.keyA: 
           world.children.query<Player>().first.rotateLeft = false;
         case LogicalKeyboardKey.keyD: 
