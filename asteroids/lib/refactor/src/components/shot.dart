@@ -20,12 +20,11 @@ class Shot extends CircleComponent
             paint: Paint()
               ..color = Colors.white
               ..style = PaintingStyle.fill,
-            children: [CircleHitbox(radius: game_settings.shotRadiusDesktop)],
+            children: [CircleHitbox(radius: game_settings.shotRadiusDesktop,
+                                    isSolid: true)],
  );
 
   int _timer = 0;
-  //int _timeToLive;
-  //bool shotReady = true;
 
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, 

@@ -84,6 +84,7 @@ class Player extends PositionComponent with CollisionCallbacks,
     ));
   }
 
+  // Handling movement: including the glide-y stuff specific to asteroids!
   void movePlayer(double dt) {
 
     double xMove = sin(angle);
@@ -136,7 +137,8 @@ class Player extends PositionComponent with CollisionCallbacks,
 
   }
 
-  void shootShot(fireShot) {
+  // handles everything related to firing and managing shots
+  void handleShot(fireShot) {
 
     // fire shot: add object to the world
     if (fireShot && _shotReady) {
@@ -179,8 +181,11 @@ class Player extends PositionComponent with CollisionCallbacks,
     // movement
     movePlayer(dt);
 
-    shootShot(fireShot);
+    // shots: firing and managing cooldown
+    handleShot(fireShot);
 
   }
+
+  // Collision stuff
 
 }

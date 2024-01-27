@@ -21,32 +21,42 @@ class Asteroid extends PositionComponent
     required this.objSize,
     required this.velocity,
     required super.position,
+    required super.angle,
   }) : super(
       anchor: Anchor.center,
-      children: [CircleHitbox()]
+      children: [CircleHitbox(isSolid: true)]
     ) {
-    // TODO: should depend on if we're using desktop or not
+      super.size = mapAsteroidSize(objSize);
+  }
+
+  // TODO: should depend on if we're using desktop or not
+  Vector2 mapAsteroidSize(asteroidSize) {
+
     switch (objSize) {
       case AsteroidSize.large:
-        super.size = Vector2(game_settings.largeAsteroidDesktop,
-                             game_settings.largeAsteroidDesktop);
-        break;
+        return Vector2(game_settings.largeAsteroidDesktop,
+                       game_settings.largeAsteroidDesktop);
       case AsteroidSize.medium:
-        super.size = Vector2(game_settings.mediumAsteroidDesktop,
-                             game_settings.mediumAsteroidDesktop);
-        break;
+        return Vector2(game_settings.mediumAsteroidDesktop,
+                       game_settings.mediumAsteroidDesktop);
       case AsteroidSize.small:
-        super.size = Vector2(game_settings.smallAsteroidDesktop,
-                             game_settings.smallAsteroidDesktop);
-        break;
+        return Vector2(game_settings.smallAsteroidDesktop,
+                       game_settings.smallAsteroidDesktop);
       default:
-        print("omg value unset?!");
+        print("Asteroid size unset!");
+        return Vector2(0, 0);
     } 
   }
 
+  // Core settings
   AsteroidSize objSize;
   AsteroidType objType;
+
+  // Movement
   final double velocity;
+
+  // for collisions (when shot)
+  List<Asteroid> _asteroidChildren = [];
 
   // Rendering
   var graphicPath = Path();
@@ -194,6 +204,105 @@ class Asteroid extends PositionComponent
   void update(double dt) {
     super.update(dt);
     moveBy(dt);
+  }
+
+  @override
+  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollisionStart(intersectionPoints, other);
+
+    if (other is Shot) {
+      _asteroidChildren = [];
+      splitAsteroid();
+    }
+  }
+
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    super.onCollisionEnd(other);
+
+    if (other is Shot) {
+      game.world.addAll(_asteroidChildren);
+      //game.updateScore(_points);
+      removeFromParent();
+    }
+  }
+
+  void splitAsteroid() {
+
+    switch (objSize) {
+
+      case AsteroidSize.large:
+
+        // for + pi / 4
+        double newXA = position.x + sin(angle + (pi / 4)) * (width / 2);
+        double newYA = position.y + (0 - cos(angle + (pi / 4)) * (height / 2));
+        // for - pi / 4
+        double newXB = position.x + sin(angle - (pi / 4)) * (width / 2);
+        double newYB = position.y + (0 - cos(angle - (pi / 4)) * (height / 2));
+        
+        _asteroidChildren.add( 
+          Asteroid( 
+            objType: objType, 
+            objSize: AsteroidSize.medium,
+            velocity: velocity,
+            position: Vector2(newXA, newYA),
+            angle: angle
+          )
+        );
+
+        _asteroidChildren.add( 
+          Asteroid( 
+            objType: objType, 
+            objSize: AsteroidSize.medium,
+            velocity: velocity,
+            position: Vector2(newXB, newYB),
+            angle: angle - (pi / 4)
+          )
+        );
+
+      break;
+
+      case AsteroidSize.medium:
+
+        // for + pi / 4
+        double newXA = position.x + sin(angle + (pi / 4)) * (width / 2);
+        double newYA = position.y + (0 - cos(angle + (pi / 4)) * (height / 2));
+        // for - pi / 4
+        double newXB = position.x + sin(angle - (pi / 4)) * (width / 2);
+        double newYB = position.y + (0 - cos(angle - (pi / 4)) * (height / 2));
+        
+        _asteroidChildren.add( 
+          Asteroid( 
+            objType: objType, 
+            objSize: AsteroidSize.small,
+            velocity: velocity,
+            position: Vector2(newXA, newYA),
+            angle: angle
+          )
+        );
+
+        _asteroidChildren.add( 
+          Asteroid( 
+            objType: objType, 
+            objSize: AsteroidSize.small,
+            velocity: velocity,
+            position: Vector2(newXB, newYB),
+            angle: angle - (pi / 4)
+          )
+        );
+
+      break;
+
+      case AsteroidSize.small:
+        // set to black briefly before removing entirely at collision end
+        _paint.color = Colors.black;
+      break;
+
+      default:
+        // TODO: throw error for undefined asteroid size?
+
+    }
+
   }
 
 }
