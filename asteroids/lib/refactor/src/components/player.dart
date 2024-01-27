@@ -10,15 +10,22 @@ import '../asteroids.dart';
 import '../config.dart' as game_settings;
 import '../components/components.dart';
 
-class Player extends PositionComponent with CollisionCallbacks, 
-  HasGameRef<Asteroids> {
+class Player extends PositionComponent 
+  with CollisionCallbacks, HasGameRef<Asteroids> {
 
+  // TODO: bespoke hitbox?
+  // TODO: how determine platform?
   Player({
+    required super.key,
     required super.position,
+    required super.size
   }) : super ( 
         anchor: Anchor.center,
+        /*
         size: Vector2(game_settings.playerWidthDesktop, 
                       game_settings.playerHeightDesktop),
+        */
+        children: [RectangleHitbox(isSolid: true)]
   );
 
   // movement input
@@ -37,6 +44,11 @@ class Player extends PositionComponent with CollisionCallbacks,
   bool fireShot = false;
   bool _shotReady = true;
   int _currShotCooldown = 0;
+
+  // respawn stuff
+  // WARN: Debug only!
+  bool _godmode = true;
+  int _currRespawnTimer = 0;
 
   // Rendering
   List<List<double>> _verticies = [];
@@ -131,7 +143,6 @@ class Player extends PositionComponent with CollisionCallbacks,
 
         _playerVelocityInitial = Vector2(0,0);
         _playerVelocityFinal= Vector2(0,0);
-
       }
     }
 
@@ -167,6 +178,48 @@ class Player extends PositionComponent with CollisionCallbacks,
 
   }
 
+  // WARN: lol this ain't right
+  // TODO: this logic isn't quite right? respawn timer not implemented
+  void updateLives(){
+    String keyName = 'life${game.lives - 1}';
+    if (game.findByKeyName<Player>(keyName) != null) {
+      remove(game.findByKeyName<Player>(keyName)!);
+    }
+    game.lives--;
+    _godmode = true;
+  }
+
+  void updateInvulnerability() {
+    if (!_godmode) { 
+      return;
+    }
+    if (_currRespawnTimer < game_settings.respawnTimer){
+      _currRespawnTimer++;
+    } else {
+      _godmode = false;
+      _currRespawnTimer = 0;
+    }
+  }
+
+  @override
+  void onCollisionStart(Set<Vector2> intersectionPoints, 
+                        PositionComponent other) {
+    super.onCollisionStart(intersectionPoints, other);
+    // if not invincible
+    // start animation?
+  }
+
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    super.onCollisionEnd(other);
+
+    if (!_godmode) {
+      updateLives();
+      position = Vector2(0, 0);
+    }
+  }
+
+
   @override
   void update(double dt) {
     super.update(dt);
@@ -184,8 +237,8 @@ class Player extends PositionComponent with CollisionCallbacks,
     // shots: firing and managing cooldown
     handleShot(fireShot);
 
+    // handle invulnerability 
+    updateInvulnerability();
+
   }
-
-  // Collision stuff
-
 }

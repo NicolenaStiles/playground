@@ -12,7 +12,6 @@ import '../components/components.dart';
 enum AsteroidType {asteroidX, asteroidS, asteroidO} 
 enum AsteroidSize {small, medium, large} 
 
-// TODO: update asteroid hitbox logic for circular
 class Asteroid extends PositionComponent 
   with CollisionCallbacks, HasGameReference<Asteroids> {
 
@@ -26,31 +25,16 @@ class Asteroid extends PositionComponent
       anchor: Anchor.center,
       children: [CircleHitbox(isSolid: true)]
     ) {
-      super.size = mapAsteroidSize(objSize);
-  }
-
-  // TODO: should depend on if we're using desktop or not
-  Vector2 mapAsteroidSize(asteroidSize) {
-
-    switch (objSize) {
-      case AsteroidSize.large:
-        return Vector2(game_settings.largeAsteroidDesktop,
-                       game_settings.largeAsteroidDesktop);
-      case AsteroidSize.medium:
-        return Vector2(game_settings.mediumAsteroidDesktop,
-                       game_settings.mediumAsteroidDesktop);
-      case AsteroidSize.small:
-        return Vector2(game_settings.smallAsteroidDesktop,
-                       game_settings.smallAsteroidDesktop);
-      default:
-        print("Asteroid size unset!");
-        return Vector2(0, 0);
-    } 
+      super.size = mapAsteroidSize();
+      _points = mapAsteroidValue();
   }
 
   // Core settings
   AsteroidSize objSize;
   AsteroidType objType;
+
+  // value when destroyed
+  int _points = 0;
 
   // Movement
   final double velocity;
@@ -65,6 +49,40 @@ class Asteroid extends PositionComponent
     ..style = PaintingStyle.stroke
     ..strokeWidth = 2.0
     ..color = Colors.white;
+
+
+  // TODO: should depend on if we're using desktop or not
+  Vector2 mapAsteroidSize() {
+
+    switch (objSize) {
+      case AsteroidSize.large:
+        return Vector2(game_settings.largeAsteroidDesktop,
+                       game_settings.largeAsteroidDesktop);
+      case AsteroidSize.medium:
+        return Vector2(game_settings.mediumAsteroidDesktop,
+                       game_settings.mediumAsteroidDesktop);
+      case AsteroidSize.small:
+        return Vector2(game_settings.smallAsteroidDesktop,
+                       game_settings.smallAsteroidDesktop);
+      default:
+        debugPrint("Asteroid size unset!");
+        return Vector2(0, 0);
+    } 
+  }
+
+  int mapAsteroidValue() {
+    switch (objSize) {
+      case AsteroidSize.large:
+        return game_settings.largeAsteroidPoints; 
+      case AsteroidSize.medium:
+        return game_settings.mediumAsteroidPoints; 
+      case AsteroidSize.small:
+        return game_settings.smallAsteroidPoints; 
+      default:
+        debugPrint("Asteroid points value unset!");
+        return 0; 
+    }
+  }
 
   Path completePath() {
 
@@ -156,7 +174,7 @@ class Asteroid extends PositionComponent
         break;
 
       default:
-        // TODO: throw error for undefined asteroid type
+        debugPrint("Asteroid type undefined!");
         break;
 
     }
@@ -207,7 +225,8 @@ class Asteroid extends PositionComponent
   }
 
   @override
-  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+  void onCollisionStart(Set<Vector2> intersectionPoints, 
+                        PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
 
     if (other is Shot) {
@@ -223,6 +242,7 @@ class Asteroid extends PositionComponent
     if (other is Shot) {
       game.world.addAll(_asteroidChildren);
       //game.updateScore(_points);
+      game.score += _points;
       removeFromParent();
     }
   }
@@ -299,10 +319,7 @@ class Asteroid extends PositionComponent
       break;
 
       default:
-        // TODO: throw error for undefined asteroid size?
-
+        debugPrint("Child asteroid size unset!");
     }
-
   }
-
 }

@@ -169,7 +169,6 @@ class Asteroids extends FlameGame
 
     }
 
-
     // update scoreboard
     scoreboard.text = score.toString().padLeft(4, '0');
   }
