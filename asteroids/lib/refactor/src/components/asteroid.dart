@@ -208,14 +208,9 @@ class Asteroid extends PositionComponent
 
     final asteroidDisplacement = direciton * (velocity * dt);
 
-    add(MoveByEffect(
-      Vector2( 
-        asteroidDisplacement[0],
-        asteroidDisplacement[1]
-      ),
-      EffectController(duration: 0.1))
-    );
+    position.add(asteroidDisplacement);
 
+    checkWraparound();
   }
 
   // Checks if PositionComponent should wrap around the game screen
@@ -242,7 +237,6 @@ class Asteroid extends PositionComponent
   void update(double dt) {
     super.update(dt);
     moveBy(dt);
-    checkWraparound();
   }
 
   @override
@@ -262,7 +256,6 @@ class Asteroid extends PositionComponent
 
     if (other is Shot) {
       game.world.addAll(_asteroidChildren);
-      //game.updateScore(_points);
       game.score += _points;
       removeFromParent();
     }

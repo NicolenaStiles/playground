@@ -79,7 +79,7 @@ class Asteroids extends FlameGame
         textRenderer: scoreRenderer,
         anchor: Anchor.topLeft,
         position: Vector2(0,0));
-    add(scoreboard);
+    world.add(scoreboard);
 
     // display lives
     for (int n = 0; n < lives; n++) {
@@ -87,7 +87,7 @@ class Asteroids extends FlameGame
       double xPos = canvasSize.x - (((n + 1) * game_settings.livesOffset) 
                                  + (n * game_settings.livesWidth) 
                                  + (game_settings.livesWidth / 2));
-      add(
+      world.add(
         Player(
           key: ComponentKey.named(lifeKey),
           position: Vector2(xPos, 
@@ -106,8 +106,6 @@ class Asteroids extends FlameGame
   void update(double dt) {
     super.update(dt);
     // update scoreboard
-    // TODO: move this to asteroid collision handling?
-    // ...or shot collision handling?
     scoreboard.text = score.toString().padLeft(4, '0');
   }
   

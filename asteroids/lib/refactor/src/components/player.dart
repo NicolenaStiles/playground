@@ -1,6 +1,5 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/effects.dart';
 import 'package:flame/extensions.dart';
 
 import 'package:flutter/material.dart';
@@ -90,11 +89,15 @@ class Player extends PositionComponent
   }
 
   // handling rotation
-  void rotateBy(double dr) {
-    add(RotateEffect.by(
-      dr, 
-      EffectController(duration: 0.1) 
-    ));
+  void turnLeft(double dt) {
+    angle -= game_settings.playerRotationSpeed * dt;
+    angle %= 2 * pi;
+  }
+
+  // handling rotation
+  void turnRight(double dt) {
+    angle += game_settings.playerRotationSpeed * dt;
+    angle %= 2 * pi;
   }
 
   // Handling movement: including the glide-y stuff specific to asteroids!
@@ -115,13 +118,8 @@ class Player extends PositionComponent
       _playerDisplacement[1] = _playerDirection[1] * _playerVelocityFinal[1];
       _playerVelocityInitial = _playerVelocityFinal;
 
-      add(MoveByEffect(
-        Vector2( 
-          _playerDisplacement[0],
-          _playerDisplacement[1]
-        ),
-        EffectController(duration: 0.1))
-      );
+      // actual position update
+      position.add(_playerDisplacement);
 
     } else {
 
@@ -132,13 +130,11 @@ class Player extends PositionComponent
         _playerDisplacement[1] = (0 - cos(_playerLastImpulseAngle)) * _playerVelocityFinal[1];
         _playerVelocityInitial = _playerVelocityFinal;
 
-        add(MoveByEffect(
-          Vector2( 
-            _playerDisplacement[0],
-            _playerDisplacement[1]
-          ),
-          EffectController(duration: 0.1))
-        );
+        // actual position update
+        position.add(_playerDisplacement);
+
+        // check wraparound
+        checkWraparound();
 
       } else {
         _playerVelocityInitial = Vector2(0,0);
@@ -174,13 +170,13 @@ class Player extends PositionComponent
     // fire shot: add object to the world
     if (fireShot && _shotReady) {
       // calculate starting position for shot
-      double shotPositionX = (position.x + sin(angle) * (height / 2));
-      double shotPositionY = (position.y - cos(angle) * (height / 2));
+      double shotPositionX = (position.x + sin(angle) * (size.x));
+      double shotPositionY = (position.y - cos(angle) * (size.x));
 
       // create shot object
       game.world.add(
         Shot(
-          position : Vector2(shotPositionX,shotPositionY),
+          position : Vector2(shotPositionX, shotPositionY),
           angle : angle
         )
       );
@@ -221,6 +217,7 @@ class Player extends PositionComponent
     }
   }
 
+  // TODO: implement collisions!
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, 
                         PositionComponent other) {
@@ -229,6 +226,8 @@ class Player extends PositionComponent
     // start animation?
   }
 
+  // TODO: implement collisions!
+  // WARN: this is super busted!
   @override
   void onCollisionEnd(PositionComponent other) {
     super.onCollisionEnd(other);
@@ -244,11 +243,8 @@ class Player extends PositionComponent
     super.update(dt);
 
     // rotation
-    if (rotateRight) {
-      rotateBy(game_settings.playerRotationSpeed);
-    } else if (rotateLeft) {
-      rotateBy(-game_settings.playerRotationSpeed);
-    }
+    if (rotateRight) { turnRight(dt); }
+    if (rotateLeft) { turnLeft(dt); }
 
     // movement
     movePlayer(dt);
@@ -259,8 +255,8 @@ class Player extends PositionComponent
     // handle invulnerability 
     updateInvulnerability();
 
-    // check wraparound
-    checkWraparound();
 
   }
+
+
 }

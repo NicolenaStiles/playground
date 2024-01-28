@@ -12,14 +12,14 @@ const int respawnTimer = 30;
 const int playerLives = 3;
 
 // TODO: change this into an upper and lower bound instead
-const double asteroidSpeed = 300.0;
+const double asteroidSpeed = 120.0;
 
 // Desktop sizing variants
 // player 
 const double playerWidthDesktop = 36;
 const double playerHeightDesktop = 60;
 
-const double playerRotationSpeed = 0.06;    // tested, seems fine
+const double playerRotationSpeed = 4; 
 Vector2 playerAcceleration = Vector2(4,4);  // untested
 const int playerMaxSpeed = 400;             // untested
 
