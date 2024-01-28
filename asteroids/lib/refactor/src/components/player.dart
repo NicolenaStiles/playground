@@ -61,8 +61,7 @@ class Player extends PositionComponent
   int _currShotCooldown = 0;
 
   // respawn stuff
-  // WARN: Debug only!
-  bool _godmode = true;
+  bool _godmode = false;
   int _currRespawnTimer = 0;
 
   // Rendering
@@ -78,6 +77,7 @@ class Player extends PositionComponent
     canvas.drawPath(completePath(), _paint);
   }
 
+  // TODO: Add boosters animation!
   Path completePath() {
 
     _verticies = [];
@@ -116,6 +116,7 @@ class Player extends PositionComponent
   }
 
   // Handling movement: including the glide-y stuff specific to asteroids!
+  // TODO: add max speed!
   void movePlayer(double dt) {
 
     double xMove = sin(angle);
@@ -148,14 +149,15 @@ class Player extends PositionComponent
         // actual position update
         position.add(_playerDisplacement);
 
-        // check wraparound
-        checkWraparound();
 
       } else {
         _playerVelocityInitial = Vector2(0,0);
         _playerVelocityFinal= Vector2(0,0);
       }
     }
+
+    // check wraparound
+    checkWraparound();
 
   }
 
@@ -164,18 +166,18 @@ class Player extends PositionComponent
   void checkWraparound() {
     // wrapping around the screen: horizontal
     // right
-   if (position.x > (game.size.x + size.x)) {
-      position.x = 0 - size.x / 2;
-    } else if ((position.x + size.x) < 0) {
-      position.x = game.size.x + size.x / 2;
+   if (position.x > (game.size.x + width)) {
+      position.x = 0 - width / 2;
+    } else if ((position.x + width) < 0) {
+      position.x = game.size.x + width / 2;
     }
 
     // wrapping around the screen: vertical 
     // bottom
-    if (position.y > (game.size.y + size.y)) {
-      position.y = 0 - (size.y / 2);
-    } else if ((position.y + size.y) < 0 ) {
-      position.y = game.size.y - (size.y / 2);
+    if (position.y > (game.size.y + height)) {
+      position.y = 0 - (height / 2);
+    } else if ((position.y + height) < 0 ) {
+      position.y = game.size.y - (height / 2);
     }
   }
 
@@ -248,7 +250,7 @@ class Player extends PositionComponent
       return;
     }
 
-    if (!_godmode) {
+    if (_godmode != true) {
       // subtract a life and zero everything else out
       updateLives();
       position = Vector2(game.width / 2, game.height / 2);
@@ -264,6 +266,10 @@ class Player extends PositionComponent
   @override
   void update(double dt) {
     super.update(dt);
+    
+    if (shipType == ShipType.lives) {
+      return;
+    }
 
     // rotation
     if (rotateRight) { turnRight(dt); }
@@ -277,7 +283,6 @@ class Player extends PositionComponent
 
     // handle invulnerability 
     updateInvulnerability();
-
 
   }
 

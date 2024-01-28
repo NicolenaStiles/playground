@@ -43,7 +43,7 @@ class Asteroids extends FlameGame
 
     // setting up world constants
     // WARN: DEBUG ONLY
-    add(
+    world.add(
       FpsTextComponent(
         position: Vector2(0, canvasSize.y),
         anchor: Anchor.bottomLeft,
@@ -88,13 +88,11 @@ class Asteroids extends FlameGame
           key: ComponentKey.named(lifeKey),
           position: Vector2(xPos, 
                             game_settings.livesOffset 
-                            + (game_settings.livesHeight / 2)),
+                              + (game_settings.livesHeight / 2)),
           shipType: ShipType.lives,
         )
       );
     }
-
-    print(world.children.toList());
 
   }
 
@@ -105,7 +103,8 @@ class Asteroids extends FlameGame
     // update scoreboard
     scoreboard.text = score.toString().padLeft(4, '0');
   }
-  
+
+  // TODO: Implement hyperdrive!
   @override
   KeyEventResult onKeyEvent( 
     RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
@@ -150,5 +149,8 @@ class Asteroids extends FlameGame
     }
     return KeyEventResult.handled;
   }
+
+  @override 
+  Color backgroundColor() => Colors.black;
 
 }
