@@ -10,23 +10,38 @@ import '../asteroids.dart';
 import '../config.dart' as game_settings;
 import '../components/components.dart';
 
+enum ShipType {player, lives}
+
 class Player extends PositionComponent 
   with CollisionCallbacks, HasGameRef<Asteroids> {
 
   // TODO: bespoke hitbox?
-  // TODO: how determine platform?
   Player({
+    required this.shipType,
     required super.key,
     required super.position,
-    required super.size
   }) : super ( 
         anchor: Anchor.center,
-        /*
-        size: Vector2(game_settings.playerWidthDesktop, 
-                      game_settings.playerHeightDesktop),
-        */
         children: [RectangleHitbox(isSolid: true)]
-  );
+  ) {
+        super.size = mapShipSize();
+  }
+
+  ShipType shipType;
+
+  Vector2 mapShipSize() {
+    switch (shipType) {
+      case ShipType.player:
+        return Vector2(game_settings.playerWidthDesktop,
+                       game_settings.playerHeightDesktop);
+      case ShipType.lives:
+        return Vector2(game_settings.livesWidth,
+                       game_settings.livesHeight);
+      default:
+        debugPrint("Ship size unset!");
+        return Vector2(0, 0);
+    }
+  }
 
   // movement input
   bool moveForward = false;
@@ -37,8 +52,8 @@ class Player extends PositionComponent
   double _playerLastImpulseAngle = 0;
   Vector2 _playerVelocityInitial = Vector2(0,0);
   Vector2 _playerVelocityFinal= Vector2(0,0);
-  final Vector2 _playerDisplacement = Vector2(0,0);
-  final Vector2 _playerDirection = Vector2(0,0);
+  Vector2 _playerDisplacement = Vector2(0,0);
+  Vector2 _playerDirection = Vector2(0,0);
 
   // handling shot
   bool fireShot = false;
@@ -194,17 +209,16 @@ class Player extends PositionComponent
 
   }
 
-  // WARN: lol this ain't right
-  // TODO: this logic isn't quite right? respawn timer not implemented
-  void updateLives(){
+  void updateLives() {
     String keyName = 'life${game.lives - 1}';
     if (game.findByKeyName<Player>(keyName) != null) {
-      remove(game.findByKeyName<Player>(keyName)!);
+      game.world.remove(game.findByKeyName<Player>(keyName)!);
     }
     game.lives--;
     _godmode = true;
   }
 
+  // TODO: visual indicator for invulnerability?
   void updateInvulnerability() {
     if (!_godmode) { 
       return;
@@ -217,7 +231,7 @@ class Player extends PositionComponent
     }
   }
 
-  // TODO: implement collisions!
+  // TODO: visual effect for collision?
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, 
                         PositionComponent other) {
@@ -226,15 +240,24 @@ class Player extends PositionComponent
     // start animation?
   }
 
-  // TODO: implement collisions!
-  // WARN: this is super busted!
   @override
   void onCollisionEnd(PositionComponent other) {
     super.onCollisionEnd(other);
+    
+    if (shipType == ShipType.lives) {
+      return;
+    }
 
     if (!_godmode) {
+      // subtract a life and zero everything else out
       updateLives();
-      position = Vector2(0, 0);
+      position = Vector2(game.width / 2, game.height / 2);
+      angle = 0;
+      _playerLastImpulseAngle = 0;
+      _playerVelocityInitial = Vector2(0,0);
+      _playerVelocityFinal= Vector2(0,0);
+      _playerDisplacement = Vector2(0,0);
+      _playerDirection = Vector2(0,0);
     }
   }
 

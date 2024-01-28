@@ -29,7 +29,7 @@ class Asteroids extends FlameGame
   double get width => size.x;
   double get height => size.y;
 
-  int score = 0000;
+  int score = 0;
   int lives = game_settings.playerLives;
   
   // displaying score
@@ -50,9 +50,6 @@ class Asteroids extends FlameGame
       )
     );
 
-    // TODO: how bad of an idea was it to remove this?
-    // world.add(PlayArea());
-
     world.add(Asteroid(
       objType: AsteroidType.asteroidX,
       objSize: AsteroidSize.large,
@@ -64,8 +61,7 @@ class Asteroids extends FlameGame
     world.add(Player(
       key: ComponentKey.named("player"),
       position: size / 2, 
-      size: Vector2(game_settings.playerWidthDesktop, 
-                    game_settings.playerHeightDesktop),
+      shipType: ShipType.player,
     ));
 
     // WARN: DEBUG ONLY 
@@ -93,11 +89,12 @@ class Asteroids extends FlameGame
           position: Vector2(xPos, 
                             game_settings.livesOffset 
                             + (game_settings.livesHeight / 2)),
-          size: Vector2(game_settings.livesWidth, 
-                        game_settings.livesHeight),
+          shipType: ShipType.lives,
         )
       );
     }
+
+    print(world.children.toList());
 
   }
 
