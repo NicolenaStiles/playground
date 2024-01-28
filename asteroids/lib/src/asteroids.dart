@@ -11,13 +11,18 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:google_fonts/google_fonts.dart';
+
 // configuration
 import 'config.dart' as game_settings;
 
-// play area
+// player, asteroid, shot 
 import 'components/components.dart';
 
 // score style rendering
+// TODO: something with font rendering is not working when deploying to pages.
+// I may need to also just commit the files for now.
+const testScoreStyle = GoogleFonts.pressStart2p;
 const scoreStyle = TextStyle(color: Colors.white, 
                              fontSize: 48.0, 
                              fontFamily: 'Hyperspace');
@@ -59,7 +64,7 @@ class Asteroids extends FlameGame
     ));
 
     world.add(Player(
-      key: ComponentKey.named("player"),
+      key: ComponentKey.named('player'),
       position: size / 2, 
       shipType: ShipType.player,
     ));
@@ -121,36 +126,45 @@ class Asteroids extends FlameGame
       switch (event.logicalKey) {
         // movement
         case LogicalKeyboardKey.keyW: 
-          world.children.query<Player>().first.moveForward = true;
+          findByKeyName<Player>('player')!.moveForward = true;
+          //world.children.query<Player>().first.moveForward = true;
         // rotation
         case LogicalKeyboardKey.keyA: 
-          world.children.query<Player>().first.rotateLeft = true;
+          findByKeyName<Player>('player')!.rotateLeft= true;
+          //world.children.query<Player>().first.rotateLeft = true;
         case LogicalKeyboardKey.keyD: 
-          world.children.query<Player>().first.rotateRight = true;
+          findByKeyName<Player>('player')!.rotateRight= true;
+          //world.children.query<Player>().first.rotateRight = true;
         // shooting
         case LogicalKeyboardKey.space: 
-          world.children.query<Player>().first.fireShot = true;
-
+          findByKeyName<Player>('player')!.fireShot= true;
+          //world.children.query<Player>().first.fireShot = true;
       } 
+
     } else if (isKeyUp) {
       switch (event.logicalKey) {
         // movement
         case LogicalKeyboardKey.keyW: 
-          world.children.query<Player>().first.moveForward = false;
+          findByKeyName<Player>('player')!.moveForward= false;
+          //world.children.query<Player>().first.moveForward = false;
         // rotation
         case LogicalKeyboardKey.keyA: 
-          world.children.query<Player>().first.rotateLeft = false;
+          findByKeyName<Player>('player')!.rotateLeft = false;
+          //world.children.query<Player>().first.rotateLeft = false;
         case LogicalKeyboardKey.keyD: 
-          world.children.query<Player>().first.rotateRight = false;
+          findByKeyName<Player>('player')!.rotateRight = false;
+          //world.children.query<Player>().first.rotateRight = false;
         // shooting
         case LogicalKeyboardKey.space: 
-          world.children.query<Player>().first.fireShot = false;
+          findByKeyName<Player>('player')!.fireShot = false;
+          //world.children.query<Player>().first.fireShot = false;
       }
     }
+
     return KeyEventResult.handled;
   }
 
   @override 
-  Color backgroundColor() => Colors.black;
+  Color backgroundColor() => const Color(0xFF000000);
 
 }
