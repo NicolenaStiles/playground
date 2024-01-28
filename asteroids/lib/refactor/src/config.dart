@@ -24,7 +24,7 @@ Vector2 playerAcceleration = Vector2(4,4);  // untested
 const int playerMaxSpeed = 400;             // untested
 
 // shot
-const double shotRadiusDesktop = 1;
+const double shotRadiusDesktop = 4;
 const double shotSpeed = 600;        // how fast bullets go
 const double shotTimer = 100;        // how long bullets live
 const double shotCooldown = 64;      // how long until shoot bullets

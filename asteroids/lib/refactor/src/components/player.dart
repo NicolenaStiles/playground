@@ -1,6 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame/extensions.dart';
 
 import 'package:flutter/material.dart';
 
@@ -92,7 +93,7 @@ class Player extends PositionComponent
   void rotateBy(double dr) {
     add(RotateEffect.by(
       dr, 
-      EffectController(duration: 0) 
+      EffectController(duration: 0.1) 
     ));
   }
 
@@ -119,7 +120,7 @@ class Player extends PositionComponent
           _playerDisplacement[0],
           _playerDisplacement[1]
         ),
-        EffectController(duration: 0))
+        EffectController(duration: 0.1))
       );
 
     } else {
@@ -136,16 +137,35 @@ class Player extends PositionComponent
             _playerDisplacement[0],
             _playerDisplacement[1]
           ),
-          EffectController(duration: 0))
+          EffectController(duration: 0.1))
         );
 
       } else {
-
         _playerVelocityInitial = Vector2(0,0);
         _playerVelocityFinal= Vector2(0,0);
       }
     }
 
+  }
+
+  // Checks if PositionComponent should wrap around the game screen
+  // (and moves it if it should)
+  void checkWraparound() {
+    // wrapping around the screen: horizontal
+    // right
+   if (position.x > (game.size.x + size.x)) {
+      position.x = 0 - size.x / 2;
+    } else if ((position.x + size.x) < 0) {
+      position.x = game.size.x + size.x / 2;
+    }
+
+    // wrapping around the screen: vertical 
+    // bottom
+    if (position.y > (game.size.y + size.y)) {
+      position.y = 0 - (size.y / 2);
+    } else if ((position.y + size.y) < 0 ) {
+      position.y = game.size.y - (size.y / 2);
+    }
   }
 
   // handles everything related to firing and managing shots
@@ -219,7 +239,6 @@ class Player extends PositionComponent
     }
   }
 
-
   @override
   void update(double dt) {
     super.update(dt);
@@ -239,6 +258,9 @@ class Player extends PositionComponent
 
     // handle invulnerability 
     updateInvulnerability();
+
+    // check wraparound
+    checkWraparound();
 
   }
 }

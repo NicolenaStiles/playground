@@ -20,8 +20,7 @@ class Shot extends CircleComponent
             paint: Paint()
               ..color = Colors.white
               ..style = PaintingStyle.fill,
-            children: [CircleHitbox(radius: game_settings.shotRadiusDesktop,
-                                    isSolid: true)],
+            children: [CircleHitbox(radius: game_settings.shotRadiusDesktop)],
  );
 
   int _timer = 0;
@@ -56,7 +55,7 @@ class Shot extends CircleComponent
         shotDisplacement[0],
         shotDisplacement[1]
       ),
-      EffectController(duration: 0))
+      EffectController(duration: 0.1))
     );
 
   }

@@ -6,6 +6,7 @@ import 'package:flame/debug.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 
+// general flutter packages
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,7 +18,9 @@ import 'config.dart' as game_settings;
 import 'components/components.dart';
 
 // score style rendering
-final scoreStyle = const TextStyle(color: Colors.white, fontSize: 48.0, fontFamily: 'Hyperspace');
+const scoreStyle = TextStyle(color: Colors.white, 
+                             fontSize: 48.0, 
+                             fontFamily: 'Hyperspace');
 final scoreRenderer = TextPaint(style: scoreStyle);
 
 class Asteroids extends FlameGame
@@ -48,13 +51,12 @@ class Asteroids extends FlameGame
     );
 
     // TODO: how bad of an idea was it to remove this?
-
-    //world.add(PlayArea());
+    // world.add(PlayArea());
 
     world.add(Asteroid(
       objType: AsteroidType.asteroidX,
       objSize: AsteroidSize.large,
-      velocity: 10.0,
+      velocity: 100.0,
       position: size * (3/4), 
       angle: 0
     ));
@@ -63,11 +65,11 @@ class Asteroids extends FlameGame
       key: ComponentKey.named("player"),
       position: size / 2, 
       size: Vector2(game_settings.playerWidthDesktop, 
-                      game_settings.playerHeightDesktop),
+                    game_settings.playerHeightDesktop),
     ));
 
     // WARN: DEBUG ONLY 
-    debugMode = true;
+    // debugMode = true;
 
     // display score
     String formattedScore = score.toString().padLeft(4, '0');
