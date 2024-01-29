@@ -3,7 +3,7 @@ import 'package:flame/collisions.dart';
 // for messing directly with the canvas
 import 'package:flutter/material.dart';
 // managing collisions
-import 'package:asteroids/asteroids.dart';
+import '../asteroids.dart';
 import 'shot.dart';
 import 'asteroid.dart';
 import 'alien.dart';

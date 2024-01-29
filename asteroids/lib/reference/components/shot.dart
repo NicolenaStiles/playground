@@ -1,4 +1,5 @@
-import 'package:asteroids/components/asteroid.dart';
+import '../asteroids.dart';
+import 'asteroid.dart';
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
 // for messing directly with the canvas

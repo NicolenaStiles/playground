@@ -1,5 +1,4 @@
 // Class for bodies that move on the asteroid field
-import 'package:asteroids/asteroids.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';

@@ -14,6 +14,14 @@ enum AsteroidSize {small, medium, large}
 class Asteroid extends PositionComponent 
   with CollisionCallbacks, HasGameReference<Asteroids> {
 
+  // Rendering
+  var graphicPath = Path();
+  List<List<double>> _verticies = [];
+  final _paint = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2.0
+    ..color = Colors.white;
+
   Asteroid({
     required this.objType,
     required this.objSize,
@@ -26,6 +34,7 @@ class Asteroid extends PositionComponent
     ) {
       super.size = mapAsteroidSize();
       _points = mapAsteroidValue();
+      graphicPath = completePath();
   }
 
   // Core settings
@@ -40,14 +49,6 @@ class Asteroid extends PositionComponent
 
   // for collisions (when shot)
   List<Asteroid> _asteroidChildren = [];
-
-  // Rendering
-  var graphicPath = Path();
-  List<List<double>> _verticies = [];
-  final _paint = Paint()
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 2.0
-    ..color = Colors.white;
 
 
   // TODO: should depend on if we're using desktop or not
@@ -86,6 +87,8 @@ class Asteroid extends PositionComponent
   Path completePath() {
 
     _verticies = [];
+
+    print('Running complete path!');
 
     switch (objType) {
 
@@ -191,7 +194,7 @@ class Asteroid extends PositionComponent
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    canvas.drawPath(completePath(), _paint);
+    canvas.drawPath(graphicPath, _paint);
   }
 
   void moveBy(double dt) {

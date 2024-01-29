@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 // managing collisions
 import 'shot.dart';
 import 'dart:math';
-import 'package:asteroids/asteroids.dart';
+import '../asteroids.dart';
+
 
 enum AsteroidType {asteroidX, asteroidS, asteroidO} 
 enum AsteroidSize {small, medium, large} 
@@ -151,6 +152,7 @@ class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef<Ast
   Path completePath() {
 
     _verticies = [];
+    print('Running complete path!');
 
     switch (objType) {
 
