@@ -79,13 +79,11 @@ class Asteroids extends FlameGame
       angle: 0
     ));
 
-    /*
     world.add(Player(
       key: ComponentKey.named('player'),
       position: size / 3, 
       shipType: ShipType.player,
     ));
-    */
 
     // WARN: DEBUG ONLY 
     // debugMode = true;

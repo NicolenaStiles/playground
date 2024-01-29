@@ -15,6 +15,14 @@ enum ShipType {player, lives}
 class Player extends PositionComponent 
   with CollisionCallbacks, HasGameRef<Asteroids> {
 
+  // Rendering
+  var _graphicPath = Path();
+  List<List<double>> _verticies = [];
+  final _paint = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2.0
+    ..color = Colors.white;
+
   // TODO: bespoke hitbox?
   Player({
     required this.shipType,
@@ -25,6 +33,7 @@ class Player extends PositionComponent
         children: [RectangleHitbox(isSolid: true)]
   ) {
         super.size = mapShipSize();
+        _graphicPath = completePath();
   }
 
   ShipType shipType;
@@ -64,17 +73,11 @@ class Player extends PositionComponent
   bool _godmode = false;
   int _currRespawnTimer = 0;
 
-  // Rendering
-  List<List<double>> _verticies = [];
-  final _paint = Paint()
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 2.0
-    ..color = Colors.white;
 
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    canvas.drawPath(completePath(), _paint);
+    canvas.drawPath(_graphicPath, _paint);
   }
 
   // TODO: Add boosters animation!
