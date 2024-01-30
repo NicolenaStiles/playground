@@ -26,13 +26,9 @@ flutter:
   fonts:
     - family: Hyperspace
       fonts:
-        - asset: fonts/Hyperspace/HyperspaceBold-GM0g.ttf
+        - asset: assets/fonts/Hyperspace/HyperspaceBold-GM0g.ttf
           weight : 100 
-    - family: ProFont_NF_Regular
-      fonts: 
-        - asset: fonts/ProFont_NF/ProFontIIxNerdFont-Regular.ttf
-          weight: 100 
     - family: ProFont_NF_Mono
       fonts:
-        - asset: fonts/ProFont_NF/ProFontIIxNerdFontMono-Regular.ttf
+        - asset: assets/fonts/ProFont_NF/ProFontIIxNerdFontMono-Regular.ttf
           weight : 300

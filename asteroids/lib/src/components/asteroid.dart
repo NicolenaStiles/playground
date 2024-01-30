@@ -8,7 +8,7 @@ import '../asteroids.dart';
 import '../config.dart' as game_settings;
 import '../components/components.dart';
 
-enum AsteroidType {asteroidX, asteroidS, asteroidO} 
+enum AsteroidType {asteroidO, asteroidS, asteroidX} 
 enum AsteroidSize {small, medium, large} 
 
 class Asteroid extends PositionComponent 

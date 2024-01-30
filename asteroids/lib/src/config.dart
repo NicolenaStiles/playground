@@ -38,6 +38,11 @@ const int largeAsteroidPoints = 200;
 const int mediumAsteroidPoints = 100;
 const int smallAsteroidPoints = 50;
 
+// I'm doing powers of 2 here
+// only tested on desktop
+const double asteroidMinVelocity = 32;
+const double asteroidMaxVelocity = 256;
+
 // lives tracker
 // TODO: scale these by device?
 const double livesWidth = 30;
