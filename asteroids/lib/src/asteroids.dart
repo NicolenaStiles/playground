@@ -6,6 +6,7 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
+import 'package:flame/timer.dart';
 
 // general flutter packages
 import 'package:flutter/widgets.dart';
@@ -27,6 +28,8 @@ const scoreStyle = TextStyle(color: Colors.white,
                              fontFamily: 'Hyperspace');
 final scoreRenderer = TextPaint(style: scoreStyle);
 
+// TODO: create new config file for mobile/smaller screens?
+// (Rather than just having switch statements everywhere)
 class Asteroids extends FlameGame
   with KeyboardEvents, HasCollisionDetection {
 
@@ -37,9 +40,13 @@ class Asteroids extends FlameGame
   // game stats
   int score = 0;
   int lives = game_settings.playerLives;
+  int numAsteroids = 0;
  
   // displaying score
   static TextComponent scoreboard = TextComponent();
+
+  // timer things
+  late Timer countdown;
 
   // managing game state
   // mostly for controlling overlays tbh
@@ -60,13 +67,31 @@ class Asteroids extends FlameGame
     camera.viewfinder.anchor = Anchor.topLeft;
 
     playState = PlayState.background;
-    animateBackground();
+    animateBackground(true);
   }
 
-  // TODO: create new config file for mobile/smaller screens?
-  // (Rather than just having switch statements everywhere)
   void generateRandomAsteroid() {
-    //Vector2 _asteroidPosition = Vector2(0, 0);
+    // generate random velocity value
+    // 32, 64, 128, 256 as possible speed
+    int asteroidSpeedScalar = rand.nextInt(4);
+    double asteroidVelocity = math.pow(2, (5 + asteroidSpeedScalar)).toDouble();
+
+    // generate position values
+    Vector2 asteroidPos = Vector2(0, 0);
+    bool isSide = rand.nextBool();
+    if (isSide) {
+      asteroidPos.y = ((rand.nextDouble() * (height / 2)  + (height / 4)));
+    } else {
+      asteroidPos.x = ((rand.nextDouble() * (width / 2)  + (width / 4)));
+    }
+
+    // generate angle
+    final bool isPositiveAngle = rand.nextBool();
+    double asteroidAngle = (rand.nextDouble() * (math.pi / 2)) 
+                              + (math.pi / 4);
+    if (!isPositiveAngle) {  
+      asteroidAngle = -asteroidAngle; 
+    }
 
     // objType:
     // enum AsteroidType {asteroidO, asteroidS, asteroidX} 
@@ -75,53 +100,30 @@ class Asteroids extends FlameGame
     // velocity:
     // min = 32, max = 256
     // 2^5 -> 2^8
-    print(math.pow(2, 5 + (rand.nextInt(4))).runtimeType);
     world.add(Asteroid(
       objType: AsteroidType.values[rand.nextInt(3)],
       objSize: AsteroidSize.values[rand.nextInt(3)],
-      velocity: 256,
-      position: size / 2,
-      angle: 0,
+      velocity: asteroidVelocity,
+      position: asteroidPos,
+      angle: asteroidAngle,
     ));
+    numAsteroids++;
   }
 
-  void animateBackground () {
+  void animateBackground (bool isFirstRun) {
 
-    generateRandomAsteroid();
+    if (isFirstRun) {
+      generateRandomAsteroid();
+      countdown = Timer(5);
+      countdown.start();
 
-    /*
-    world.add(Asteroid(
-      objType: AsteroidType.asteroidX,
-      objSize: AsteroidSize.large,
-      velocity: 120.0,
-      position: Vector2 (0, height * (1/4)),
-      angle: (math.pi / 2)
-    ));
-
-    world.add(Asteroid(
-      objType: AsteroidType.asteroidX,
-      objSize: AsteroidSize.small,
-      velocity: 120.0,
-      position: Vector2 (0, height * (1/4)),
-      angle: -(math.pi / 2)
-    ));
-
-    world.add(Asteroid(
-      objType: AsteroidType.asteroidO,
-      objSize: AsteroidSize.large,
-      velocity: 120.0,
-      position: Vector2 (0, height * (2/4)),
-      angle: -(math.pi / 2)
-    ));
-
-    world.add(Asteroid(
-      objType: AsteroidType.asteroidS,
-      objSize: AsteroidSize.large,
-      velocity: 120.0,
-      position: Vector2 (0, height * (3/4)),
-      angle: -(math.pi / 2)
-    ));
-    */
+    } else {
+      if (countdown.finished && numAsteroids < 10) {
+        generateRandomAsteroid();
+        countdown = Timer(5);
+        countdown.start();
+      }
+    }
   }
 
   void startGame() {
@@ -209,9 +211,19 @@ class Asteroids extends FlameGame
   @override 
   void update(double dt) {
     super.update(dt);
-    // update scoreboard
-    scoreboard.text = score.toString().padLeft(4, '0');
+
+    // if we're still animating the background, just keep doing that
+    if (_playState == PlayState.background) {
+      // update timer
+      countdown.update(dt);
+      animateBackground(false);
+    // switching to playing the game
+    } else {
+      // update scoreboard
+      scoreboard.text = score.toString().padLeft(4, '0');
+    }
   }
+
 
   // TODO: Implement hyperdrive!
   @override
