@@ -3,7 +3,6 @@ import 'package:flame/game.dart';
 // NOTE: these are temp values for debugging viewport stuff. 
 // the actual asteroids game will be fullscreen (probably)
 // THESE VALUES ARE NOT USED IN CURRENT IMPLEMENTAITON
-// TODO: adjust these to work better with mobile players?
 const gameHeight = 200.0;
 const gameWidth = 300.0;
 
@@ -54,5 +53,3 @@ const double livesOffset = 8;
 const alienWidthDesktop = 60;
 const alienHeightDesktop = 36;
 
-// Mobile sizing variants
-// TODO: how bad is this idea?
