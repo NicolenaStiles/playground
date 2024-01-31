@@ -1,4 +1,5 @@
-import 'package:asteroids/components/asteroid.dart';
+import '../asteroids.dart';
+import 'asteroid.dart';
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
 // for messing directly with the canvas
@@ -29,7 +30,6 @@ class Shot extends PositionComponent with CollisionCallbacks {
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is Asteroid) {
-
       removeFromParent();
     }
   }

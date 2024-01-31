@@ -7,8 +7,9 @@ import 'package:flutter/services.dart';
 
 // Custom componenets
 import 'components/asteroid.dart';
-import 'package:asteroids/components/shot.dart';
-import 'package:asteroids/components/player.dart';
+import 'components/shot.dart';
+import 'components/player.dart';
+
 // utils
 import 'dart:math';
 
@@ -54,6 +55,8 @@ class Asteroids extends FlameGame
   // asteroid
   static const int asteroidSpeed = 300;
   late final Asteroid testAsteroid;
+  late final Asteroid testAsteroidd;
+  late final Asteroid testAsteroiddd;
 
   // shot
   static int shotSpeed = 800;       // how fast bullets go
@@ -124,11 +127,23 @@ class Asteroids extends FlameGame
     player.setGodmode(true);
     world.add(player);
 
-    testAsteroid = Asteroid(AsteroidType.asteroidO, AsteroidSize.large) 
-      ..position = Vector2(worldMinX,0)
-      ..angle = 3 * (pi / 2)
+    testAsteroid = Asteroid(AsteroidType.asteroidX, AsteroidSize.large) 
+      ..position = size * (1/4)
+      ..angle = 0
       ..nativeAngle = 0;
     world.add(testAsteroid);
+
+    testAsteroidd = Asteroid(AsteroidType.asteroidS, AsteroidSize.large) 
+      ..position = size * (3/4)
+      ..angle = 0
+      ..nativeAngle = 0;
+    world.add(testAsteroidd);
+
+    testAsteroiddd = Asteroid(AsteroidType.asteroidO, AsteroidSize.large) 
+      ..position = size * (3/4)
+      ..angle = 0
+      ..nativeAngle = 0;
+    world.add(testAsteroiddd);
 
     // start listening for user input
     startKeyboardListener();
@@ -163,11 +178,9 @@ class Asteroids extends FlameGame
       currShotCooldown++;
 
     } else {
-        shotReady = true;
+      shotReady = true;
       currShotCooldown = 0;
-
     }
-
 
     // update scoreboard
     scoreboard.text = score.toString().padLeft(4, '0');
@@ -268,6 +281,8 @@ class Asteroids extends FlameGame
   // camping ;)
   // NOTE: I should probably document the math here better? but it's in my
   // paper notes for 11/18/2023 if I need to go back and check.
+  // TODO: add hyperdrive 
+
   void movePlayer(double dt) {
 
     // rotation update

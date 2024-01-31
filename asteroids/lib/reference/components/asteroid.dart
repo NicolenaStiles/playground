@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 // managing collisions
 import 'shot.dart';
 import 'dart:math';
-import 'package:asteroids/asteroids.dart';
+import '../asteroids.dart';
+
 
 enum AsteroidType {asteroidX, asteroidS, asteroidO} 
 enum AsteroidSize {small, medium, large} 
@@ -63,10 +64,8 @@ class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef<Ast
     super.onCollisionStart(intersectionPoints, other);
 
     if (other is Shot) {
-
       _asteroidChildren = [];
       splitAsteroid();
-
     }
   }
 
@@ -153,6 +152,7 @@ class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef<Ast
   Path completePath() {
 
     _verticies = [];
+    print('Running complete path!');
 
     switch (objType) {
 
@@ -240,7 +240,7 @@ class Asteroid extends PositionComponent with CollisionCallbacks, HasGameRef<Ast
         break;
 
       default:
-        //TODO: throw error for undefined asteroid type
+        // TODO: throw error for undefined asteroid type
         break;
 
     }

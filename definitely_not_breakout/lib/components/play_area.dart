@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 
 import '../src/brick_breaker.dart';
 
-class PlayArea extends RectangleComponent with HasGameReference<BrickBreaker> {
+class PlayArea extends RectangleComponent 
+  with HasGameReference<BrickBreaker> {
   PlayArea()
     : super( 
       paint: Paint()..color = const Color(0xfff2e8cf), // background color

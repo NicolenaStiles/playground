@@ -43,6 +43,5 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Custom
-# avoid version-controlling fonts (put these on server or something else)
-fonts/
+# Ignore resources folder, the stuff I need is moved into assets
+resources/
