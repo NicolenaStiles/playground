@@ -18,7 +18,7 @@ import 'components/components.dart';
 import 'config.dart' as game_settings;
 
 // enum PlayState {background, welcome, play, gameOver, won}
-enum PlayState { background, play }
+enum PlayState { debug, background, play }
 
 // scoreboard
 const scoreStyle = TextStyle(color: Colors.white, 
@@ -53,6 +53,7 @@ class Asteroids extends FlameGame
   set playState(PlayState playState) {
     _playState = playState;
     switch (playState) {
+      case PlayState.debug:
       case PlayState.background:
       case PlayState.play:
     }
@@ -64,8 +65,14 @@ class Asteroids extends FlameGame
 
     camera.viewfinder.anchor = Anchor.topLeft;
 
+    playState = PlayState.debug;
+    // WARN: debug only!
+    layoutDebug();
+
+    /*
     playState = PlayState.background;
     animateBackground(true);
+    */
   }
 
   void generateRandomAsteroid() {
@@ -106,6 +113,62 @@ class Asteroids extends FlameGame
       angle: asteroidAngle,
     ));
     numAsteroids++;
+  }
+
+  // layout all the assets to determine if screen sizing is trash or not
+  void layoutDebug() {
+
+    for (var j = 3; j > 0; j--) {
+      Vector2 asteroidPos = Vector2(0, 0);
+      asteroidPos.y = (j / 5) * size.y;
+      for (var i = 1; i < 4; i++) {
+        asteroidPos.x = (i / 4) * size.x;
+        world.add(Asteroid(
+          objType: AsteroidType.values[i - 1],
+          objSize: AsteroidSize.values[j - 1],
+          velocity: 0,
+          position: asteroidPos, 
+          angle: 0,
+        ));
+      }
+    }
+
+    Vector2 shipPos = Vector2(0, 0);
+    shipPos.x = size.x * (1/2);
+    shipPos.y = size.y * (4/5);
+    // player's ship
+    world.add(Player(
+      key: ComponentKey.named('player'),
+      position: shipPos,
+      shipType: ShipType.player,
+    ));
+
+    // score 
+    String formattedScore = score.toString().padLeft(4, '0');
+    scoreboard = TextComponent(
+        key: ComponentKey.named('scoreboard'),
+        text: formattedScore, 
+        textRenderer: scoreRenderer,
+        anchor: Anchor.topLeft,
+        position: Vector2(0,0));
+    world.add(scoreboard);
+
+    // lives
+    for (int n = 0; n < lives; n++) {
+      String lifeKey = "life$n";
+      double xPos = canvasSize.x - (((n + 1) * game_settings.livesOffset) 
+                                 + (n * game_settings.livesWidth) 
+                                 + (game_settings.livesWidth / 2));
+      world.add(
+        Player(
+          key: ComponentKey.named(lifeKey),
+          position: Vector2(xPos, 
+                            game_settings.livesOffset 
+                              + (game_settings.livesHeight / 2)),
+          shipType: ShipType.lives,
+        )
+      );
+    }
   }
 
   void animateBackground (bool isFirstRun) {
@@ -216,7 +279,7 @@ class Asteroids extends FlameGame
       countdown.update(dt);
       animateBackground(false);
     // switching to playing the game
-    } else {
+    } else if (_playState == PlayState.play) {
       // update scoreboard
       scoreboard.text = score.toString().padLeft(4, '0');
     }
