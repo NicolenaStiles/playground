@@ -8,6 +8,31 @@ import 'package:flutter/material.dart';
 
 import '../asteroids.dart';
 
+class TestJoystick extends JoystickComponent
+  with HasVisibility {
+
+  TestJoystick({
+    required super.key,
+    required super.knob,
+    required super.background,
+    required super.position
+  });
+
+  @override
+  bool onDragStart(DragStartEvent event) {
+    super.onDragStart(event);
+    isVisible = true;
+    return false;
+  }
+
+  @override
+  void onDragStop() {
+    super.onDragStop();
+    isVisible = false;
+  }
+
+}
+
 class VirtualJoystick extends PositionComponent 
   with HasVisibility, HasGameRef<Asteroids> {
 
@@ -44,6 +69,10 @@ class VirtualJoystick extends PositionComponent
         key: ComponentKey.named('button'), 
         radius: radius / 2,
         position: size / 2));
+  }
+
+  void sayHi() {
+    print('hi!');
   }
 }
 

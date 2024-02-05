@@ -6,6 +6,7 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
+import 'package:flame/palette.dart';
 
 // general flutter packages
 import 'package:flutter/material.dart';
@@ -49,6 +50,9 @@ class Asteroids extends FlameGame
   static TextComponent tapTracker = TextComponent();
   static TextComponent tapTracker2 = TextComponent();
 
+  // WARN: debugging gestures
+  late final TestJoystick joystick;
+
   TextComponent dist = TextComponent();
   TextComponent ang = TextComponent();
 
@@ -82,18 +86,13 @@ class Asteroids extends FlameGame
     }
 
     debugMode = true;
-
+    _playState = PlayState.debug;
     gestureDebug();
 
     // playState = PlayState.background;
     // animateBackground(true);
     
     // layoutDebug();
-
-    /*
-    playState = PlayState.background;
-    animateBackground(true);
-    */
   }
 
   void gestureDebug () {
@@ -112,11 +111,27 @@ class Asteroids extends FlameGame
                 anchor: Anchor.topCenter);
     world.add(ang);
 
-    world.add(
-      VirtualJoystick(
-        key: ComponentKey.named('joystick'), 
-        radius: 200, 
-        position: Vector2(size.x / 2, size.y * (3 / 4))));
+    // player's ship
+    Vector2 shipPos = Vector2(0, 0);
+    shipPos.x = size.x * (1/2);
+    shipPos.y = size.y * (4/5);
+    world.add(Player(
+      key: ComponentKey.named('player'),
+      position: shipPos,
+      size : Vector2(testCfg.playerWidth, testCfg.playerHeight),
+      shipType: ShipType.player,
+    ));
+
+    final knobPaint = BasicPalette.white.withAlpha(200).paint();
+    final backgroundPaint = BasicPalette.white.withAlpha(100).paint();
+    joystick = TestJoystick(
+      key: ComponentKey.named('joystick'),
+      knob: CircleComponent(radius: 20, paint: knobPaint),
+      background: CircleComponent(radius: 50, paint: backgroundPaint),
+      position: size * (3 / 4),
+    );
+    joystick.isVisible = false;
+    world.add(joystick);
 
   }
 
@@ -349,34 +364,60 @@ class Asteroids extends FlameGame
 
   }
 
-  /*
   @override
   void onTapDown(TapDownInfo info) {
     super.onTapDown(info);
     if (_playState == PlayState.background) {
       startGame();
     }
-    tapPosition = info.eventPosition.global.toString();
-    tapTracker2.text = 'tap down';
+    print(info.eventPosition.widget);
+    joystick.position = info.eventPosition.widget;
+    joystick.isVisible = true;
   }
+
+  /*
+
+  @override
+  void onTapDown(TapDownInfo info) {
+    super.onTapDown(info);
+    if (_playState == PlayState.background) {
+      startGame();
+    }
+    print(info.eventPosition.widget);
+    findByKeyName<VirtualJoystick>('joystick')!.position = info.eventPosition.widget;
+    return;
+    //findByKeyName<VirtualJoystick>('joystick')!.position = info.eventPosition.widget;
+  }
+
+  @override
+  void onTapUp(TapUpInfo info) {
+    super.onTapUp(info);
+    return;
+  }
+
+  */
 
   // main gameplay loop
   @override 
   void update(double dt) {
     super.update(dt);
 
-    // if we're still animating the background, just keep doing that
-    if (_playState == PlayState.background) {
-      // update timer
-      countdown.update(dt);
-      animateBackground(false);
-    // switching to playing the game
-    } else if (_playState == PlayState.play) {
-      // update scoreboard
-      scoreboard.text = score.toString().padLeft(4, '0');
+    switch (_playState) {
+      case PlayState.debug:
+        dist.text = joystick.relativeDelta.toString();
+        ang.text = joystick.delta.screenAngle().toString();
+      case PlayState.background:
+        countdown.update(dt);
+        animateBackground(false);
+        break;
+      case PlayState.play:
+        scoreboard.text = score.toString().padLeft(4, '0');
+        break;
     }
+
   }
 
+  /*
   @override
   void onPanUpdate(DragUpdateInfo info) {
     super.onPanUpdate(info);

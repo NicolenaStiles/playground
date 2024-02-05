@@ -103,12 +103,14 @@ class Player extends PositionComponent
   void turnLeft(double dt) {
     angle -= game_settings.playerRotationSpeed * dt;
     angle %= 2 * pi;
+
   }
 
   // handling rotation
   void turnRight(double dt) {
     angle += game_settings.playerRotationSpeed * dt;
     angle %= 2 * pi;
+
   }
 
   // Handling movement: including the glide-y stuff specific to asteroids!
@@ -262,15 +264,6 @@ class Player extends PositionComponent
     }
   }
 
-  // TODO: touchscreen controls?
-  /*
-  @override
-  void onDragUpdate(DragUpdateEvent event) {
-    super.onDragUpdate(event);
-    lookAt(event.localDelta);
-  }
-  */
-
   @override
   void update(double dt) {
     super.update(dt);
@@ -279,12 +272,12 @@ class Player extends PositionComponent
       return;
     }
 
+    // movement
+    movePlayer(dt);
+
     // rotation
     if (rotateRight) { turnRight(dt); }
     if (rotateLeft) { turnLeft(dt); }
-
-    // movement
-    movePlayer(dt);
 
     // shots: firing and managing cooldown
     handleShot(fireShot);
