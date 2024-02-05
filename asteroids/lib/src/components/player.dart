@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 import '../asteroids.dart';
+//import '../mobile_asteroids.dart';
 import '../config.dart' as game_settings;
 import '../components/components.dart';
 
@@ -27,29 +28,21 @@ class Player extends PositionComponent
   Player({
     required this.shipType,
     required super.key,
+    required super.size,
     required super.position,
   }) : super ( 
         anchor: Anchor.center,
         children: [RectangleHitbox(isSolid: true)]
   ) {
-        super.size = mapShipSize();
         _graphicPath = completePath();
   }
 
   ShipType shipType;
 
-  Vector2 mapShipSize() {
-    switch (shipType) {
-      case ShipType.player:
-        return Vector2(game_settings.playerWidthDesktop,
-                       game_settings.playerHeightDesktop);
-      case ShipType.lives:
-        return Vector2(game_settings.livesWidth,
-                       game_settings.livesHeight);
-      default:
-        debugPrint("Ship size unset!");
-        return Vector2(0, 0);
-    }
+  @override 
+  Future<void> onLoad() async {
+    super.onLoad();
+    _graphicPath = completePath();
   }
 
   // movement input
@@ -243,6 +236,9 @@ class Player extends PositionComponent
     super.onCollisionStart(intersectionPoints, other);
     // if not invincible
     // start animation?
+    if (shipType == ShipType.lives) {
+      return;
+    }
   }
 
   @override
@@ -265,6 +261,15 @@ class Player extends PositionComponent
       _playerDirection = Vector2(0,0);
     }
   }
+
+  // TODO: touchscreen controls?
+  /*
+  @override
+  void onDragUpdate(DragUpdateEvent event) {
+    super.onDragUpdate(event);
+    lookAt(event.localDelta);
+  }
+  */
 
   @override
   void update(double dt) {

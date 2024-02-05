@@ -1,7 +1,9 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import 'src/asteroids.dart';
+// import 'src/mobile_asteroids.dart';
 
 // TODO: 1. Create static display test image layout 
 // Should include ship, all asteroid sizes, and HUD componenets
@@ -13,6 +15,9 @@ import 'src/asteroids.dart';
 // TODO: 3. Handle resize/screen rotation (landscape vs portrait)
 
 void main() {
-  final game = Asteroids();
+  final isMobile = kIsWeb && 
+                  (defaultTargetPlatform == TargetPlatform.iOS || 
+                   defaultTargetPlatform == TargetPlatform.android);
+  final game = Asteroids(isMobile);
   runApp(GameWidget(game: game));
 }
