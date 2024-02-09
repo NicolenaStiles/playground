@@ -6,11 +6,12 @@ import 'package:flame/events.dart';
 
 import 'package:flutter/material.dart';
 
-import '../asteroids.dart';
+// import '../asteroids.dart';
+import '../mobile_asteroids.dart';
 import 'components.dart';
 
 class TestJoystick extends JoystickComponent
-  with HasVisibility, HasGameRef<Asteroids> {
+  with HasVisibility, TapCallbacks, HasGameRef<MobileAsteroids> {
 
   TestJoystick({
     required super.key,
@@ -23,6 +24,7 @@ class TestJoystick extends JoystickComponent
   bool onDragStart(DragStartEvent event) {
     super.onDragStart(event);
     game.findByKeyName<Player>('player')!.isJoystickActive = true;
+    game.isJoystickActive = true;
     isVisible = true;
     return false;
   }
@@ -40,11 +42,13 @@ class TestJoystick extends JoystickComponent
   void onDragStop() {
     super.onDragStop();
     game.findByKeyName<Player>('player')!.isJoystickActive = false;
+    game.isJoystickActive = false;
     isVisible = false;
   }
 
 }
 
+/*
 class VirtualJoystick extends PositionComponent 
   with HasVisibility, HasGameRef<Asteroids> {
 
@@ -169,4 +173,4 @@ class JoystickButton extends CircleComponent
     // only provide updates to the object if _isDragged == true!
   }
 }
-
+*/

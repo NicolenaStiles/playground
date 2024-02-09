@@ -7,15 +7,15 @@ import 'package:flutter/material.dart';
 
 import 'dart:math';
 
-import '../asteroids.dart';
-//import '../mobile_asteroids.dart';
+//import '../asteroids.dart';
+import '../mobile_asteroids.dart';
 import '../config.dart' as game_settings;
 import '../components/components.dart';
 
 enum ShipType {player, lives}
 
 class Player extends PositionComponent 
-  with CollisionCallbacks, HasGameRef<Asteroids> {
+  with CollisionCallbacks, HasGameRef<MobileAsteroids> {
 
   // Rendering
   var _graphicPath = Path();

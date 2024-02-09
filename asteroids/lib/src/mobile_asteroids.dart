@@ -4,6 +4,8 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+import 'package:flame/input.dart';
+import 'package:flame/palette.dart';
 
 // general flutter packages
 import 'package:flutter/material.dart';
@@ -17,7 +19,9 @@ import 'config.dart' as game_settings;
 game_settings.GameCfg testCfg = game_settings.GameCfg.desktop();
 
 class MobileAsteroids extends FlameGame
-  with KeyboardEvents, HasCollisionDetection {
+  with MultiTouchTapDetector, HasCollisionDetection {
+
+  // are we running on mobile?
   bool isMobile;
   MobileAsteroids(this.isMobile);
 
@@ -28,8 +32,19 @@ class MobileAsteroids extends FlameGame
   int score = 0;
   int lives = game_settings.playerLives;
 
-  // displaying score
-  static TextComponent scoreboard = TextComponent();
+  // displaying debug info 
+  static TextComponent tapIdsText = TextComponent();
+  static TextComponent tapPosText = TextComponent();
+
+  List<String> tapIdsList = [];
+  List<String> tapPosList = []; 
+
+  bool isJoystickActive = false;
+  bool isButtonActive = false;
+
+  // gesture input
+  late final TestJoystick joystick;
+  late final VirtualButton button;
 
   @override
   FutureOr<void> onLoad() async {
@@ -44,11 +59,11 @@ class MobileAsteroids extends FlameGame
       testCfg = game_settings.GameCfg.mobile(width, height);
     }
 
-    layoutDebug();
+    gestureDebug();
   }
 
-  void layoutDebug() {
-    
+  void gestureDebug() {
+
     // player's ship
     Vector2 shipPos = Vector2(0, 0);
     shipPos.x = size.x * (1/2);
@@ -58,72 +73,102 @@ class MobileAsteroids extends FlameGame
       position: shipPos,
       size : Vector2(testCfg.playerWidth, testCfg.playerHeight),
       shipType: ShipType.player,
-      isMobileGame: isMobile,
+      isMobileGame: true,
     ));
-    
-    // asteroids
-    for (var j = 3; j > 0; j--) {
-      Vector2 asteroidPos = Vector2(0, 0);
-      asteroidPos.y = (j / 5) * size.y;
-      for (var i = 1; i < 4; i++) {
-        asteroidPos.x = (i / 4) * size.x;
-        Vector2 asteroidSize = Vector2(0, 0);
-        // TODO: add same logic to random asteroid gen
-        switch (AsteroidSize.values[j - 1]) {
-          case AsteroidSize.large:
-           asteroidSize.x = testCfg.largeAsteroidSize; 
-           asteroidSize.y = testCfg.largeAsteroidSize; 
-          case AsteroidSize.medium:
-           asteroidSize.x = testCfg.mediumAsteroidSize; 
-           asteroidSize.y = testCfg.mediumAsteroidSize; 
-          case AsteroidSize.small:
-           asteroidSize.x = testCfg.smallAsteroidSize; 
-           asteroidSize.y = testCfg.smallAsteroidSize; 
-        }
-        world.add(Asteroid(
-          objType: AsteroidType.values[i - 1],
-          objSize: AsteroidSize.values[j - 1],
-          velocity: 0,
-          size: asteroidSize,
-          position: asteroidPos, 
-          angle: 0,
-        ));
-      }
+
+    // Virtual Joystick ('TestJoystick' class)
+    final knobPaint = BasicPalette.white.withAlpha(200).paint();
+    final backgroundPaint = BasicPalette.white.withAlpha(100).paint();
+    joystick = TestJoystick(
+      key: ComponentKey.named('joystick'),
+      knob: CircleComponent(radius: 20, paint: knobPaint),
+      background: CircleComponent(radius: 50, paint: backgroundPaint),
+      position: size * (3 / 4),
+    );
+    joystick.isVisible = false;
+    world.add(joystick);
+
+    button = VirtualButton(
+      radius: 50,
+      position: Vector2(100, size.y - 100),
+    );
+    world.add(button);
+
+    // debug info
+    tapIdsText = TextComponent(
+        key: ComponentKey.named('tapIds'),
+        text: tapIdsList.toString(), 
+        anchor: Anchor.topCenter,
+        position: Vector2(width / 2, 0));
+    world.add(tapIdsText);
+
+    tapPosText = TextComponent(
+        key: ComponentKey.named('tapPos'),
+        text: tapPosList.toString(), 
+        anchor: Anchor.topCenter,
+        position: Vector2(width / 2, 40));
+    world.add(tapPosText);
+  }
+  
+  // handling tap events
+  /*
+  @override
+  void onTapDown(TapDownInfo info) {
+    super.onTapDown(info);
+    tapIdsText.text = "Tap down!";
+    if (!buttonComponent.containsPoint(info.eventPosition.widget)) {
+      isJoystickActive = true;
+      joystick.position = info.eventPosition.widget;
+      joystick.isVisible = true;
     }
+  }
 
-    // HUD stuff: scoreboard and lives tracker
-    // scoreboard
-    TextStyle scoreStyle = TextStyle(color: Colors.white, 
-                                     fontSize: testCfg.fontSize, 
-                                     fontFamily: 'Hyperspace');
-    final scoreRenderer = TextPaint(style: scoreStyle);
+  @override
+  void onTapCancel() {
+    super.onTapCancel();
+    tapIdsText.text = "Tap cancel!";
+  }
 
-    // score 
-    String formattedScore = score.toString().padLeft(4, '0');
-    scoreboard = TextComponent(
-        key: ComponentKey.named('scoreboard'),
-        text: formattedScore, 
-        textRenderer: scoreRenderer,
-        anchor: Anchor.topLeft,
-        position: Vector2(0,0));
-    world.add(scoreboard);
+  @override
+  void onTapUp(TapUpInfo info) {
+    super.onTapUp(info);
+    tapIdsText.text = "Tap up!";
+    if (!buttonComponent.containsPoint(info.eventPosition.widget)) {
+      isJoystickActive = false;
+      joystick.isVisible = false;
+    }
+  }
+  */
 
-    // lives tracker
-    for (int n = 0; n < lives; n++) {
-      String lifeKey = "life$n";
-      double xPos = width - (((n + 1) * testCfg.livesOffset) 
-                                 + (n * testCfg.livesWidth) 
-                                 + (testCfg.livesWidth / 2));
-      double yPos = testCfg.livesOffset + (testCfg.livesHeight / 2);
-      world.add(
-        Player(
-          key: ComponentKey.named(lifeKey),
-          position: Vector2(xPos, yPos),
-          size : Vector2(testCfg.livesWidth, testCfg.livesHeight),
-          shipType: ShipType.lives,
-          isMobileGame: isMobile,
-        )
-      );
+  // tracks which tap accessed button
+  int buttonTapId = 0;
+
+  @override 
+  void onTapDown(int pointerId, TapDownInfo info) {
+    super.onTapDown(pointerId, info);
+    if (button.containsPoint(info.eventPosition.widget)) {
+      button.isPressed = true;
+      buttonTapId = pointerId;
+    } else if (!isJoystickActive) {
+      joystick.position = info.eventPosition.widget;
+      joystick.isVisible = true;
+      isJoystickActive = true;
+    }
+  }
+
+  @override
+  void onTapCancel(int pointerId) {
+    super.onTapCancel(pointerId);
+    if (pointerId == buttonTapId && button.isPressed == true) {
+      button.isPressed = false;
+    }
+  }
+
+  @override
+  void onTapUp(int pointerId, TapUpInfo info) {
+    super.onTapUp(pointerId, info);
+    if (pointerId == buttonTapId && button.isPressed == true) {
+      button.isPressed = false;
     }
   }
 }

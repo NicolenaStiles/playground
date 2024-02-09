@@ -144,6 +144,7 @@ class Asteroids extends FlameGame
         left:  20, 
         bottom: 20
       ),
+      /*
       onPressed: () { 
         findByKeyName<Player>('player')!.fireShot = true; 
       },
@@ -154,6 +155,7 @@ class Asteroids extends FlameGame
         findByKeyName<Player>('player')!.fireShot = false; 
         print('I was cancelled!');
       }
+      */
     );
     add(buttonShoot);
   }
@@ -399,10 +401,11 @@ class Asteroids extends FlameGame
     if (!buttonShoot.containsPoint(info.eventPosition.widget)) {
       joystick.position = info.eventPosition.widget;
       joystick.isVisible = true;
+    } else {
+      findByKeyName<Player>('player')!.fireShot = true; 
     }
   }
 
-  /*
   @override
   void onTapUp(TapUpInfo info) {
     super.onTapUp(info);
@@ -410,7 +413,6 @@ class Asteroids extends FlameGame
       findByKeyName<Player>('player')!.fireShot = false; 
     }
   }
-  */
 
   // main gameplay loop
   @override 
