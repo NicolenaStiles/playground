@@ -1,10 +1,12 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:math';
 
 import '../asteroids.dart';
+// import '../mobile_asteroids.dart';
 import '../config.dart' as game_settings;
 import '../components/components.dart';
 
@@ -13,29 +15,6 @@ enum AsteroidSize {small, medium, large}
 
 class Asteroid extends PositionComponent 
   with CollisionCallbacks, HasGameReference<Asteroids> {
-
-  // Rendering
-  var _graphicPath = Path();
-  List<List<double>> _verticies = [];
-  final _paint = Paint()
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 2.0
-    ..color = Colors.white;
-
-  Asteroid({
-    required this.objType,
-    required this.objSize,
-    required this.velocity,
-    required super.position,
-    required super.angle,
-  }) : super(
-      anchor: Anchor.center,
-      children: [CircleHitbox(isSolid: true)]
-    ) {
-      super.size = mapAsteroidSize();
-      _points = mapAsteroidValue();
-      _graphicPath = completePath();
-  }
 
   // Core settings
   AsteroidSize objSize;
@@ -50,24 +29,32 @@ class Asteroid extends PositionComponent
   // for collisions (when shot)
   List<Asteroid> _asteroidChildren = [];
 
+  // Rendering
+  var _graphicPath = Path();
+  List<List<double>> _verticies = [];
+  final _paint = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2.0
+    ..color = Colors.white;
 
-  // TODO: should depend on if we're using desktop or not
-  Vector2 mapAsteroidSize() {
+  Asteroid({
+    required this.objType,
+    required this.objSize,
+    required this.velocity,
+    required super.size,
+    required super.position,
+    required super.angle,
+  }) : super(
+      anchor: Anchor.center,
+      children: [CircleHitbox(isSolid: true)]
+    ) {
+      _points = mapAsteroidValue();
+  }
 
-    switch (objSize) {
-      case AsteroidSize.large:
-        return Vector2(game_settings.largeAsteroidDesktop,
-                       game_settings.largeAsteroidDesktop);
-      case AsteroidSize.medium:
-        return Vector2(game_settings.mediumAsteroidDesktop,
-                       game_settings.mediumAsteroidDesktop);
-      case AsteroidSize.small:
-        return Vector2(game_settings.smallAsteroidDesktop,
-                       game_settings.smallAsteroidDesktop);
-      default:
-        debugPrint("Asteroid size unset!");
-        return Vector2(0, 0);
-    } 
+  @override
+  Future<void> onLoad() async {
+    super.onLoad();
+    _graphicPath = completePath();
   }
 
   int mapAsteroidValue() {
@@ -280,6 +267,7 @@ class Asteroid extends PositionComponent
             objType: objType, 
             objSize: AsteroidSize.medium,
             velocity: velocity,
+            size: size / 2,
             position: Vector2(newXA, newYA),
             angle: angle
           )
@@ -290,6 +278,7 @@ class Asteroid extends PositionComponent
             objType: objType, 
             objSize: AsteroidSize.medium,
             velocity: velocity,
+            size: size / 2,
             position: Vector2(newXB, newYB),
             angle: angle - (pi / 4)
           )
@@ -311,6 +300,7 @@ class Asteroid extends PositionComponent
             objType: objType, 
             objSize: AsteroidSize.small,
             velocity: velocity,
+            size: size / 2,
             position: Vector2(newXA, newYA),
             angle: angle
           )
@@ -321,6 +311,7 @@ class Asteroid extends PositionComponent
             objType: objType, 
             objSize: AsteroidSize.small,
             velocity: velocity,
+            size: size / 2,
             position: Vector2(newXB, newYB),
             angle: angle - (pi / 4)
           )

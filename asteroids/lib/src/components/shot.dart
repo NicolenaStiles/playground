@@ -4,23 +4,24 @@ import 'package:flutter/material.dart';
 
 import 'dart:math';
 
-import '../asteroids.dart';
+// import '../asteroids.dart';
+import '../mobile_asteroids.dart';
 import '../config.dart' as game_settings;
 import '../components/components.dart';
 
 class Shot extends CircleComponent 
-  with CollisionCallbacks, HasGameRef<Asteroids> {
+  with CollisionCallbacks, HasGameRef<MobileAsteroids> {
 
   Shot({
     required super.position,
     required super.angle,
   }) : super(
-            radius: game_settings.shotRadiusDesktop,
-            anchor: Anchor.center,
-            paint: Paint()
-              ..color = Colors.white
-              ..style = PaintingStyle.fill,
-            children: [CircleHitbox(radius: game_settings.shotRadiusDesktop)],
+    radius: game_settings.shotRadiusDesktop,
+    anchor: Anchor.center,
+    paint: Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill,
+    children: [CircleHitbox(radius: game_settings.shotRadiusDesktop)],
  );
 
   int _timer = 0;
