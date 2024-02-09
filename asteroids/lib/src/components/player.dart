@@ -1,20 +1,29 @@
+// flame-specific
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 
+// flutter-specific
 import 'package:flutter/material.dart';
 
+// dart-specific
 import 'dart:math';
 
-//import '../asteroids.dart';
-import '../mobile_asteroids.dart';
+// local components
+import '../asteroids.dart';
 import '../config.dart' as game_settings;
 import '../components/components.dart';
 
-enum ShipType {player, lives}
+// TODO: 1. Bespoke hitbox?
+// TODO: 2. Add boosters animation!
+// TODO: 3. add max speed!
+//          this one may just be for desktop-- there's a basic version
+//          aready in place for mobile.
+// TODO: 4. add visual indicator for invulnerability?
+// TODO: 5. add visual effect for collision?
 
 class Player extends PositionComponent 
-  with CollisionCallbacks, HasGameRef<MobileAsteroids> {
+  with CollisionCallbacks, HasGameRef<Asteroids> {
 
   // Rendering
   var _graphicPath = Path();
@@ -24,9 +33,7 @@ class Player extends PositionComponent
     ..strokeWidth = 2.0
     ..color = Colors.white;
 
-  // TODO: bespoke hitbox?
   Player({
-    required this.shipType,
     required this.isMobileGame,
     required super.key,
     required super.size,
@@ -38,7 +45,6 @@ class Player extends PositionComponent
     _graphicPath = completePath();
   }
 
-  ShipType shipType;
   final bool isMobileGame;
 
   @override 
@@ -83,7 +89,6 @@ class Player extends PositionComponent
     canvas.drawPath(_graphicPath, _paint);
   }
 
-  // TODO: Add boosters animation!
   Path completePath() {
 
     _verticies = [];
@@ -161,7 +166,6 @@ class Player extends PositionComponent
   }
 
   // Handling movement: including the glide-y stuff specific to asteroids!
-  // TODO: add max speed!
   void movePlayer(double dt) {
 
     double xMove = sin(angle);
@@ -247,7 +251,6 @@ class Player extends PositionComponent
       }
     }
 
-    // TODO: test this max speed!
     double maxPlayerVelocity = 4;
     if (_playerVelocityFinal.x > maxPlayerVelocity) {
       _playerVelocityFinal.x = maxPlayerVelocity;
@@ -312,14 +315,13 @@ class Player extends PositionComponent
 
   void updateLives() {
     String keyName = 'life${game.lives - 1}';
-    if (game.findByKeyName<Player>(keyName) != null) {
-      game.world.remove(game.findByKeyName<Player>(keyName)!);
+    if (game.findByKeyName<Lives>(keyName) != null) {
+      game.world.remove(game.findByKeyName<Lives>(keyName)!);
     }
     game.lives--;
     _godmode = true;
   }
 
-  // TODO: visual indicator for invulnerability?
   void updateInvulnerability() {
     if (!_godmode) { 
       return;
@@ -332,25 +334,17 @@ class Player extends PositionComponent
     }
   }
 
-  // TODO: visual effect for collision?
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, 
                         PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
     // if not invincible
     // start animation?
-    if (shipType == ShipType.lives) {
-      return;
-    }
   }
 
   @override
   void onCollisionEnd(PositionComponent other) {
     super.onCollisionEnd(other);
-    
-    if (shipType == ShipType.lives) {
-      return;
-    }
 
     if (_godmode != true) {
       // subtract a life and zero everything else out
@@ -368,10 +362,6 @@ class Player extends PositionComponent
   @override
   void update(double dt) {
     super.update(dt);
-    
-    if (shipType == ShipType.lives) {
-      return;
-    }
 
     if (isMobileGame) {
       // movement
