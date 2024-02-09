@@ -120,6 +120,7 @@ class Asteroids extends FlameGame
       position: shipPos,
       size : Vector2(testCfg.playerWidth, testCfg.playerHeight),
       shipType: ShipType.player,
+      isMobileGame: true,
     ));
 
     final knobPaint = BasicPalette.white.withAlpha(200).paint();
@@ -147,6 +148,7 @@ class Asteroids extends FlameGame
       position: shipPos,
       size : Vector2(testCfg.playerWidth, testCfg.playerHeight),
       shipType: ShipType.player,
+      isMobileGame: isMobile,
     ));
     
     // asteroids
@@ -208,6 +210,7 @@ class Asteroids extends FlameGame
           position: Vector2(xPos, yPos),
           size : Vector2(testCfg.livesWidth, testCfg.livesHeight),
           shipType: ShipType.lives,
+          isMobileGame: isMobile,
         )
       );
     }
@@ -358,6 +361,7 @@ class Asteroids extends FlameGame
           position: Vector2(xPos, yPos),
           size : Vector2(testCfg.livesWidth, testCfg.livesHeight),
           shipType: ShipType.lives,
+          isMobileGame: isMobile,
         )
       );
     }
@@ -370,32 +374,9 @@ class Asteroids extends FlameGame
     if (_playState == PlayState.background) {
       startGame();
     }
-    print(info.eventPosition.widget);
     joystick.position = info.eventPosition.widget;
     joystick.isVisible = true;
   }
-
-  /*
-
-  @override
-  void onTapDown(TapDownInfo info) {
-    super.onTapDown(info);
-    if (_playState == PlayState.background) {
-      startGame();
-    }
-    print(info.eventPosition.widget);
-    findByKeyName<VirtualJoystick>('joystick')!.position = info.eventPosition.widget;
-    return;
-    //findByKeyName<VirtualJoystick>('joystick')!.position = info.eventPosition.widget;
-  }
-
-  @override
-  void onTapUp(TapUpInfo info) {
-    super.onTapUp(info);
-    return;
-  }
-
-  */
 
   // main gameplay loop
   @override 
@@ -404,8 +385,10 @@ class Asteroids extends FlameGame
 
     switch (_playState) {
       case PlayState.debug:
+        //findByKeyName<Player>('player')!.angle = joystick.delta.screenAngle();
+        //findByKeyName<Player>('player')!
         dist.text = joystick.relativeDelta.toString();
-        ang.text = joystick.delta.screenAngle().toString();
+        ang.text = (joystick.delta.screenAngle() * radians2Degrees).toString();
       case PlayState.background:
         countdown.update(dt);
         animateBackground(false);
@@ -416,68 +399,6 @@ class Asteroids extends FlameGame
     }
 
   }
-
-  /*
-  @override
-  void onPanUpdate(DragUpdateInfo info) {
-    super.onPanUpdate(info);
-    tapPosition = info.eventPosition.global.toString();
-    tapTracker2.text = 'pan update';
-  }
-
-  @override
-  void onPanStart(DragStartInfo info) {
-    super.onPanStart(info);
-    tapPosition = info.eventPosition.global.toString();
-    tapTracker2.text = 'pan start';
-  }
-
-  @override
-  void onPanEnd(DragEndInfo info) {
-    super.onPanEnd(info);
-    tapTracker2.text = 'pan end';
-  }
-
-
-  @override
-  void onLongPressStart(LongPressStartInfo info) {
-    super.onLongPressStart(info);
-    tapTracker.text = info.eventPosition.global.toString();
-    tapTracker2.text = 'long press start';
-  }
-
-  @override
-    void onLongPressMoveUpdate(LongPressMoveUpdateInfo info) {
-      super.onLongPressMoveUpdate(info);
-      tapTracker.text = info.eventPosition.global.toString();
-      tapTracker2.text = 'long press move update';
-    }
-
-  @override
-  void onLongPressEnd(LongPressEndInfo info) {
-    super.onLongPressEnd(info);
-    tapTracker.text = info.eventPosition.global.toString();
-    tapTracker2.text = 'long press end';
-  }
-
-  @override
-  void onTapDown(TapDownInfo info) {
-    super.onTapDown(info);
-    if (_playState == PlayState.background) {
-      startGame();
-    }
-    tapPosition = info.eventPosition.global.toString();
-    tapTracker2.text = 'tap down';
-  }
-
-  @override
-  void onTapUp(TapUpInfo info) {
-    super.onTapUp(info);
-    tapPosition = info.eventPosition.global.toString();
-    tapTracker2.text = 'tap up';
-  }
-
-  */
 
   // TODO: Implement hyperdrive!
   @override

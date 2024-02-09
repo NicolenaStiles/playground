@@ -7,9 +7,10 @@ import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 
 import '../asteroids.dart';
+import 'components.dart';
 
 class TestJoystick extends JoystickComponent
-  with HasVisibility {
+  with HasVisibility, HasGameRef<Asteroids> {
 
   TestJoystick({
     required super.key,
@@ -21,13 +22,23 @@ class TestJoystick extends JoystickComponent
   @override
   bool onDragStart(DragStartEvent event) {
     super.onDragStart(event);
+    game.findByKeyName<Player>('player')!.isJoystickActive = true;
     isVisible = true;
+    return false;
+  }
+
+  @override
+  bool onDragUpdate(DragUpdateEvent event) {
+    super.onDragUpdate(event);
+    game.findByKeyName<Player>('player')!.mobileMove = relativeDelta;
+    game.findByKeyName<Player>('player')!.angleRequest = relativeDelta.screenAngle();
     return false;
   }
 
   @override
   void onDragStop() {
     super.onDragStop();
+    game.findByKeyName<Player>('player')!.isJoystickActive = false;
     isVisible = false;
   }
 

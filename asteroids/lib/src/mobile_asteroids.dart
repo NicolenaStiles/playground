@@ -58,6 +58,7 @@ class MobileAsteroids extends FlameGame
       position: shipPos,
       size : Vector2(testCfg.playerWidth, testCfg.playerHeight),
       shipType: ShipType.player,
+      isMobileGame: isMobile,
     ));
     
     // asteroids
