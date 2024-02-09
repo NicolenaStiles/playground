@@ -17,8 +17,8 @@ import '../components/components.dart';
 // TODO: 1. Bespoke hitbox?
 // TODO: 2. Add boosters animation!
 // TODO: 3. add max speed!
-// this one may just be for desktop-- there's a basic version
-// aready in place for mobile.
+//          this one may just be for desktop-- there's a basic version
+//          aready in place for mobile.
 // TODO: 4. add visual indicator for invulnerability?
 // TODO: 5. add visual effect for collision?
 
