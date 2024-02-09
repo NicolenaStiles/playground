@@ -31,6 +31,7 @@ class TestJoystick extends JoystickComponent
   bool onDragUpdate(DragUpdateEvent event) {
     super.onDragUpdate(event);
     game.findByKeyName<Player>('player')!.mobileMove = relativeDelta;
+    game.findByKeyName<Player>('player')!.mobilePercent = intensity;
     game.findByKeyName<Player>('player')!.angleRequest = relativeDelta.screenAngle();
     return false;
   }
@@ -80,10 +81,6 @@ class VirtualJoystick extends PositionComponent
         key: ComponentKey.named('button'), 
         radius: radius / 2,
         position: size / 2));
-  }
-
-  void sayHi() {
-    print('hi!');
   }
 }
 
@@ -170,8 +167,6 @@ class JoystickButton extends CircleComponent
   void update(dt) {
     super.update(dt);
     // only provide updates to the object if _isDragged == true!
-    game.dist.text = 'Distance: $dist';
-    game.ang.text = 'Angle: ${ang * radians2Degrees}';
   }
 }
 

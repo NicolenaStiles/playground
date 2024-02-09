@@ -57,7 +57,9 @@ class Player extends PositionComponent
   // mobile support
   bool isJoystickActive = false;
   Vector2 mobileMove = Vector2.zero();
+  double mobilePercent = 0;
   double angleRequest = 0;
+  static const double acceptableAngleError = 5; // in degrees
 
   // movement math
   double _playerLastImpulseAngle = 0;
@@ -108,9 +110,6 @@ class Player extends PositionComponent
     return graphicPath;
   }
 
-  // TODO: move this up in the class 
-  static const double acceptableAngleError = 5; // in degrees
-
   void mobileTurn(double dt) {
     if (!isJoystickActive) return; // only run if we're recieving input
 
@@ -123,19 +122,19 @@ class Player extends PositionComponent
 
     if (eA > 180) {
       eA -= 360;
-    } else if (eA < -180){
+    } else if (eA < -180) {
       eA += 360;
     }
 
     // exit early if we're under acceptable error
     if (eA.abs() < acceptableAngleError) return;
 
-    double mobilePlayerRotatationSpeed = 128;
+    // calculate next angle
     double nA = 0;
     if (eA > 0) {
-      nA = cA + mobilePlayerRotatationSpeed * dt;
+      nA = cA + game_settings.mobilePlayerRotatationSpeed * dt;
     } else {
-      nA = cA - mobilePlayerRotatationSpeed * dt;
+      nA = cA - game_settings.mobilePlayerRotatationSpeed * dt;
     }
 
     // if next angle is outside of bounds,
@@ -149,7 +148,6 @@ class Player extends PositionComponent
     // assign final value to angle
     angle = nA * degrees2Radians;
   }
-
 
   // handling rotation
   void turnLeft(double dt) {
@@ -208,15 +206,23 @@ class Player extends PositionComponent
   }
 
   void mobileMovePlayer(double dt) {
+
+    double xMove = sin(angle);
+    double yMove = 0 - cos(angle);
+
+    _playerDirection 
+    ..setValues(xMove,yMove)
+    ..normalize();
     
-    _playerDirection = mobileMove;
-    print('Player direction: ${_playerDirection.toString()}');
-    print('mobile move: ${mobileMove.toString()}');
+    //_playerDirection = mobileMove;
+    //print('Player direction: ${_playerDirection.toString()}');
+    //print('Mobile move: ${mobileMove.toString()}');
+    //print('Percentage power: ${mobilePercent.toString()}');
 
     if (isJoystickActive) {
 
       _playerLastImpulseAngle = angle;
-      _playerVelocityFinal = _playerVelocityInitial + (game_settings.playerAcceleration * dt);
+      _playerVelocityFinal = _playerVelocityInitial + (game_settings.mobilePlayerAcceleration * dt * mobilePercent);
       _playerDisplacement[0] = _playerDirection[0] * _playerVelocityFinal[0];
       _playerDisplacement[1] = _playerDirection[1] * _playerVelocityFinal[1];
       _playerVelocityInitial = _playerVelocityFinal;
@@ -228,7 +234,7 @@ class Player extends PositionComponent
 
       if (_playerVelocityFinal[0] > 0 && _playerVelocityFinal[1] > 0) {
 
-        _playerVelocityFinal = _playerVelocityInitial - (game_settings.playerAcceleration * dt);
+        _playerVelocityFinal = _playerVelocityInitial - (game_settings.mobilePlayerAcceleration * dt);
         _playerDisplacement[0] = sin(_playerLastImpulseAngle) * _playerVelocityFinal[0];
         _playerDisplacement[1] = (0 - cos(_playerLastImpulseAngle)) * _playerVelocityFinal[1];
         _playerVelocityInitial = _playerVelocityFinal;
@@ -240,6 +246,15 @@ class Player extends PositionComponent
         _playerVelocityInitial = Vector2(0,0);
         _playerVelocityFinal= Vector2(0,0);
       }
+    }
+
+    // TODO: test this max speed!
+    double maxPlayerVelocity = 4;
+    if (_playerVelocityFinal.x > maxPlayerVelocity) {
+      _playerVelocityFinal.x = maxPlayerVelocity;
+    }
+    if (_playerVelocityFinal.y > maxPlayerVelocity) {
+      _playerVelocityFinal.y = maxPlayerVelocity;
     }
 
     // check wraparound
@@ -360,9 +375,15 @@ class Player extends PositionComponent
     }
 
     if (isMobileGame) {
-      // movement and rotation
-      //mobileMovePlayer(dt);
+      // movement
+      mobileMovePlayer(dt);
+
+      // rotation
       mobileTurn(dt);
+
+      // shots: firing and managing cooldown
+      handleShot(fireShot);
+
     } else {
       // movement
       movePlayer(dt);
@@ -378,6 +399,4 @@ class Player extends PositionComponent
     // handle invulnerability 
     updateInvulnerability();
   }
-
-
 }

@@ -82,8 +82,11 @@ double livesHeight = 42;
 double livesOffset = 8;
 
 // mobile scalars
- double playerShipMobileScalar = 16;
+double playerShipMobileScalar = 16;
+Vector2 mobilePlayerAcceleration = Vector2(2,2);
 
+// mobile rotation settings
+const double mobilePlayerRotatationSpeed = 256; // in degrees I think?
 
 // player settings
 double playerRotationSpeed = 4; 
@@ -95,7 +98,6 @@ const double shotRadiusDesktop = 4;
 const double shotSpeed = 600;        // how fast bullets go
 const double shotTimer = 80;        // how long bullets live
 const double shotCooldown = 16;      // how long until shoot bullets
-
 
 // alien
 // WARN : I pulled these numbers out of my ass
