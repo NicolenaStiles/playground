@@ -74,7 +74,6 @@ class Shot extends CircleComponent
     }
   }
 
-
   @override
   void update(double dt) {
     super.update(dt);

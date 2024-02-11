@@ -41,7 +41,6 @@ class Asteroids extends FlameGame
   // gesture input
   late final Joystick joystick;
   late final GameButton buttonShoot;
-  late final GameButton buttonWarp;
 
   // gesture state
   bool isJoystickActive = false;
@@ -213,14 +212,11 @@ class Asteroids extends FlameGame
   // no component keys here :(
   void addHudButtons() {
 
-    double radius = 20;
+    double radius = 40;
     double margin = 10;
 
     Vector2 shootPos = Vector2(
                           margin + radius, 
-                          size.y - ( 2 * margin + 2 * radius));
-    Vector2 warpPos = Vector2( 
-                          2 * margin + 3 * radius, 
                           size.y - (margin + radius));
 
     buttonShoot = GameButton(
@@ -228,14 +224,8 @@ class Asteroids extends FlameGame
       position: shootPos, 
       radius: radius, 
     );
-
-    buttonWarp = GameButton(
-      type: ButtonType.warp, 
-      position: warpPos, 
-      radius: radius,
-    );
-
-    world.addAll([buttonShoot, buttonWarp]);
+    
+    world.add(buttonShoot);
   }
 
   // Game components: player, joystick, etc.
@@ -374,7 +364,6 @@ class Asteroids extends FlameGame
 
   // tracks which tap accessed button
   int shootButtonTapId = 0;
-  int warpButtonTapId = 0;
 
   @override 
   void onTapDown(int pointerId, TapDownInfo info) {
@@ -384,9 +373,6 @@ class Asteroids extends FlameGame
     if (buttonShoot.containsPoint(info.eventPosition.widget)) {
       buttonShoot.isPressed = true;
       shootButtonTapId = pointerId;
-    } else if (buttonWarp.containsPoint(info.eventPosition.widget)) {
-      buttonWarp.isPressed = true;
-      warpButtonTapId = pointerId;
     } else if (!isJoystickActive) {
       joystick.position = info.eventPosition.widget;
       joystick.isVisible = true;
@@ -402,9 +388,6 @@ class Asteroids extends FlameGame
     if (pointerId == shootButtonTapId && buttonShoot.isPressed == true) {
       buttonShoot.isPressed = false;
       shootButtonTapId = 0;
-    } else if (pointerId == warpButtonTapId && buttonWarp.isPressed == true) {
-      buttonWarp.isPressed = false;      
-      warpButtonTapId = 0;
     }
   }
 
@@ -421,9 +404,6 @@ class Asteroids extends FlameGame
     if (pointerId == shootButtonTapId && buttonShoot.isPressed == true) {
       buttonShoot.isPressed = false;
       shootButtonTapId = 0;
-    } else if (pointerId == warpButtonTapId && buttonWarp.isPressed == true) {
-      buttonWarp.isPressed = false;      
-      warpButtonTapId = 0;
     }
   }
 

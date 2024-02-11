@@ -381,9 +381,11 @@ class Player extends PositionComponent
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, 
                         PositionComponent other) {
+
     super.onCollisionStart(intersectionPoints, other);
-    // if not invincible
-    // start animation?
+
+    if (other is Shot) return;
+
     if (_godmode != true) {
 
       // subtract a life
@@ -406,6 +408,7 @@ class Player extends PositionComponent
   @override
   void onCollisionEnd(PositionComponent other) {
     super.onCollisionEnd(other);
+    if (other is Shot) return;
   }
 
   @override
