@@ -97,7 +97,7 @@ int playerMaxSpeed = 400;                       // untested
 // shot
 const double shotRadiusDesktop = 4;
 const double shotSpeed = 1024;        // how fast bullets go
-const double shotTimer = 80;          // how long bullets live
+const double shotTimer = 60;          // how long bullets live
 const double shotCooldown = 16;       // how long until shoot bullets
 
 // alien

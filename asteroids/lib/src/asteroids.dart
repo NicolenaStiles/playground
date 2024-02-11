@@ -309,7 +309,6 @@ class Asteroids extends FlameGame
       position: asteroidPos,
       angle: asteroidAngle,
     ));
-    numAsteroids++;
   }
 
 
@@ -329,6 +328,7 @@ class Asteroids extends FlameGame
     }
   }
 
+  // stand up and start game
   void startGame() {
 
     // ignore call here if already playing
@@ -341,17 +341,8 @@ class Asteroids extends FlameGame
 
     score = 0;
     lives = game_settings.playerLives;
-
-    // setting up world constants
-    // WARN: debug only!
-    /*
-    world.add(
-      FpsTextComponent(
-        position: Vector2(0, 200),
-        anchor: Anchor.bottomLeft,
-      )
-    );
-    */
+    numAsteroids = 0;
+    countdown.stop();
 
     // display score
     addScoreboard();
@@ -367,11 +358,18 @@ class Asteroids extends FlameGame
 
     // add player
     addPlayerShip();
+  }
 
-    // populate with asteroids
+  // main loop for gameplay
+  int maxAsteroids = 5;
+  void gameplayLoop() {
+
+    if (countdown.isRunning()) return;
+    if (numAsteroids > maxAsteroids) return;
+
+    countdown = Timer(rand.nextInt(16).toDouble());
     generateRandomAsteroid();
-    generateRandomAsteroid();
-    generateRandomAsteroid();
+    countdown.start();
   }
 
   // tracks which tap accessed button
@@ -440,9 +438,13 @@ class Asteroids extends FlameGame
       case PlayState.background:
         countdown.update(dt);
         animateBackground(false);
+        numAsteroids = world.children.query<Asteroid>().length;
         break;
       case PlayState.play:
+        countdown.update(dt);
+        gameplayLoop();
         findByKeyName<TextComponent>('scoreboard')!.text = score.toString().padLeft(4, '0');
+        numAsteroids = world.children.query<Asteroid>().length;
         break;
       case PlayState.gameOver:
         break;
