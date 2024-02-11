@@ -7,7 +7,6 @@ import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
-import 'package:flame/palette.dart';
 
 // general flutter packages
 import 'package:flutter/material.dart';
@@ -20,20 +19,13 @@ import 'components/components.dart';
 import 'config.dart' as game_settings;
 game_settings.GameCfg testCfg = game_settings.GameCfg.desktop();
 
-// WARN: Debug only!
-String tapPosition = '';
-
 // enum PlayState {background, welcome, play, gameOver, won}
-enum PlayState { debug, background, play }
-
-// scoreboard
-const scoreStyle = TextStyle(color: Colors.white, 
-                             fontSize: 48.0, 
-                             fontFamily: 'Hyperspace');
-final scoreRenderer = TextPaint(style: scoreStyle);
+// debug is only temp here
+enum PlayState { debug, background, play, gameOver, gameWon }
 
 class Asteroids extends FlameGame
-  with TapDetector, KeyboardEvents, HasCollisionDetection {
+  with MultiTouchTapDetector, KeyboardEvents, HasCollisionDetection {
+
   bool isMobile;
   Asteroids(this.isMobile);
 
@@ -45,29 +37,37 @@ class Asteroids extends FlameGame
   int score = 0;
   int lives = game_settings.playerLives;
   int numAsteroids = 0;
- 
-  // displaying score
-  static TextComponent scoreboard = TextComponent();
-  static TextComponent tapTracker = TextComponent();
-  static TextComponent tapTracker2 = TextComponent();
 
   // gesture input
-  late final TestJoystick joystick;
-  late final HudButtonComponent buttonShoot;
+  late final Joystick joystick;
+  late final GameButton buttonShoot;
+  late final GameButton buttonWarp;
+
+  // gesture state
+  bool isJoystickActive = false;
+  bool isShootActive = false;
+  bool isWarpActive = false;
 
   // timer things
   late Timer countdown;
 
   // managing game state
-  // mostly for controlling overlays tbh
+  // TODO: add overlay logic here
   late PlayState _playState;
   PlayState get playState => _playState;
   set playState(PlayState playState) {
     _playState = playState;
     switch (playState) {
       case PlayState.debug:
+      break;
       case PlayState.background:
+      break;
       case PlayState.play:
+      break;
+      case PlayState.gameOver:
+      break;
+      case PlayState.gameWon:
+      break;
     }
   }
 
@@ -84,80 +84,23 @@ class Asteroids extends FlameGame
       testCfg = game_settings.GameCfg.mobile(width, height);
     }
 
-    //debugMode = false;
-    _playState = PlayState.debug;
-    gestureDebug();
-
-    //playState = PlayState.background;
-    //animateBackground(true);
+    playState = PlayState.background;
+    animateBackground(true);
   }
 
-  void gestureDebug () {
+  // testing gesture layout stuff
+  void layoutHUDDebug() {
 
-    // player's ship
-    Vector2 shipPos = Vector2(0, 0);
-    shipPos.x = size.x * (1/2);
-    shipPos.y = size.y * (4/5);
-    world.add(Player(
-      key: ComponentKey.named('player'),
-      position: shipPos,
-      size : Vector2(testCfg.playerWidth, testCfg.playerHeight),
-      shipType: ShipType.player,
-      isMobileGame: true,
-    ));
+    // HUD stats
+    addScoreboard();
+    addLivesTracker();
 
-    // Virtual Joystick ('TestJoystick' class)
-    final knobPaint = BasicPalette.white.withAlpha(200).paint();
-    final backgroundPaint = BasicPalette.white.withAlpha(100).paint();
-    joystick = TestJoystick(
-      key: ComponentKey.named('joystick'),
-      knob: CircleComponent(radius: 20, paint: knobPaint),
-      background: CircleComponent(radius: 50, paint: backgroundPaint),
-      position: size * (3 / 4),
-    );
-    joystick.isVisible = false;
-    world.add(joystick);
+    // HUD controls
+    addJoystick();
+    addHudButtons();
 
-    HudMarginComponent testMargin = HudMarginComponent( 
-      margin: const EdgeInsets.only(
-        top: 10,
-        left: 10,
-      ),
-    );
-
-    world.add(testMargin);
-
-    // HUD button component
-    final buttonUp = BasicPalette.white.withAlpha(200).paint();
-    final buttonDown = BasicPalette.gray.withAlpha(200).paint();
-    buttonShoot = HudButtonComponent( 
-      button: CircleComponent(
-        radius: 50, 
-        paint: buttonUp, 
-      ),
-      buttonDown: CircleComponent( 
-        radius: 50,
-        paint: buttonDown,
-      ),
-      size: Vector2(100, 100),
-      margin: const EdgeInsets.only(
-        left:  20, 
-        bottom: 20
-      ),
-      /*
-      onPressed: () { 
-        findByKeyName<Player>('player')!.fireShot = true; 
-      },
-      onReleased: () {
-        print('I was released!');
-      },
-      onCancelled: () {
-        findByKeyName<Player>('player')!.fireShot = false; 
-        print('I was cancelled!');
-      }
-      */
-    );
-    add(buttonShoot);
+    // and finally player ship
+    addPlayerShip();
   }
 
   // layout all the assets to determine if screen sizing is trash or not
@@ -171,7 +114,6 @@ class Asteroids extends FlameGame
       key: ComponentKey.named('player'),
       position: shipPos,
       size : Vector2(testCfg.playerWidth, testCfg.playerHeight),
-      shipType: ShipType.player,
       isMobileGame: isMobile,
     ));
     
@@ -203,9 +145,17 @@ class Asteroids extends FlameGame
         ));
       }
     }
+  }
 
-    // HUD stuff: scoreboard and lives tracker
+  // HUD elements: scoreboard, lives
+  // adding the scoreboard to the HUD
+  // font size is inhereted from testCfg
+  //
+  // component key name : 'scoreboard'
+  void addScoreboard() {
+
     // scoreboard
+    TextComponent scoreboard = TextComponent();
     TextStyle scoreStyle = TextStyle(color: Colors.white, 
                                      fontSize: testCfg.fontSize, 
                                      fontFamily: 'Hyperspace');
@@ -220,25 +170,93 @@ class Asteroids extends FlameGame
         anchor: Anchor.topLeft,
         position: Vector2(0,0));
     world.add(scoreboard);
+  }
 
-    // lives tracker
+  // adding the lives tracker to the HUD
+  // sizing is all determined from logic in testCfg
+  //
+  // component key names ; 'life3' , 'life2', 'life1'
+  void addLivesTracker() {
+
     for (int n = 0; n < lives; n++) {
-      String lifeKey = "life$n";
+      String lifeKey = 'life$n';
       double xPos = width - (((n + 1) * testCfg.livesOffset) 
                                  + (n * testCfg.livesWidth) 
                                  + (testCfg.livesWidth / 2));
       double yPos = testCfg.livesOffset + (testCfg.livesHeight / 2);
+
       world.add(
-        Player(
+        Lives(
           key: ComponentKey.named(lifeKey),
           position: Vector2(xPos, yPos),
           size : Vector2(testCfg.livesWidth, testCfg.livesHeight),
-          shipType: ShipType.lives,
-          isMobileGame: isMobile,
         )
       );
     }
   }
+  
+  // Mobile only: Add gesture control elements
+  // adding joystick
+  //
+  // component name : 'joystick'
+  void addJoystick() {
+
+    joystick = Joystick(
+      key: ComponentKey.named('joystick'),
+      position: size * (3 / 4),
+    );
+    joystick.isVisible = false;
+    world.add(joystick);
+  }
+
+  // adding buttons to the HUD
+  // no component keys here :(
+  void addHudButtons() {
+
+    double radius = 20;
+    double margin = 10;
+
+    Vector2 shootPos = Vector2(
+                          margin + radius, 
+                          size.y - ( 2 * margin + 2 * radius));
+    Vector2 warpPos = Vector2( 
+                          2 * margin + 3 * radius, 
+                          size.y - (margin + radius));
+
+    buttonShoot = GameButton(
+      type: ButtonType.shoot, 
+      position: shootPos, 
+      radius: radius, 
+    );
+
+    buttonWarp = GameButton(
+      type: ButtonType.warp, 
+      position: warpPos, 
+      radius: radius,
+    );
+
+    world.addAll([buttonShoot, buttonWarp]);
+  }
+
+  // Game components: player, joystick, etc.
+  // adding player ship to the game
+  // edit "shipPos" to change where it spawns in
+  //
+  // component name : 'player'
+  void addPlayerShip() {
+
+    // player's ship
+    Vector2 shipPos = Vector2(0, 0);
+    shipPos.x = size.x * (1/2);
+    shipPos.y = size.y * (1/2);
+    world.add(Player(
+      key: ComponentKey.named('player'),
+      position: shipPos,
+      size : Vector2(testCfg.playerWidth, testCfg.playerHeight),
+      isMobileGame: isMobile,
+    ));
+  }
+
 
   void generateRandomAsteroid() {
     // generate random velocity value
@@ -325,92 +343,89 @@ class Asteroids extends FlameGame
     lives = game_settings.playerLives;
 
     // setting up world constants
+    // WARN: debug only!
+    /*
     world.add(
       FpsTextComponent(
-        position: Vector2(0, canvasSize.y),
+        position: Vector2(0, 200),
         anchor: Anchor.bottomLeft,
       )
     );
-    
-    if (isMobile) {
-      final knobPaint = BasicPalette.white.withAlpha(200).paint();
-      final backgroundPaint = BasicPalette.white.withAlpha(100).paint();
-      joystick = TestJoystick(
-        key: ComponentKey.named('joystick'),
-        knob: CircleComponent(radius: 20, paint: knobPaint),
-        background: CircleComponent(radius: 50, paint: backgroundPaint),
-        position: size * (3 / 4),
-      );
-      joystick.isVisible = false;
-      world.add(joystick);
-    }
-
-    // player's ship
-    Vector2 shipPos = Vector2(0, 0);
-    shipPos.x = size.x * (1/2);
-    shipPos.y = size.y * (4/5);
-    world.add(Player(
-      key: ComponentKey.named('player'),
-      position: shipPos,
-      size : Vector2(testCfg.playerWidth, testCfg.playerHeight),
-      shipType: ShipType.player,
-      isMobileGame: isMobile,
-    ));
+    */
 
     // display score
-    String formattedScore = score.toString().padLeft(4, '0');
-    scoreboard = TextComponent(
-        key: ComponentKey.named('scoreboard'),
-        text: formattedScore, 
-        textRenderer: scoreRenderer,
-        anchor: Anchor.topLeft,
-        position: Vector2(0,0));
-    world.add(scoreboard);
+    addScoreboard();
 
     // lives tracker
-    for (int n = 0; n < lives; n++) {
-      String lifeKey = "life$n";
-      double xPos = width - (((n + 1) * testCfg.livesOffset) 
-                                 + (n * testCfg.livesWidth) 
-                                 + (testCfg.livesWidth / 2));
-      double yPos = testCfg.livesOffset + (testCfg.livesHeight / 2);
-      world.add(
-        Player(
-          key: ComponentKey.named(lifeKey),
-          position: Vector2(xPos, yPos),
-          size : Vector2(testCfg.livesWidth, testCfg.livesHeight),
-          shipType: ShipType.lives,
-          isMobileGame: isMobile,
-        )
-      );
+    addLivesTracker();
+
+    // add controls for mobile
+    if (isMobile) {
+      addJoystick();
+      addHudButtons();
     }
 
-    // populate with an asteroid
+    // add player
+    addPlayerShip();
+
+    // populate with asteroids
     generateRandomAsteroid();
     generateRandomAsteroid();
     generateRandomAsteroid();
   }
 
-  @override
-  void onTapDown(TapDownInfo info) {
-    super.onTapDown(info);
-    if (_playState == PlayState.background) {
-      startGame();
-      return;
-    }
-    if (!buttonShoot.containsPoint(info.eventPosition.widget)) {
+  // tracks which tap accessed button
+  int shootButtonTapId = 0;
+  int warpButtonTapId = 0;
+
+  @override 
+  void onTapDown(int pointerId, TapDownInfo info) {
+    super.onTapDown(pointerId, info);
+
+    // gameplay input controls
+    if (buttonShoot.containsPoint(info.eventPosition.widget)) {
+      buttonShoot.isPressed = true;
+      shootButtonTapId = pointerId;
+    } else if (buttonWarp.containsPoint(info.eventPosition.widget)) {
+      buttonWarp.isPressed = true;
+      warpButtonTapId = pointerId;
+    } else if (!isJoystickActive) {
       joystick.position = info.eventPosition.widget;
       joystick.isVisible = true;
-    } else {
-      findByKeyName<Player>('player')!.fireShot = true; 
+      isJoystickActive = true;
     }
   }
 
   @override
-  void onTapUp(TapUpInfo info) {
-    super.onTapUp(info);
-    if (buttonShoot.containsPoint(info.eventPosition.widget)) {
-      findByKeyName<Player>('player')!.fireShot = false; 
+  void onTapCancel(int pointerId) {
+    super.onTapCancel(pointerId);
+
+    // gameplay input controls
+    if (pointerId == shootButtonTapId && buttonShoot.isPressed == true) {
+      buttonShoot.isPressed = false;
+      shootButtonTapId = 0;
+    } else if (pointerId == warpButtonTapId && buttonWarp.isPressed == true) {
+      buttonWarp.isPressed = false;      
+      warpButtonTapId = 0;
+    }
+  }
+
+  @override
+  void onTapUp(int pointerId, TapUpInfo info) {
+    super.onTapUp(pointerId, info);
+
+    // start game if running in background on tap
+    if (_playState == PlayState.background) {
+      startGame();
+    }
+
+    // gameplay input controls
+    if (pointerId == shootButtonTapId && buttonShoot.isPressed == true) {
+      buttonShoot.isPressed = false;
+      shootButtonTapId = 0;
+    } else if (pointerId == warpButtonTapId && buttonWarp.isPressed == true) {
+      buttonWarp.isPressed = false;      
+      warpButtonTapId = 0;
     }
   }
 
@@ -421,15 +436,17 @@ class Asteroids extends FlameGame
 
     switch (_playState) {
       case PlayState.debug:
-        //findByKeyName<Player>('player')!.angle = joystick.delta.screenAngle();
-        //findByKeyName<Player>('player')!
         break;
       case PlayState.background:
         countdown.update(dt);
         animateBackground(false);
         break;
       case PlayState.play:
-        scoreboard.text = score.toString().padLeft(4, '0');
+        findByKeyName<TextComponent>('scoreboard')!.text = score.toString().padLeft(4, '0');
+        break;
+      case PlayState.gameOver:
+        break;
+      case PlayState.gameWon:
         break;
     }
   }
@@ -452,18 +469,14 @@ class Asteroids extends FlameGame
         // movement
         case LogicalKeyboardKey.keyW: 
           findByKeyName<Player>('player')!.moveForward = true;
-          //world.children.query<Player>().first.moveForward = true;
         // rotation
         case LogicalKeyboardKey.keyA: 
           findByKeyName<Player>('player')!.rotateLeft = true;
-          //world.children.query<Player>().first.rotateLeft = true;
         case LogicalKeyboardKey.keyD: 
           findByKeyName<Player>('player')!.rotateRight = true;
-          //world.children.query<Player>().first.rotateRight = true;
         // shooting
         case LogicalKeyboardKey.space: 
           findByKeyName<Player>('player')!.fireShot = true;
-          //world.children.query<Player>().first.fireShot = true;
         case LogicalKeyboardKey.enter:
           startGame();
       } 
@@ -473,18 +486,14 @@ class Asteroids extends FlameGame
         // movement
         case LogicalKeyboardKey.keyW: 
           findByKeyName<Player>('player')!.moveForward = false;
-          //world.children.query<Player>().first.moveForward = false;
         // rotation
         case LogicalKeyboardKey.keyA: 
           findByKeyName<Player>('player')!.rotateLeft = false;
-          //world.children.query<Player>().first.rotateLeft = false;
         case LogicalKeyboardKey.keyD: 
           findByKeyName<Player>('player')!.rotateRight = false;
-          //world.children.query<Player>().first.rotateRight = false;
         // shooting
         case LogicalKeyboardKey.space: 
           findByKeyName<Player>('player')!.fireShot = false;
-          //world.children.query<Player>().first.fireShot = false;
       }
     }
     return KeyEventResult.handled;

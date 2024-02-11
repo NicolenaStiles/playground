@@ -5,7 +5,6 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
-import 'package:flame/palette.dart';
 
 // general flutter packages
 import 'package:flutter/material.dart';
@@ -43,8 +42,8 @@ class MobileAsteroids extends FlameGame
   bool isButtonActive = false;
 
   // gesture input
-  late final TestJoystick joystick;
-  late final VirtualButton button;
+  late final Joystick joystick;
+  late final GameButton button;
 
   @override
   FutureOr<void> onLoad() async {
@@ -72,23 +71,18 @@ class MobileAsteroids extends FlameGame
       key: ComponentKey.named('player'),
       position: shipPos,
       size : Vector2(testCfg.playerWidth, testCfg.playerHeight),
-      shipType: ShipType.player,
       isMobileGame: true,
     ));
 
-    // Virtual Joystick ('TestJoystick' class)
-    final knobPaint = BasicPalette.white.withAlpha(200).paint();
-    final backgroundPaint = BasicPalette.white.withAlpha(100).paint();
-    joystick = TestJoystick(
+    joystick = Joystick(
       key: ComponentKey.named('joystick'),
-      knob: CircleComponent(radius: 20, paint: knobPaint),
-      background: CircleComponent(radius: 50, paint: backgroundPaint),
       position: size * (3 / 4),
     );
     joystick.isVisible = false;
     world.add(joystick);
 
-    button = VirtualButton(
+    button = GameButton(
+      type: ButtonType.shoot,
       radius: 50,
       position: Vector2(100, size.y - 100),
     );

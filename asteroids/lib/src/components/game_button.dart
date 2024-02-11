@@ -2,6 +2,9 @@ import 'package:flame/components.dart';
 
 import 'package:flutter/material.dart';
 
+import '../asteroids.dart';
+import 'components.dart';
+
 enum ButtonType {shoot, warp}
 
 // TODO: 1. how determine if isMobile?
@@ -9,7 +12,8 @@ enum ButtonType {shoot, warp}
 // TODO: 2. Pick a color pallette for these guys!
 // I was just spitballing with these.
 
-class GameButton extends CircleComponent {
+class GameButton extends CircleComponent 
+  with HasGameRef<Asteroids> {
 
   final ButtonType type;
   bool isPressed = false;
@@ -59,10 +63,17 @@ class GameButton extends CircleComponent {
   void update(dt) {
     super.update(dt);
     if (isPressed) {
+      // shooting button
+      if (type == ButtonType.shoot) {
+        game.findByKeyName<Player>('player')!.fireShot = true; 
+      }
       paint = _paintActive;
     } else {
+      // shooting button
+      if (type == ButtonType.shoot) {
+        game.findByKeyName<Player>('player')!.fireShot = false; 
+      }
       paint = _paintInactive;
     }
   }
-
 }
