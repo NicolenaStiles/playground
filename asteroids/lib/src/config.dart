@@ -43,6 +43,12 @@ class GameCfg {
   static const double mediumAsteroidMobileScalar = 16;
   static const double smallAsteroidMobileScalar = 32;
 
+  // shot
+  double shotRadius = 4;
+  double shotSpeed = 1024;        // how fast bullets go
+  double shotTimer = 60;          // how long bullets live
+  double shotCooldown = 16;       // how long until shoot bullets
+
   // Desktop constructor
   GameCfg.desktop();
 
@@ -72,6 +78,13 @@ class GameCfg {
     largeAsteroidSize = largeAsteroidMobileSize;
     mediumAsteroidSize = mediumAsteroidMobileSize;
     smallAsteroidSize = smallAsteroidMobileSize;
+
+    // shot settings
+    shotRadius = 2;
+    shotSpeed = 1024;
+    shotTimer = 20;
+    shotCooldown = 16;
+
   }
 }
 
