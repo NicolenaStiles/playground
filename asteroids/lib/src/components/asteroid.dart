@@ -244,7 +244,7 @@ class Asteroid extends PositionComponent
     if (other is Shot) {
       if (game.score > game_settings.maxScore) {
         game.score = game_settings.maxScore;
-        game.playState = PlayState.gameWon;
+        game.playState = PlayState.gameOver;
         game.world.removeAll(game.world.children.query<Player>());
         game.world.removeAll(game.world.children.query<Shot>());
       } else {
