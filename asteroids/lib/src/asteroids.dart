@@ -373,6 +373,7 @@ class Asteroids extends FlameGame
     if (buttonShoot.containsPoint(info.eventPosition.widget)) {
       buttonShoot.isPressed = true;
       shootButtonTapId = pointerId;
+
     } else if (!isJoystickActive) {
       joystick.position = info.eventPosition.widget;
       joystick.isVisible = true;
@@ -407,6 +408,7 @@ class Asteroids extends FlameGame
     }
   }
 
+
   // main gameplay loop
   @override 
   void update(double dt) {
@@ -415,21 +417,26 @@ class Asteroids extends FlameGame
     switch (_playState) {
       case PlayState.debug:
         break;
+
       case PlayState.background:
         countdown.update(dt);
         animateBackground(false);
         numAsteroids = world.children.query<Asteroid>().length;
         break;
+
       case PlayState.play:
         countdown.update(dt);
         gameplayLoop();
         findByKeyName<TextComponent>('scoreboard')!.text = score.toString().padLeft(4, '0');
         numAsteroids = world.children.query<Asteroid>().length;
         break;
+
       case PlayState.gameOver:
         break;
+
       case PlayState.gameWon:
         break;
+
     }
   }
 
@@ -450,32 +457,56 @@ class Asteroids extends FlameGame
       switch (event.logicalKey) {
         // movement
         case LogicalKeyboardKey.keyW: 
-          findByKeyName<Player>('player')!.moveForward = true;
+          if (_playState == PlayState.play) {
+            findByKeyName<Player>('player')!.moveForward = true; }
+
         // rotation
         case LogicalKeyboardKey.keyA: 
-          findByKeyName<Player>('player')!.rotateLeft = true;
+          if (_playState == PlayState.play) {
+            findByKeyName<Player>('player')!.rotateLeft = true; }
+
         case LogicalKeyboardKey.keyD: 
-          findByKeyName<Player>('player')!.rotateRight = true;
+          if (_playState == PlayState.play) {
+            findByKeyName<Player>('player')!.rotateRight = true; }
+
         // shooting
         case LogicalKeyboardKey.space: 
-          findByKeyName<Player>('player')!.fireShot = true;
-        case LogicalKeyboardKey.enter:
-          startGame();
-      } 
+          if (_playState == PlayState.play) {
+            findByKeyName<Player>('player')!.fireShot = true; }
+          else if (_playState == PlayState.background) {
+            startGame(); }
 
+      } 
     } else if (isKeyUp) {
       switch (event.logicalKey) {
+
         // movement
         case LogicalKeyboardKey.keyW: 
-          findByKeyName<Player>('player')!.moveForward = false;
+          if (_playState == PlayState.play) {
+            findByKeyName<Player>('player')!.moveForward = false; }
+
         // rotation
         case LogicalKeyboardKey.keyA: 
-          findByKeyName<Player>('player')!.rotateLeft = false;
+          if (_playState == PlayState.play) {
+            findByKeyName<Player>('player')!.rotateLeft = false; }
+
         case LogicalKeyboardKey.keyD: 
-          findByKeyName<Player>('player')!.rotateRight = false;
+          if (_playState == PlayState.play) {
+            findByKeyName<Player>('player')!.rotateRight = false; }
+
         // shooting
         case LogicalKeyboardKey.space: 
-          findByKeyName<Player>('player')!.fireShot = false;
+          if (_playState == PlayState.play) {
+            findByKeyName<Player>('player')!.fireShot = false; }
+          else if (_playState == PlayState.background) {
+            startGame(); }
+
+        // start playing game
+        // WARN: only works for background -> start, no support for new game
+        case LogicalKeyboardKey.enter:
+          if (_playState == PlayState.background) {
+            startGame(); }
+
       }
     }
     return KeyEventResult.handled;

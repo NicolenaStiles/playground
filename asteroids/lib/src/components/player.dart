@@ -348,22 +348,20 @@ class Player extends PositionComponent
 
   }
 
+  // remove a life (if we have any to remove!)
+  // otherwise, switch game state to gameOver
   void updateLives() {
+
     if (game.lives - 1 > 0) {
       String keyName = 'life${game.lives - 1}';
       game.world.remove(game.findByKeyName<Lives>(keyName)!);
       game.lives--;
       _godmode = true;
       _godmodeTimer.start();
+
     } else {
-      add(
-        RemoveEffect(
-          delay: 0.4, 
-          onComplete: () {
-            game.playState = PlayState.gameOver;
-          }
-        )
-      );
+      game.playState = PlayState.gameOver;
+      removeFromParent();
     }
   }
 
@@ -388,9 +386,6 @@ class Player extends PositionComponent
 
     if (_godmode != true) {
 
-      // subtract a life
-      updateLives();
-
       // enable visual for godmode
       paint = getPaint(1);
   
@@ -402,6 +397,9 @@ class Player extends PositionComponent
       _playerVelocityFinal= Vector2(0,0);
       _playerDisplacement = Vector2(0,0);
       _playerDirection = Vector2(0,0);
+
+      // subtract a life
+      updateLives();
     }
   }
 
