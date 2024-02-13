@@ -1,28 +1,28 @@
+// flame game-related stuff
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:math';
 
-// import '../asteroids.dart';
-import '../mobile_asteroids.dart';
-import '../config.dart' as game_settings;
+// custom components 
+import '../asteroids.dart';
 import '../components/components.dart';
 
 class Shot extends CircleComponent 
-  with CollisionCallbacks, HasGameRef<MobileAsteroids> {
+  with CollisionCallbacks, HasGameRef<Asteroids> {
 
   Shot({
     required super.position,
     required super.angle,
   }) : super(
-    radius: game_settings.shotRadiusDesktop,
+    radius: testCfg.shotRadius,
     anchor: Anchor.center,
     paint: Paint()
       ..color = Colors.white
       ..style = PaintingStyle.fill,
-    children: [CircleHitbox(radius: game_settings.shotRadiusDesktop)],
- );
+    children: [CircleHitbox(radius: testCfg.shotRadius)],
+  );
 
   int _timer = 0;
 
@@ -35,7 +35,6 @@ class Shot extends CircleComponent
     if (other is Asteroid) { 
       removeFromParent();
     }
-
   }
 
   void moveBy(double dt) {
@@ -49,12 +48,11 @@ class Shot extends CircleComponent
       ..setValues(xMove,yMove)
       ..normalize();
 
-    final shotDisplacement = direciton * (game_settings.shotSpeed * dt);
+    final shotDisplacement = direciton * (testCfg.shotSpeed * dt);
 
     position.add(shotDisplacement);
 
     checkWraparound();
-
   }
 
   // Checks if PositionComponent should wrap around the game screen
@@ -77,18 +75,16 @@ class Shot extends CircleComponent
     }
   }
 
-
   @override
   void update(double dt) {
     super.update(dt);
 
-    if (_timer < game_settings.shotTimer) {
+    if (_timer < testCfg.shotTimer) {
       moveBy(dt);
       _timer++;
     } else {
       removeFromParent();
     }
-
   }
 }
 

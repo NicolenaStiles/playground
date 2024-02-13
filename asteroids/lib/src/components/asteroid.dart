@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 import '../asteroids.dart';
-// import '../mobile_asteroids.dart';
 import '../config.dart' as game_settings;
 import '../components/components.dart';
 
@@ -47,7 +46,7 @@ class Asteroid extends PositionComponent
   }) : super(
       anchor: Anchor.center,
       children: [CircleHitbox(isSolid: true)]
-    ) {
+  ){
       _points = mapAsteroidValue();
   }
 
@@ -243,9 +242,16 @@ class Asteroid extends PositionComponent
     super.onCollisionEnd(other);
 
     if (other is Shot) {
-      game.world.addAll(_asteroidChildren);
-      game.score += _points;
-      removeFromParent();
+      if (game.score > game_settings.maxScore) {
+        game.score = game_settings.maxScore;
+        game.playState = PlayState.gameWon;
+        game.world.removeAll(game.world.children.query<Player>());
+        game.world.removeAll(game.world.children.query<Shot>());
+      } else {
+        game.world.addAll(_asteroidChildren);
+        game.score += _points;
+        removeFromParent();
+      }
     }
   }
 

@@ -1,6 +1,7 @@
 // flame-specific
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame/extensions.dart';
 
 // flutter-specific
@@ -16,22 +17,14 @@ import '../components/components.dart';
 
 // TODO: 1. Bespoke hitbox?
 // TODO: 2. Add boosters animation!
-// TODO: 3. add max speed!
-//          this one may just be for desktop-- there's a basic version
-//          aready in place for mobile.
-// TODO: 4. add visual indicator for invulnerability?
 // TODO: 5. add visual effect for collision?
 
 class Player extends PositionComponent 
-  with CollisionCallbacks, HasGameRef<Asteroids> {
+  with CollisionCallbacks, HasPaint, HasGameRef<Asteroids> {
 
   // Rendering
   var _graphicPath = Path();
   List<List<double>> _verticies = [];
-  final _paint = Paint()
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 2.0
-    ..color = Colors.white;
 
   Player({
     required this.isMobileGame,
@@ -40,9 +33,40 @@ class Player extends PositionComponent
     required super.position,
   }) : super ( 
     anchor: Anchor.center,
-    children: [RectangleHitbox(isSolid: true)]
+    children: [RectangleHitbox(isSolid: true)],
   ) {
+
+    // vector path
     _graphicPath = completePath();
+
+    // paint colors
+    setPaint(
+      0, 
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0
+        ..color = Colors.white);
+
+    setPaint(
+      1, 
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0
+        ..color = Colors.yellow);
+
+    setPaint(
+      2, 
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0
+        ..color = Colors.yellowAccent
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, convertRadiusToSigma(3)));
+
+    paint = getPaint(0);
+  }
+
+  static double convertRadiusToSigma(double radius) {
+    return radius * 0.57735 + 0.5;
   }
 
   final bool isMobileGame;
@@ -51,8 +75,8 @@ class Player extends PositionComponent
   Future<void> onLoad() async {
     super.onLoad();
     _graphicPath = completePath();
+    _godmodeTimer = Timer(5);
   }
-
 
   // movement input
   bool moveForward = false;
@@ -80,13 +104,16 @@ class Player extends PositionComponent
 
   // respawn stuff
   bool _godmode = false;
-  int _currRespawnTimer = 0;
-
+  late Timer _godmodeTimer;
 
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    canvas.drawPath(_graphicPath, _paint);
+    // draw the glow!
+    if (_godmode) {
+      canvas.drawPath(_graphicPath, getPaint(2));
+    }
+    canvas.drawPath(_graphicPath, paint);
   }
 
   Path completePath() {
@@ -177,14 +204,27 @@ class Player extends PositionComponent
 
     if (moveForward) {
 
+      // check impulse angle
       _playerLastImpulseAngle = angle;
+
+      // check if we surpass max
       _playerVelocityFinal = _playerVelocityInitial + (game_settings.playerAcceleration * dt);
+      double maxPlayerVelocity = 10;
+      if (_playerVelocityFinal.x > maxPlayerVelocity) {
+        _playerVelocityFinal.x = maxPlayerVelocity;
+      }
+      if (_playerVelocityFinal.y > maxPlayerVelocity) {
+        _playerVelocityFinal.y = maxPlayerVelocity;
+      }
+
+      // calculate resultant move
       _playerDisplacement[0] = _playerDirection[0] * _playerVelocityFinal[0];
       _playerDisplacement[1] = _playerDirection[1] * _playerVelocityFinal[1];
       _playerVelocityInitial = _playerVelocityFinal;
 
       // actual position update
       position.add(_playerDisplacement);
+
 
     } else {
 
@@ -216,11 +256,6 @@ class Player extends PositionComponent
     _playerDirection 
     ..setValues(xMove,yMove)
     ..normalize();
-    
-    //_playerDirection = mobileMove;
-    //print('Player direction: ${_playerDirection.toString()}');
-    //print('Mobile move: ${mobileMove.toString()}');
-    //print('Percentage power: ${mobilePercent.toString()}');
 
     if (isJoystickActive) {
 
@@ -313,42 +348,48 @@ class Player extends PositionComponent
 
   }
 
+  // remove a life (if we have any to remove!)
+  // otherwise, switch game state to gameOver
   void updateLives() {
-    String keyName = 'life${game.lives - 1}';
-    if (game.findByKeyName<Lives>(keyName) != null) {
+
+    if (game.lives - 1 > 0) {
+      String keyName = 'life${game.lives - 1}';
       game.world.remove(game.findByKeyName<Lives>(keyName)!);
+      game.lives--;
+      _godmode = true;
+      _godmodeTimer.start();
+
+    } else {
+      game.playState = PlayState.gameOver;
+      removeFromParent();
     }
-    game.lives--;
-    _godmode = true;
   }
 
+  // check godmode
   void updateInvulnerability() {
     if (!_godmode) { 
       return;
     }
-    if (_currRespawnTimer < game_settings.respawnTimer){
-      _currRespawnTimer++;
-    } else {
+    if (_godmode && _godmodeTimer.finished) {
       _godmode = false;
-      _currRespawnTimer = 0;
+      paint = getPaint(0);
     }
   }
 
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, 
                         PositionComponent other) {
-    super.onCollisionStart(intersectionPoints, other);
-    // if not invincible
-    // start animation?
-  }
 
-  @override
-  void onCollisionEnd(PositionComponent other) {
-    super.onCollisionEnd(other);
+    super.onCollisionStart(intersectionPoints, other);
+
+    if (other is Shot) return;
 
     if (_godmode != true) {
-      // subtract a life and zero everything else out
-      updateLives();
+
+      // enable visual for godmode
+      paint = getPaint(1);
+  
+      // zero and reset everything else
       position = Vector2(game.width / 2, game.height / 2);
       angle = 0;
       _playerLastImpulseAngle = 0;
@@ -356,7 +397,16 @@ class Player extends PositionComponent
       _playerVelocityFinal= Vector2(0,0);
       _playerDisplacement = Vector2(0,0);
       _playerDirection = Vector2(0,0);
+
+      // subtract a life
+      updateLives();
     }
+  }
+
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    super.onCollisionEnd(other);
+    if (other is Shot) return;
   }
 
   @override
@@ -364,6 +414,7 @@ class Player extends PositionComponent
     super.update(dt);
 
     if (isMobileGame) {
+
       // movement
       mobileMovePlayer(dt);
 
@@ -374,6 +425,7 @@ class Player extends PositionComponent
       handleShot(fireShot);
 
     } else {
+
       // movement
       movePlayer(dt);
 
@@ -387,5 +439,6 @@ class Player extends PositionComponent
 
     // handle invulnerability 
     updateInvulnerability();
+    _godmodeTimer.update(dt);
   }
 }

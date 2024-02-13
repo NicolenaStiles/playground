@@ -4,6 +4,7 @@ import 'package:flame/game.dart';
 // lives outside of platform-related stuff
 const int respawnTimer = 30; 
 const int playerLives = 3;
+const int maxScore = 9999;
 const int largeAsteroidPoints = 200;
 const int mediumAsteroidPoints = 100;
 const int smallAsteroidPoints = 50;
@@ -42,6 +43,12 @@ class GameCfg {
   static const double mediumAsteroidMobileScalar = 16;
   static const double smallAsteroidMobileScalar = 32;
 
+  // shot
+  double shotRadius = 4;
+  double shotSpeed = 1024;        // how fast bullets go
+  double shotTimer = 60;          // how long bullets live
+  double shotCooldown = 16;       // how long until shoot bullets
+
   // Desktop constructor
   GameCfg.desktop();
 
@@ -71,11 +78,18 @@ class GameCfg {
     largeAsteroidSize = largeAsteroidMobileSize;
     mediumAsteroidSize = mediumAsteroidMobileSize;
     smallAsteroidSize = smallAsteroidMobileSize;
+
+    // shot settings
+    shotRadius = 2;
+    shotSpeed = 1024;
+    shotTimer = 20;
+    shotCooldown = 16;
+
   }
 }
 
 // TODO: change this into an upper and lower bound instead
- double asteroidSpeed = 120.0;
+double asteroidSpeed = 120.0;
 
 double livesWidth = 30;
 double livesHeight = 42;
@@ -95,9 +109,9 @@ int playerMaxSpeed = 400;                       // untested
 
 // shot
 const double shotRadiusDesktop = 4;
-const double shotSpeed = 600;        // how fast bullets go
-const double shotTimer = 80;        // how long bullets live
-const double shotCooldown = 16;      // how long until shoot bullets
+const double shotSpeed = 1024;        // how fast bullets go
+const double shotTimer = 60;          // how long bullets live
+const double shotCooldown = 16;       // how long until shoot bullets
 
 // alien
 // WARN : I pulled these numbers out of my ass

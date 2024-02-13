@@ -1,16 +1,9 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 
 import '../asteroids.dart';
 import 'components.dart';
-
-// TODO: 1. state management
-// game.isJoystickActive
-// player.isJoystickActive
-
-// TODO: 2. verify color selection!
 
 class Joystick extends JoystickComponent
   with HasVisibility, TapCallbacks, HasGameRef<Asteroids> {
