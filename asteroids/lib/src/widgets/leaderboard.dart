@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../asteroids.dart';
 
+// TODO: add leaderboard
+// TODO: resize this dynamically on mobile
 class Leaderboard extends StatefulWidget {
 
   const Leaderboard({ 
@@ -14,14 +16,43 @@ class Leaderboard extends StatefulWidget {
   State<Leaderboard> createState() => _LeaderboardState();
 }
 
-// TODO: add leaderboard
-// TODO: resize this dynamically on mobile
 class _LeaderboardState extends State<Leaderboard> {
 
   @override 
   Widget build(BuildContext context) {
-    return Center( 
-
+    return Center ( 
+      child: Container( 
+        constraints: const BoxConstraints(
+          minWidth: 375,
+          maxWidth: 512,
+          minHeight: 375,
+          maxHeight: 512,
+        ),
+        padding: const EdgeInsets.all(10),
+        decoration: ShapeDecoration(
+          color: Colors.black.withOpacity(0.9),
+          shape: const ContinuousRectangleBorder(
+            side: BorderSide(
+              color: Colors.white, 
+              width: 2))),
+        child: Align( 
+          alignment: Alignment.topLeft,
+          child: OutlinedButton(
+            onPressed: () {
+              widget.game.playState = PlayState.mainMenu; 
+            },
+            style: const ButtonStyle(
+              padding: MaterialStatePropertyAll(EdgeInsets.all(20)),
+              side: MaterialStatePropertyAll(
+                BorderSide(
+                  color: Colors.white, 
+                  width: 2))),
+            child: 
+              Text('<',
+                style: Theme.of(context).textTheme.titleMedium),
+          ),
+        ),
+      ),
     );
   }
 }

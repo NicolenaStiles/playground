@@ -2,11 +2,10 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 import '../asteroids.dart';
-import '../widgets/main_menu.dart';
-import '../widgets/tutorial.dart';
-
 import '../theme.dart';
+import 'widgets.dart';
 
+// TODO: size literally any of this dynamically lol
 class GameApp extends StatefulWidget {
 
   const GameApp({
@@ -34,13 +33,14 @@ class _GameAppState extends State<GameApp> {
             PlayState.mainMenu.name: (BuildContext context, Asteroids game) => 
               MainMenu(game: game),
 
+            PlayState.leaderboard.name: (BuildContext context, Asteroids game) =>
+              Leaderboard(game: game),
+
             PlayState.tutorial.name: (BuildContext context, Asteroids game) =>
               Tutorial(game: game),
               
-            PlayState.gameOver.name: (context, game) =>
-              Center( 
-                child: Text("this is the game over screen"),
-              ),
+            PlayState.gameOver.name: (BuildContext context, Asteroids game) =>
+              GameOver(game: game),
           },
         ),
       ),

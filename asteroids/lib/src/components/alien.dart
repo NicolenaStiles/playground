@@ -46,6 +46,11 @@ class Alien extends PositionComponent
   }
 
   @override
+  void update(double dt) {
+    super.update(dt);
+  }
+
+  @override
   void onCollisionStart(Set<Vector2> intersectionPoints, 
                         PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);

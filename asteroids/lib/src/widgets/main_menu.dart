@@ -66,7 +66,9 @@ class _MainMenuState extends State<MainMenu> {
 
                 // leaderboard 
                 OutlinedButton(
-                  onPressed: () {}, 
+                  onPressed: () {
+                    widget.game.playState = PlayState.leaderboard; 
+                  },
                   style: const ButtonStyle(
                     padding: MaterialStatePropertyAll(EdgeInsets.all(20)),
                     side: MaterialStatePropertyAll(

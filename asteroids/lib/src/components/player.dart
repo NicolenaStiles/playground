@@ -360,6 +360,8 @@ class Player extends PositionComponent
       _godmodeTimer.start();
 
     } else {
+      String keyName = 'life${game.lives - 1}';
+      game.world.remove(game.findByKeyName<Lives>(keyName)!);
       game.playState = PlayState.gameOver;
       removeFromParent();
     }

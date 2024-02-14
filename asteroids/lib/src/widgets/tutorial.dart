@@ -33,8 +33,7 @@ class _TutorialState extends State<Tutorial> {
               shape: const ContinuousRectangleBorder(
                 side: BorderSide(
                   color: Colors.white, 
-                  width: 2)),
-            ),
+                  width: 2))),
             child: Center( 
               child: Text('This is some tutorial text',
                   style: Theme.of(context).textTheme.headlineSmall),

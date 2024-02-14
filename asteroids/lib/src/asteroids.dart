@@ -24,6 +24,7 @@ import 'config.dart' as game_settings;
 game_settings.GameCfg testCfg = game_settings.GameCfg.desktop();
 
 // debug is only temp here
+// TODO: maybe add "replay" as state?
 enum PlayState { 
   debug, 
   background, 
@@ -75,6 +76,8 @@ class Asteroids extends FlameGame
       case PlayState.background:
         break;
       case PlayState.mainMenu:
+        overlays.remove(PlayState.leaderboard.name);
+        overlays.remove(PlayState.gameOver.name);
         overlays.add(playState.name);
         break;
       case PlayState.leaderboard:
@@ -87,6 +90,7 @@ class Asteroids extends FlameGame
         break;
       case PlayState.play:
         overlays.remove(PlayState.tutorial.name);
+        overlays.remove(PlayState.gameOver.name);
         break;
       case PlayState.gameOver:
         overlays.add(playState.name);
@@ -113,11 +117,11 @@ class Asteroids extends FlameGame
       testCfg = game_settings.GameCfg.mobile(width, height);
     }
 
-    //playState = PlayState.mainMenu;
-    //animateBackground(true);
+    playState = PlayState.mainMenu;
+    animateBackground(true);
 
-    playState = PlayState.debug;
-    layoutDebug();
+    //playState = PlayState.debug;
+    //layoutDebug();
   }
 
   // testing gesture layout stuff
@@ -158,7 +162,6 @@ class Asteroids extends FlameGame
       size: Vector2(64, 48), 
       position: alienPos
     ));
-
     
     // asteroids
     for (var j = 3; j > 0; j--) {
