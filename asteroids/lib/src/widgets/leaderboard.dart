@@ -25,12 +25,11 @@ class _LeaderboardState extends State<Leaderboard> {
         constraints: const BoxConstraints(
           minWidth: 375,
           maxWidth: 512,
-          minHeight: 375,
-          maxHeight: 512,
         ),
         padding: const EdgeInsets.all(10),
+        margin: const EdgeInsets.all(20),
         decoration: ShapeDecoration(
-          color: Colors.black.withOpacity(0.9),
+          color: Colors.black.withOpacity(0.75),
           shape: const ContinuousRectangleBorder(
             side: BorderSide(
               color: Colors.white, 

@@ -17,6 +17,8 @@ class Tutorial extends StatefulWidget {
 // TODO: resize this dynamically on mobile
 class _TutorialState extends State<Tutorial> {
 
+  var tutorialText = """Use WAD to steer the spaceship and SPACEBAR to shoot. Colliding with an asteroid will cost you a life. Be careful, since you only have three! Try to make it as high as you can on the leaderboard, but watch out: I've heard we're not alone in space after all..""";
+
   @override 
   Widget build(BuildContext context) {
     return Center( 
@@ -25,18 +27,19 @@ class _TutorialState extends State<Tutorial> {
         children: [ 
           Container( 
             constraints: const BoxConstraints(
-              maxHeight: 256,
+              maxHeight: 150,
             ),
             padding: const EdgeInsets.all(10),
+            margin: const EdgeInsets.all(20),
             decoration: ShapeDecoration(
-              color: Colors.black.withOpacity(0.9),
+              color: Colors.black.withOpacity(0.75),
               shape: const ContinuousRectangleBorder(
                 side: BorderSide(
                   color: Colors.white, 
                   width: 2))),
             child: Center( 
-              child: Text('This is some tutorial text',
-                  style: Theme.of(context).textTheme.headlineSmall),
+              child: Text(tutorialText,
+                  style: Theme.of(context).textTheme.bodyMedium),
             ),
           ),
         ], 
