@@ -1,33 +1,67 @@
+// flame game-related stuff
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
-// for messing directly with the canvas
+
+// general flutter packages
 import 'package:flutter/material.dart';
 
-class Alien extends PositionComponent with CollisionCallbacks {
+// custom game componenets
+import '../asteroids.dart';
+import '../components/components.dart';
+
+// TODO: 1. set points value
+// TODO: 2. set movement behaviors (sine wave?)
+class Alien extends PositionComponent 
+  with CollisionCallbacks, HasPaint, HasGameReference<Asteroids> {
+
+  // value when destroyed
+  int _points = 0;
 
   // For rendering
+  var _graphicPath = Path();
   List<List<double>> _verticies = [];
-  final _paint = Paint()
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 2.0
-    ..color = Colors.white;
 
-  Alien(){
-    add(RectangleHitbox());
+  Alien({ 
+    required super.size,
+    required super.position,
+  }) : super( 
+    anchor: Anchor.center,
+    children: [RectangleHitbox(isSolid: true)]
+  ){ 
+
+    // vector path
+    _graphicPath = completePath();
+
+    // define and set paint
+    setPaint(
+      0, 
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0
+        ..color = Colors.white);
+    paint = getPaint(0);
   }
 
   @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+  void onCollisionStart(Set<Vector2> intersectionPoints, 
+                        PositionComponent other) {
+    super.onCollisionStart(intersectionPoints, other);
 
   }
 
   @override
   void onCollisionEnd(PositionComponent other) {
+    super.onCollisionEnd(other);
 
+    if (other is Shot) {
+      game.score += _points;
+      removeFromParent();
+    }
   }
 
   @override void render(Canvas canvas) {
-    canvas.drawPath(completePath(), _paint);
+    super.render(canvas);
+    canvas.drawPath(_graphicPath, paint);
   }
 
   Path completePath() {
