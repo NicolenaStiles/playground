@@ -113,8 +113,11 @@ class Asteroids extends FlameGame
       testCfg = game_settings.GameCfg.mobile(width, height);
     }
 
-    playState = PlayState.mainMenu;
-    animateBackground(true);
+    //playState = PlayState.mainMenu;
+    //animateBackground(true);
+
+    playState = PlayState.debug;
+    layoutDebug();
   }
 
   // testing gesture layout stuff
@@ -145,6 +148,17 @@ class Asteroids extends FlameGame
       size : Vector2(testCfg.playerWidth, testCfg.playerHeight),
       isMobileGame: isMobile,
     ));
+
+    // test alien
+    Vector2 alienPos = Vector2(0, 0);
+    alienPos.x = size.x * (1/3);
+    alienPos.y = size.y * (4/5);
+    world.add(Alien(
+      key: ComponentKey.named('alien'),
+      size: Vector2(64, 48), 
+      position: alienPos
+    ));
+
     
     // asteroids
     for (var j = 3; j > 0; j--) {

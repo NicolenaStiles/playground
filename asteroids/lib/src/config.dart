@@ -36,6 +36,9 @@ class GameCfg {
   double mediumAsteroidSize = 64.0; 
   double smallAsteroidSize = 32.0; 
 
+  double alienWidth = 64;
+  double alienHeight = 40;
+
   // mobile scalars
   static const double playerShipMobileScalar = 16;
   static const double livesMobileScalar = 24;

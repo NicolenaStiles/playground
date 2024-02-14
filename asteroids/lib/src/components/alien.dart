@@ -11,6 +11,8 @@ import '../components/components.dart';
 
 // TODO: 1. set points value
 // TODO: 2. set movement behaviors (sine wave?)
+// TODO: 3. scale with mobile
+// TODO: 4. may need to create alien shot class as well?
 class Alien extends PositionComponent 
   with CollisionCallbacks, HasPaint, HasGameReference<Asteroids> {
 
@@ -22,6 +24,7 @@ class Alien extends PositionComponent
   List<List<double>> _verticies = [];
 
   Alien({ 
+    required super.key,
     required super.size,
     required super.position,
   }) : super( 
