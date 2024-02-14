@@ -49,10 +49,9 @@ class _GameOverState extends State<GameOver> {
               children: [ 
 
                 // replay 
-                // TODO: have replay skip tutorial
                 OutlinedButton(
                   onPressed: () {
-                    widget.game.playState = PlayState.tutorial; 
+                    widget.game.playState = PlayState.replay; 
                   },
                   style: const ButtonStyle(
                     padding: MaterialStatePropertyAll(EdgeInsets.all(20)),

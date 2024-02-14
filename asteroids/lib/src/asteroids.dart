@@ -32,6 +32,7 @@ enum PlayState {
   leaderboard,
   tutorial, 
   play, 
+  replay,
   gameOver,
 }
 
@@ -90,6 +91,9 @@ class Asteroids extends FlameGame
         break;
       case PlayState.play:
         overlays.remove(PlayState.tutorial.name);
+        overlays.remove(PlayState.gameOver.name);
+        break;
+      case PlayState.replay:
         overlays.remove(PlayState.gameOver.name);
         break;
       case PlayState.gameOver:
@@ -410,6 +414,31 @@ class Asteroids extends FlameGame
     countdown.start();
   }
 
+  void startReplay() {
+
+    // pull all the asteroids off the screen before we start
+    world.removeAll(world.children.query<Asteroid>());
+
+    playState = PlayState.play;
+
+    score = 0;
+    lives = game_settings.playerLives;
+    numAsteroids = 0;
+    countdown.stop();
+
+    // lives tracker
+    addLivesTracker();
+
+    // add controls for mobile
+    if (isMobile) {
+      addJoystick();
+      addHudButtons();
+    }
+
+    // add player
+    addPlayerShip();
+  }
+
   // main gameplay loop
   @override 
   void update(double dt) {
@@ -449,6 +478,9 @@ class Asteroids extends FlameGame
         findByKeyName<TextComponent>('scoreboard')!.text = score.toString().padLeft(4, '0');
         numAsteroids = world.children.query<Asteroid>().length;
         break;
+
+      case PlayState.replay:
+        startReplay();
 
       // TODO: manage game over update
       case PlayState.gameOver:
