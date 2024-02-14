@@ -23,10 +23,18 @@ import 'components/components.dart';
 import 'config.dart' as game_settings;
 game_settings.GameCfg testCfg = game_settings.GameCfg.desktop();
 
-// enum PlayState {background, welcome, play, gameOver, won}
 // debug is only temp here
-enum PlayState { debug, background, mainMenu, tutorial, play, gameOver}
+enum PlayState { 
+  debug, 
+  background, 
+  mainMenu, 
+  leaderboard,
+  tutorial, 
+  play, 
+  gameOver,
+}
 
+// global state management
 GetIt getIt = GetIt.instance;
 
 class Asteroids extends FlameGame
@@ -69,13 +77,19 @@ class Asteroids extends FlameGame
       case PlayState.mainMenu:
         overlays.add(playState.name);
         break;
+      case PlayState.leaderboard:
+        overlays.remove(PlayState.mainMenu.name);
+        overlays.add(playState.name);
+        break;
       case PlayState.tutorial:
         overlays.remove(PlayState.mainMenu.name);
+        overlays.add(playState.name);
         break;
       case PlayState.play:
         overlays.remove(PlayState.tutorial.name);
         break;
       case PlayState.gameOver:
+        overlays.add(playState.name);
         break;
     }
   }
@@ -307,6 +321,7 @@ class Asteroids extends FlameGame
        asteroidSize.x = testCfg.smallAsteroidSize; 
        asteroidSize.y = testCfg.smallAsteroidSize; 
     }
+
     world.add(Asteroid(
       objType: AsteroidType.values[rand.nextInt(3)],
       objSize: asteroidSizeEnum,
@@ -317,7 +332,7 @@ class Asteroids extends FlameGame
     ));
   }
 
-
+  // generate background asteroids for Ze Aesthetique
   void animateBackground (bool isFirstRun) {
 
     if (isFirstRun) {
@@ -378,9 +393,55 @@ class Asteroids extends FlameGame
     countdown.start();
   }
 
+  // main gameplay loop
+  @override 
+  void update(double dt) {
+    super.update(dt);
+
+    switch (_playState) {
+      case PlayState.debug:
+        break;
+
+      case PlayState.background:
+        countdown.update(dt);
+        animateBackground(false);
+        numAsteroids = world.children.query<Asteroid>().length;
+        break;
+
+      case PlayState.mainMenu:
+        countdown.update(dt);
+        animateBackground(false);
+        numAsteroids = world.children.query<Asteroid>().length;
+        break;
+
+      case PlayState.leaderboard:
+        countdown.update(dt);
+        animateBackground(false);
+        numAsteroids = world.children.query<Asteroid>().length;
+        break;
+
+      case PlayState.tutorial:
+        countdown.update(dt);
+        animateBackground(false);
+        numAsteroids = world.children.query<Asteroid>().length;
+        break;
+
+      case PlayState.play:
+        countdown.update(dt);
+        gameplayLoop();
+        findByKeyName<TextComponent>('scoreboard')!.text = score.toString().padLeft(4, '0');
+        numAsteroids = world.children.query<Asteroid>().length;
+        break;
+
+      // TODO: manage game over update
+      case PlayState.gameOver:
+        break;
+
+    }
+  }
+
   // tracks which tap accessed button
   int shootButtonTapId = 0;
-
   @override 
   void onTapDown(int pointerId, TapDownInfo info) {
     super.onTapDown(pointerId, info);
@@ -424,47 +485,8 @@ class Asteroids extends FlameGame
     }
   }
 
-
-  // main gameplay loop
-  @override 
-  void update(double dt) {
-    super.update(dt);
-
-    switch (_playState) {
-      case PlayState.debug:
-        break;
-
-      case PlayState.background:
-        countdown.update(dt);
-        animateBackground(false);
-        numAsteroids = world.children.query<Asteroid>().length;
-        break;
-
-      case PlayState.mainMenu:
-        countdown.update(dt);
-        animateBackground(false);
-        numAsteroids = world.children.query<Asteroid>().length;
-        break;
-
-      // TODO: manage tutorial update
-      case PlayState.tutorial:
-      break;
-
-      case PlayState.play:
-        countdown.update(dt);
-        gameplayLoop();
-        findByKeyName<TextComponent>('scoreboard')!.text = score.toString().padLeft(4, '0');
-        numAsteroids = world.children.query<Asteroid>().length;
-        break;
-
-      // TODO: manage game over update
-      case PlayState.gameOver:
-      break;
-
-    }
-  }
-
   // TODO: Implement hyperdrive!
+  // TODO: handle misclicks/incorrect keypress/taps
   @override
   KeyEventResult onKeyEvent( 
     RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
@@ -482,8 +504,7 @@ class Asteroids extends FlameGame
         // movement
         case LogicalKeyboardKey.keyW: 
           if (_playState == PlayState.play) {
-            findByKeyName<Player>('player')!.moveForward = true; }
-
+            findByKeyName<Player>('player')!.moveForward = true; } 
         // rotation
         case LogicalKeyboardKey.keyA: 
           if (_playState == PlayState.play) {
@@ -497,8 +518,6 @@ class Asteroids extends FlameGame
         case LogicalKeyboardKey.space: 
           if (_playState == PlayState.play) {
             findByKeyName<Player>('player')!.fireShot = true; }
-          else if (_playState == PlayState.background) {
-            startGame(); }
 
       } 
     } else if (isKeyUp) {
@@ -522,16 +541,12 @@ class Asteroids extends FlameGame
         case LogicalKeyboardKey.space: 
           if (_playState == PlayState.play) {
             findByKeyName<Player>('player')!.fireShot = false; }
-          else if (_playState == PlayState.background) {
+          else if (_playState == PlayState.tutorial) {
             startGame(); }
 
-        // start playing game
-        // WARN: only works for background -> start, no support for new game
         case LogicalKeyboardKey.enter:
-          if (_playState == PlayState.background) {
-            _playState =  PlayState.mainMenu;
-            //startGame(); 
-          }
+          if (_playState == PlayState.tutorial) {
+            startGame(); }
 
       }
     }
