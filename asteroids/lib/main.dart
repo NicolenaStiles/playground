@@ -21,7 +21,7 @@ void main() {
                   (defaultTargetPlatform == TargetPlatform.iOS || 
                    defaultTargetPlatform == TargetPlatform.android);
 
-  getIt<SiteState>().isMobile = true;
+  getIt<SiteState>().isMobile = isMobile;
 
   runApp(const GameApp());
 }

@@ -247,14 +247,6 @@ class Asteroid extends PositionComponent
     super.onCollisionEnd(other);
 
     if (other is Shot) {
-      /*
-      if (game.score > game_settings.maxScore) {
-        game.score = game_settings.maxScore;
-        game.playState = PlayState.gameOver;
-        game.world.removeAll(game.world.children.query<Player>());
-        game.world.removeAll(game.world.children.query<Shot>());
-      } else {
-        */
       game.world.addAll(_asteroidChildren);
       game.score += _points;
       removeFromParent();
@@ -264,7 +256,6 @@ class Asteroid extends PositionComponent
   void splitAsteroid() {
 
     switch (objSize) {
-
       case AsteroidSize.large:
 
         // for + pi / 4

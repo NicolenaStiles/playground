@@ -472,9 +472,11 @@ class Asteroids extends FlameGame
 
       case PlayState.replay:
         startReplay();
+        break;
 
-      // TODO: manage game over update
       case PlayState.gameOver:
+        joystick.isVisible = false;
+        isJoystickActive = false;
         break;
 
     }
@@ -510,8 +512,10 @@ class Asteroids extends FlameGame
         }
         return;
       case PlayState.replay:
+        shootButtonTapId = 0;
         return;
       case PlayState.gameOver:
+        buttonShoot.isPressed = false;
         return;
     }
   }
@@ -541,6 +545,7 @@ class Asteroids extends FlameGame
       case PlayState.replay:
         return;
       case PlayState.gameOver:
+        buttonShoot.isPressed = false;
         return;
     }
   }
@@ -572,6 +577,7 @@ class Asteroids extends FlameGame
       case PlayState.replay:
         return;
       case PlayState.gameOver:
+        buttonShoot.isPressed = false;
         return;
     }
   }

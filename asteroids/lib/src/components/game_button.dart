@@ -60,6 +60,7 @@ class GameButton extends CircleComponent
     super.update(dt);
 
     if (game.playState != PlayState.play) return;
+    if (game.findByKeyName<Player>('player') == null) return;
 
     if (isPressed) {
       // shooting button

@@ -28,6 +28,8 @@ class Joystick extends JoystickComponent
   @override
   bool onDragStart(DragStartEvent event) {
     super.onDragStart(event);
+    if (game.playState != PlayState.play) return false;
+    if (game.findByKeyName<Player>('player') == null) return false;
     game.findByKeyName<Player>('player')!.isJoystickActive = true;
     game.isJoystickActive = true;
     isVisible = true;
@@ -37,6 +39,8 @@ class Joystick extends JoystickComponent
   @override
   bool onDragUpdate(DragUpdateEvent event) {
     super.onDragUpdate(event);
+    if (game.playState != PlayState.play) return false;
+    if (game.findByKeyName<Player>('player') == null) return false;
     game.findByKeyName<Player>('player')!.mobileMove = relativeDelta;
     game.findByKeyName<Player>('player')!.mobilePercent = intensity;
     game.findByKeyName<Player>('player')!.angleRequest = relativeDelta.screenAngle();
@@ -46,6 +50,8 @@ class Joystick extends JoystickComponent
   @override
   void onDragStop() {
     super.onDragStop();
+    if (game.playState != PlayState.play) return;
+    if (game.findByKeyName<Player>('player') == null) return;
     game.findByKeyName<Player>('player')!.isJoystickActive = false;
     game.isJoystickActive = false;
     isVisible = false;
