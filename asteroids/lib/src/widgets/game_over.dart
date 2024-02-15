@@ -67,7 +67,7 @@ class _GameOverState extends State<GameOver> {
                 // main menu 
                 OutlinedButton(
                   onPressed: () {
-                    widget.game.world.remove(widget.game.findByKeyName('scoreboard')!);
+                    //widget.game.world.remove(widget.game.findByKeyName('scoreboard')!);
                     widget.game.playState = PlayState.mainMenu; 
                   },
                   style: const ButtonStyle(

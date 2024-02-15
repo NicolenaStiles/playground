@@ -8,9 +8,7 @@ class Tutorial extends StatefulWidget {
 
   const Tutorial({ 
     super.key,
-    required this.game,
   });
-  final Asteroids game;
 
   @override
   State<Tutorial> createState() => _TutorialState();

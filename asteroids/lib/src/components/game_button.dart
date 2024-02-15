@@ -7,10 +7,6 @@ import 'components.dart';
 
 enum ButtonType {shoot, warp}
 
-// TODO: 1. how determine if isMobile?
-
-// TODO: 2. Pick a color pallette for these guys!
-// I was just spitballing with these.
 
 class GameButton extends CircleComponent 
   with HasGameRef<Asteroids> {
@@ -62,6 +58,9 @@ class GameButton extends CircleComponent
   @override
   void update(dt) {
     super.update(dt);
+
+    if (game.playState != PlayState.play) return;
+
     if (isPressed) {
       // shooting button
       if (type == ButtonType.shoot) {

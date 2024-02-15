@@ -10,9 +10,7 @@ class GameApp extends StatefulWidget {
 
   const GameApp({
     super.key,
-    required this.isMobile,
   });
-  final bool isMobile;
   
   @override
   State<GameApp> createState() => _GameAppState();
@@ -20,14 +18,22 @@ class GameApp extends StatefulWidget {
 
 class _GameAppState extends State<GameApp> {
 
+  late final Asteroids game;
+
+  @override
+  void initState() {
+    super.initState();
+    game = Asteroids();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: websiteTheme,
       home: Scaffold ( 
-        body: GameWidget.controlled(
-          gameFactory: Asteroids.new,
+        body: GameWidget(
+          game: game,
           overlayBuilderMap: { 
 
             PlayState.mainMenu.name: (BuildContext context, Asteroids game) => 
@@ -37,7 +43,7 @@ class _GameAppState extends State<GameApp> {
               Leaderboard(game: game),
 
             PlayState.tutorial.name: (BuildContext context, Asteroids game) =>
-              Tutorial(game: game),
+              const Tutorial(),
               
             PlayState.gameOver.name: (BuildContext context, Asteroids game) =>
               GameOver(game: game),
