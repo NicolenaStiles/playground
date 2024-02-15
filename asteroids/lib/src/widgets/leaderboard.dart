@@ -18,13 +18,35 @@ class Leaderboard extends StatefulWidget {
 
 class _LeaderboardState extends State<Leaderboard> {
 
+  double _buttonPaddingInset = 0;
+  TextStyle _buttonTextStyle = const TextStyle();
+
+  // have to set things here, because context is not availible in 'initState'
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Dimensions in logical pixels (dp)
+    Size size = MediaQuery.of(context).size;
+    double width = size.width;
+    double height = size.height;
+
+    if (width < 414) {
+      _buttonTextStyle = Theme.of(context).textTheme.bodySmall!;
+      _buttonPaddingInset = 10;
+    } else  {
+      _buttonTextStyle = Theme.of(context).textTheme.titleMedium!;
+      _buttonPaddingInset = 20;
+    }
+  }
+
   @override 
   Widget build(BuildContext context) {
     return Center ( 
       child: Container( 
         constraints: const BoxConstraints(
           minWidth: 375,
-          maxWidth: 512,
+          maxWidth: 1024,
         ),
         padding: const EdgeInsets.all(10),
         margin: const EdgeInsets.all(20),
@@ -40,15 +62,15 @@ class _LeaderboardState extends State<Leaderboard> {
             onPressed: () {
               widget.game.playState = PlayState.mainMenu; 
             },
-            style: const ButtonStyle(
-              padding: MaterialStatePropertyAll(EdgeInsets.all(20)),
-              side: MaterialStatePropertyAll(
+            style: ButtonStyle(
+              padding: MaterialStatePropertyAll(EdgeInsets.all(_buttonPaddingInset)),
+              side: const MaterialStatePropertyAll(
                 BorderSide(
                   color: Colors.white, 
                   width: 2))),
             child: 
               Text('<',
-                style: Theme.of(context).textTheme.titleMedium),
+                style: _buttonTextStyle),
           ),
         ),
       ),

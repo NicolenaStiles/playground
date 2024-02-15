@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import '../asteroids.dart';
@@ -17,19 +19,39 @@ class MainMenu extends StatefulWidget {
 // TODO: resize this dynamically on mobile
 class _MainMenuState extends State<MainMenu> {
 
+  double _buttonPaddingInset = 0;
+  TextStyle _buttonTextStyle = TextStyle();
+
+  // have to set things here, because context is not availible in 'initState'
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Dimensions in logical pixels (dp)
+    Size size = MediaQuery.of(context).size;
+    double width = size.width;
+    double height = size.height;
+
+    if (width < 414) {
+      _buttonTextStyle = Theme.of(context).textTheme.bodyMedium!;
+      _buttonPaddingInset = 10;
+    } else  {
+      _buttonTextStyle = Theme.of(context).textTheme.titleMedium!;
+      _buttonPaddingInset = 20;
+    }
+  }
+
   @override 
   Widget build(BuildContext context) {
     return Center ( 
       child: Container( 
         constraints: const BoxConstraints(
-          minWidth: 375,
           maxWidth: 512,
-          minHeight: 375,
           maxHeight: 512,
         ),
         padding: const EdgeInsets.all(10),
         child: Column( 
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [ 
     
@@ -53,15 +75,15 @@ class _MainMenuState extends State<MainMenu> {
                   onPressed: () {
                     widget.game.playState = PlayState.tutorial; 
                   },
-                  style: const ButtonStyle(
-                    padding: MaterialStatePropertyAll(EdgeInsets.all(20)),
-                    side: MaterialStatePropertyAll(
+                  style: ButtonStyle(
+                    padding: MaterialStatePropertyAll(EdgeInsets.all(_buttonPaddingInset)),
+                    side: const MaterialStatePropertyAll(
                       BorderSide(
                         color: Colors.white, 
                         width: 2))),
                   child: 
                     Text('start game',
-                      style: Theme.of(context).textTheme.titleMedium),
+                      style: _buttonTextStyle),
                     ),
 
                 // leaderboard 
@@ -69,15 +91,15 @@ class _MainMenuState extends State<MainMenu> {
                   onPressed: () {
                     widget.game.playState = PlayState.leaderboard; 
                   },
-                  style: const ButtonStyle(
-                    padding: MaterialStatePropertyAll(EdgeInsets.all(20)),
-                    side: MaterialStatePropertyAll(
+                  style: ButtonStyle(
+                    padding: MaterialStatePropertyAll(EdgeInsets.all(_buttonPaddingInset)),
+                    side: const MaterialStatePropertyAll(
                       BorderSide(
                         color: Colors.white, 
                         width: 2))),
                   child: 
                     Text('leaderboard',
-                      style: Theme.of(context).textTheme.titleMedium),
+                      style: _buttonTextStyle),
                     ),
               ],
             ),
