@@ -22,5 +22,21 @@ void main() {
 
   getIt<SiteState>().isMobile = isMobile;
 
+  // Adding some test data
+  getIt<SiteState>().highScores.add(
+  (16190,
+  'AA')
+  );
+
+  getIt<SiteState>().highScores.add(
+  (6300,
+  'ASS')
+  );
+
+  getIt<SiteState>().highScores.add(
+  (6210,
+  'BIL')
+  );
+
   runApp(const GameApp());
 }

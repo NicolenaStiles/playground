@@ -1,6 +1,7 @@
-// TODO: implement high scores
 class SiteState {
   bool isMobile = false;
-
-  List<int> highScores = [];
+  
+  // score and initals
+  //typedef HighScoreRecord = ({int score, String initals});
+  List<(int,String)> highScores = [];
 }
