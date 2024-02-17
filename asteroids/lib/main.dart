@@ -9,7 +9,6 @@ import 'src/api/site_state.dart';
 import 'src/widgets/game_app.dart';
 //import 'src/mobile_asteroids.dart';
 
-
 // This is our global ServiceLocator
 GetIt getIt = GetIt.instance;
 

@@ -475,8 +475,10 @@ class Asteroids extends FlameGame
         break;
 
       case PlayState.gameOver:
-        joystick.isVisible = false;
-        isJoystickActive = false;
+        if (isMobile) {
+          joystick.isVisible = false;
+          isJoystickActive = false;
+        }
         break;
 
     }

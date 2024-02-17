@@ -16,7 +16,6 @@ class MainMenu extends StatefulWidget {
   State<MainMenu> createState() => _MainMenuState();
 }
 
-// TODO: resize this dynamically on mobile
 class _MainMenuState extends State<MainMenu> {
 
   double _buttonPaddingInset = 0;
