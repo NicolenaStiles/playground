@@ -41,7 +41,7 @@ class _LeaderboardEntryState extends State<LeaderboardEntry> {
   Widget build(BuildContext context) {
     return Center( 
       child: Row( 
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           // idx
           Text( 

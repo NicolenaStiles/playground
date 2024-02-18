@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../asteroids.dart';
 
-// TODO: add leaderboard
-// TODO: resize this dynamically on mobile
+// global state management
+import '../api/site_state.dart';
+
+// for each high score entry
+import 'leaderboard_entry.dart';
+
+// TODO: index from 1 in display
 class Leaderboard extends StatefulWidget {
 
   const Leaderboard({ 
@@ -29,7 +34,6 @@ class _LeaderboardState extends State<Leaderboard> {
     // Dimensions in logical pixels (dp)
     Size size = MediaQuery.of(context).size;
     double width = size.width;
-    double height = size.height;
 
     if (width < 414) {
       _buttonTextStyle = Theme.of(context).textTheme.bodySmall!;
@@ -45,8 +49,7 @@ class _LeaderboardState extends State<Leaderboard> {
     return Center ( 
       child: Container( 
         constraints: const BoxConstraints(
-          minWidth: 375,
-          maxWidth: 1024,
+          maxWidth: 512,
         ),
         padding: const EdgeInsets.all(10),
         margin: const EdgeInsets.all(20),
@@ -56,22 +59,50 @@ class _LeaderboardState extends State<Leaderboard> {
             side: BorderSide(
               color: Colors.white, 
               width: 2))),
-        child: Align( 
-          alignment: Alignment.topLeft,
-          child: OutlinedButton(
-            onPressed: () {
-              widget.game.playState = PlayState.mainMenu; 
-            },
-            style: ButtonStyle(
-              padding: MaterialStatePropertyAll(EdgeInsets.all(_buttonPaddingInset)),
-              side: const MaterialStatePropertyAll(
-                BorderSide(
-                  color: Colors.white, 
-                  width: 2))),
-            child: 
-              Text('<',
-                style: _buttonTextStyle),
-          ),
+        child: Column( 
+          children: [ 
+
+            // Back button
+            Align( 
+              alignment: Alignment.centerLeft,
+              child: OutlinedButton(
+                onPressed: () {
+                  widget.game.playState = PlayState.mainMenu; 
+                },
+                style: ButtonStyle(
+                  padding: MaterialStatePropertyAll(EdgeInsets.all(_buttonPaddingInset)),
+                  side: const MaterialStatePropertyAll(
+                    BorderSide(
+                      color: Colors.white, 
+                      width: 2))),
+                child: 
+                  Text('<',
+                    style: _buttonTextStyle),
+              ),
+            ),
+
+            // High score header
+            Text('HIGH SCORES',
+              style: Theme.of(context).textTheme.headlineSmall),
+
+            // High score collection
+            ListView.separated(
+              shrinkWrap: true,
+              padding: const EdgeInsets.all(20),
+              itemCount: getIt<SiteState>().highScores.length,
+              itemBuilder: (BuildContext context, index) {
+                  return LeaderboardEntry(
+                    idx: index, 
+                    score: getIt<SiteState>().highScores[index].$1,
+                    initials: getIt<SiteState>().highScores[index].$2,
+                  );
+              },
+              separatorBuilder: (BuildContext context, int index) => Divider(
+                // TODO: fix this, it's such a hack omg
+                color: Colors.white.withOpacity(0),
+              ),
+            ),
+          ],
         ),
       ),
     );

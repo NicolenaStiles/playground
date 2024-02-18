@@ -3,5 +3,5 @@ class SiteState {
   
   // score and initals
   //typedef HighScoreRecord = ({int score, String initals});
-  List<(int,String)> highScores = [];
+  List<(int score, String initals)> highScores = [];
 }

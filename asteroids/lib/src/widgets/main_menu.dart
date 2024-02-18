@@ -1,6 +1,5 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../asteroids.dart';
 
@@ -65,7 +64,7 @@ class _MainMenuState extends State<MainMenu> {
                 ],
               ),
 
-            Row(
+            Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [ 
 
