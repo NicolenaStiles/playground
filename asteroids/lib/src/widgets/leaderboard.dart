@@ -8,20 +8,19 @@ import '../api/site_state.dart';
 // for each high score entry
 import 'leaderboard_entry.dart';
 
-// TODO: index from 1 in display
-class Leaderboard extends StatefulWidget {
+class LeaderboardDisplay extends StatefulWidget {
 
-  const Leaderboard({ 
+  const LeaderboardDisplay({ 
     super.key,
     required this.game,
   });
   final Asteroids game;
 
   @override
-  State<Leaderboard> createState() => _LeaderboardState();
+  State<LeaderboardDisplay> createState() => _LeaderboardDisplayState();
 }
 
-class _LeaderboardState extends State<Leaderboard> {
+class _LeaderboardDisplayState extends State<LeaderboardDisplay> {
 
   double _buttonPaddingInset = 0;
   TextStyle _buttonTextStyle = const TextStyle();
@@ -89,12 +88,12 @@ class _LeaderboardState extends State<Leaderboard> {
             ListView.separated(
               shrinkWrap: true,
               padding: const EdgeInsets.all(20),
-              itemCount: getIt<SiteState>().highScores.length,
+              itemCount: getIt<Leaderboard>().highScores.length,
               itemBuilder: (BuildContext context, index) {
-                  return LeaderboardEntry(
+                  return LeaderboardDisplayEntry(
                     idx: index + 1, 
-                    score: getIt<SiteState>().highScores[index].$1,
-                    initials: getIt<SiteState>().highScores[index].$2,
+                    score: getIt<Leaderboard>().highScores[index].score,
+                    initials: getIt<Leaderboard>().highScores[index].initals,
                   );
               },
               separatorBuilder: (BuildContext context, int index) => Divider(

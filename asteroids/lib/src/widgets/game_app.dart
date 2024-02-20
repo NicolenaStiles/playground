@@ -40,7 +40,7 @@ class _GameAppState extends State<GameApp> {
               MainMenu(game: game),
 
             PlayState.leaderboard.name: (BuildContext context, Asteroids game) =>
-              Leaderboard(game: game),
+              LeaderboardDisplay(game: game),
 
             PlayState.tutorial.name: (BuildContext context, Asteroids game) =>
               const Tutorial(),

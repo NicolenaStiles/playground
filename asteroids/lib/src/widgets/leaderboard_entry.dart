@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-class LeaderboardEntry extends StatefulWidget {
+// TODO: force these to all have the same spacing between?
+class LeaderboardDisplayEntry extends StatefulWidget {
 
-  const LeaderboardEntry({ 
+  const LeaderboardDisplayEntry({ 
     super.key,
     required this.idx,
     required this.score,
@@ -14,10 +15,10 @@ class LeaderboardEntry extends StatefulWidget {
   final String initials;
 
   @override
-  State<LeaderboardEntry> createState() => _LeaderboardEntryState();
+  State<LeaderboardDisplayEntry> createState() => _LeaderboardDisplayEntryState();
 }
 
-class _LeaderboardEntryState extends State<LeaderboardEntry> {
+class _LeaderboardDisplayEntryState extends State<LeaderboardDisplayEntry> {
 
   TextStyle _buttonTextStyle = const TextStyle();
 

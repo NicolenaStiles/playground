@@ -10,6 +10,9 @@ import 'package:flutter/material.dart';
 // dart-specific
 import 'dart:math';
 
+// record-keeping
+import '../api/site_state.dart';
+
 // local components
 import '../asteroids.dart';
 import '../config.dart' as game_settings;
@@ -362,7 +365,11 @@ class Player extends PositionComponent
     } else {
       String keyName = 'life${game.lives - 1}';
       game.world.remove(game.findByKeyName<Lives>(keyName)!);
-      game.playState = PlayState.gameOver;
+      if (getIt<Leaderboard>().verifyScore(game.score)) {
+        game.playState = PlayState.gameOverAddScore;
+      } else {
+        game.playState = PlayState.gameOver;
+      }
       removeFromParent();
     }
   }

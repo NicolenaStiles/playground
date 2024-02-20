@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 
 import '../asteroids.dart';
 
+// global state management
+import '../api/site_state.dart';
+
 class GameOverAddScore extends StatefulWidget {
 
   const GameOverAddScore({ 
@@ -15,7 +18,14 @@ class GameOverAddScore extends StatefulWidget {
   State<GameOverAddScore> createState() => _GameOverAddScoreState();
 }
 
-// TODO: resize this dynamically on mobile
+// TODO: Cleanup form handling (low priority tho)
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    return TextEditingValue(text: newValue.text.toUpperCase(), selection: newValue.selection);
+  }
+}
+
 class _GameOverAddScoreState extends State<GameOverAddScore> {
 
   // Text form handling
@@ -41,7 +51,6 @@ class _GameOverAddScoreState extends State<GameOverAddScore> {
     // Dimensions in logical pixels (dp)
     Size size = MediaQuery.of(context).size;
     double width = size.width;
-    double height = size.height;
 
     if (width < 414) {
       _buttonTextStyle = Theme.of(context).textTheme.bodyMedium!;
@@ -89,12 +98,13 @@ class _GameOverAddScoreState extends State<GameOverAddScore> {
 
                 inputFormatters: [ 
                   FilteringTextInputFormatter.allow(initalValidator),
+                  UpperCaseTextFormatter(), 
                 ],
 
                 onChanged: (inputValue) {
                   if (inputValue.isEmpty || initalValidator.hasMatch(inputValue)) {
                     setValidator(true);
-                    _initalInput = inputValue; 
+                    _initalInput = inputValue.toUpperCase(); 
                   } else {
                     setValidator(false);
                   }
@@ -112,7 +122,12 @@ class _GameOverAddScoreState extends State<GameOverAddScore> {
             OutlinedButton(
               onPressed: () {
                 if (isValidInitals) {
-                  print('Got value: $_initalInput');
+                  _initalInput.toUpperCase();
+                  getIt<Leaderboard>().handleScore(
+                    LeaderboardEntry(
+                      score: widget.game.score, 
+                      initals: _initalInput));
+                  widget.game.playState = PlayState.gameOver;
                 }
               },
               style: ButtonStyle(

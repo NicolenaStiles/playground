@@ -15,6 +15,7 @@ GetIt getIt = GetIt.instance;
 void main() {
 
   getIt.registerSingleton<SiteState>(SiteState());
+  getIt.registerSingleton<Leaderboard>(Leaderboard());
 
   final isMobile = kIsWeb && 
                   (defaultTargetPlatform == TargetPlatform.iOS || 
@@ -23,10 +24,11 @@ void main() {
   getIt<SiteState>().isMobile = isMobile;
 
   // Adding some test data
-  getIt<SiteState>().highScores.add((
-  65536, 
-  'OJI'
-  ));
+  LeaderboardEntry oji = LeaderboardEntry(score: 65536, initals: 'OJI');
+  LeaderboardEntry azu = LeaderboardEntry(score: 32768, initals: 'AZU');
+
+  getIt<Leaderboard>().handleScore(oji);
+  getIt<Leaderboard>().handleScore(azu);
 
   runApp(const GameApp());
 }
