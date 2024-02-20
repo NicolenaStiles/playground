@@ -28,7 +28,6 @@ class _MainMenuState extends State<MainMenu> {
     // Dimensions in logical pixels (dp)
     Size size = MediaQuery.of(context).size;
     double width = size.width;
-    double height = size.height;
 
     if (width < 414) {
       _buttonTextStyle = Theme.of(context).textTheme.bodyMedium!;
@@ -64,7 +63,7 @@ class _MainMenuState extends State<MainMenu> {
                 ],
               ),
 
-            Column(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [ 
 

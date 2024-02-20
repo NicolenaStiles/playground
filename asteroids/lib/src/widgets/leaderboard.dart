@@ -92,7 +92,7 @@ class _LeaderboardState extends State<Leaderboard> {
               itemCount: getIt<SiteState>().highScores.length,
               itemBuilder: (BuildContext context, index) {
                   return LeaderboardEntry(
-                    idx: index, 
+                    idx: index + 1, 
                     score: getIt<SiteState>().highScores[index].$1,
                     initials: getIt<SiteState>().highScores[index].$2,
                   );

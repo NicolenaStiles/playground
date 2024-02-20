@@ -34,6 +34,7 @@ enum PlayState {
   play, 
   replay,
   gameOver,
+  gameOverAddScore,
 }
 
 // global state management
@@ -96,7 +97,10 @@ class Asteroids extends FlameGame
       case PlayState.replay:
         overlays.remove(PlayState.gameOver.name);
         break;
+      case PlayState.gameOverAddScore:
+        overlays.add(playState.name);
       case PlayState.gameOver:
+        overlays.remove(PlayState.gameOverAddScore.name);
         overlays.add(playState.name);
         break;
     }
@@ -474,6 +478,13 @@ class Asteroids extends FlameGame
         startReplay();
         break;
 
+      case PlayState.gameOverAddScore:
+        if (isMobile) {
+          joystick.isVisible = false;
+          isJoystickActive = false;
+        }
+        break;
+
       case PlayState.gameOver:
         if (isMobile) {
           joystick.isVisible = false;
@@ -516,6 +527,9 @@ class Asteroids extends FlameGame
       case PlayState.replay:
         shootButtonTapId = 0;
         return;
+      case PlayState.gameOverAddScore:
+        buttonShoot.isPressed = false;
+        return;
       case PlayState.gameOver:
         buttonShoot.isPressed = false;
         return;
@@ -545,6 +559,9 @@ class Asteroids extends FlameGame
         }
         return;
       case PlayState.replay:
+        return;
+      case PlayState.gameOverAddScore:
+        buttonShoot.isPressed = false;
         return;
       case PlayState.gameOver:
         buttonShoot.isPressed = false;
@@ -577,6 +594,9 @@ class Asteroids extends FlameGame
         }
         return;
       case PlayState.replay:
+        return;
+      case PlayState.gameOverAddScore:
+        buttonShoot.isPressed = false;
         return;
       case PlayState.gameOver:
         buttonShoot.isPressed = false;
@@ -653,5 +673,4 @@ class Asteroids extends FlameGame
 
   @override 
   Color backgroundColor() => const Color(0xFF000000);
-
 }

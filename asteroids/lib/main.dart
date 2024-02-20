@@ -24,18 +24,8 @@ void main() {
 
   // Adding some test data
   getIt<SiteState>().highScores.add((
-  16190, 
-  'AA'
-  ));
-
-  getIt<SiteState>().highScores.add((
-  6300,
-  'ASS'
-  ));
-
-  getIt<SiteState>().highScores.add((
-  6210,
-  'BIL'
+  65536, 
+  'OJI'
   ));
 
   runApp(const GameApp());

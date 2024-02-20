@@ -47,6 +47,9 @@ class _GameAppState extends State<GameApp> {
               
             PlayState.gameOver.name: (BuildContext context, Asteroids game) =>
               GameOver(game: game),
+
+            PlayState.gameOverAddScore.name: (BuildContext context, Asteroids game) =>
+              GameOverAddScore(game: game),
           },
         ),
       ),
