@@ -1,12 +1,18 @@
+// flame game-related stuff
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 
+// asteroids-specific
 import '../asteroids.dart';
 import 'components.dart';
 
+// FIX: Breaking change involving HasGameReference in v1.15
+// Can't bump version because the mixin is provided in JoystickComponent
+// Need to either find direct fix to mixin conflict or rework 
+
 class Joystick extends JoystickComponent
-  with HasVisibility, TapCallbacks, HasGameRef<Asteroids> {
+  with HasVisibility, TapCallbacks, HasGameReference<Asteroids> {
 
   Joystick({
     required super.key,
@@ -25,9 +31,11 @@ class Joystick extends JoystickComponent
                     ..style = PaintingStyle.fill),
   );
 
+
   @override
   bool onDragStart(DragStartEvent event) {
     super.onDragStart(event);
+    super.findRootGame().runtimeType;
     if (game.playState != PlayState.play) return false;
     if (game.findByKeyName<Player>('player') == null) return false;
     game.findByKeyName<Player>('player')!.isJoystickActive = true;

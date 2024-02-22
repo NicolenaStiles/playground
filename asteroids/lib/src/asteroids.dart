@@ -1,3 +1,4 @@
+// general dart stuff
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -440,6 +441,7 @@ class Asteroids extends FlameGame
     super.update(dt);
 
     switch (_playState) {
+
       case PlayState.debug:
         break;
 
@@ -604,7 +606,10 @@ class Asteroids extends FlameGame
     }
   }
 
-  // TODO: Implement hyperdrive!
+  // FIX: update depreciated keypress handling
+  // Only using v.1.14 due to the breaking changes in how 
+  // the joystick inheretance is handled in 1.15. The fix here is simple and
+  // should be patched in after moving up from v1.14.
   @override
   KeyEventResult onKeyEvent( 
     RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {

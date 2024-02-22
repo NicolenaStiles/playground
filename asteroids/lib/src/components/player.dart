@@ -1,7 +1,6 @@
 // flame-specific
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/effects.dart';
 import 'package:flame/extensions.dart';
 
 // flutter-specific
