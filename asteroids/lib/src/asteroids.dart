@@ -1,3 +1,4 @@
+// general dart stuff
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -12,22 +13,37 @@ import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// global state management
+import '../src/api/site_state.dart';
+
 // player, asteroid, shot 
+import 'package:get_it/get_it.dart';
 import 'components/components.dart';
 
 // configuration
 import 'config.dart' as game_settings;
 game_settings.GameCfg testCfg = game_settings.GameCfg.desktop();
 
-// enum PlayState {background, welcome, play, gameOver, won}
 // debug is only temp here
-enum PlayState { debug, background, play, gameOver, gameWon }
+enum PlayState { 
+  debug, 
+  background, 
+  mainMenu, 
+  leaderboard,
+  tutorial, 
+  play, 
+  replay,
+  gameOver,
+  gameOverAddScore,
+}
+
+// global state management
+GetIt getIt = GetIt.instance;
 
 class Asteroids extends FlameGame
   with MultiTouchTapDetector, KeyboardEvents, HasCollisionDetection {
 
-  bool isMobile;
-  Asteroids(this.isMobile);
+  bool isMobile = false;
 
   final rand = math.Random();
   double get width => size.x;
@@ -58,15 +74,35 @@ class Asteroids extends FlameGame
     _playState = playState;
     switch (playState) {
       case PlayState.debug:
-      break;
+        break;
       case PlayState.background:
-      break;
+        break;
+      case PlayState.mainMenu:
+        overlays.remove(PlayState.leaderboard.name);
+        overlays.remove(PlayState.gameOver.name);
+        overlays.add(playState.name);
+        break;
+      case PlayState.leaderboard:
+        overlays.remove(PlayState.mainMenu.name);
+        overlays.add(playState.name);
+        break;
+      case PlayState.tutorial:
+        overlays.remove(PlayState.mainMenu.name);
+        overlays.add(playState.name);
+        break;
       case PlayState.play:
-      break;
+        overlays.remove(PlayState.tutorial.name);
+        overlays.remove(PlayState.gameOver.name);
+        break;
+      case PlayState.replay:
+        overlays.remove(PlayState.gameOver.name);
+        break;
+      case PlayState.gameOverAddScore:
+        overlays.add(playState.name);
       case PlayState.gameOver:
-      break;
-      case PlayState.gameWon:
-      break;
+        overlays.remove(PlayState.gameOverAddScore.name);
+        overlays.add(playState.name);
+        break;
     }
   }
 
@@ -75,16 +111,20 @@ class Asteroids extends FlameGame
     super.onLoad();
 
     camera.viewfinder.anchor = Anchor.topLeft;
+ 
+    isMobile = getIt<SiteState>().isMobile;
 
-    // populate config object with appropriate settings
     if (!isMobile) {
       testCfg = game_settings.GameCfg.desktop();
     } else {
       testCfg = game_settings.GameCfg.mobile(width, height);
     }
 
-    playState = PlayState.background;
+    playState = PlayState.mainMenu;
     animateBackground(true);
+
+    //playState = PlayState.debug;
+    //layoutDebug();
   }
 
   // testing gesture layout stuff
@@ -114,6 +154,16 @@ class Asteroids extends FlameGame
       position: shipPos,
       size : Vector2(testCfg.playerWidth, testCfg.playerHeight),
       isMobileGame: isMobile,
+    ));
+
+    // test alien
+    Vector2 alienPos = Vector2(0, 0);
+    alienPos.x = size.x * (1/3);
+    alienPos.y = size.y * (4/5);
+    world.add(Alien(
+      key: ComponentKey.named('alien'),
+      size: Vector2(64, 48), 
+      position: alienPos
     ));
     
     // asteroids
@@ -220,6 +270,7 @@ class Asteroids extends FlameGame
                           size.y - (margin + radius));
 
     buttonShoot = GameButton(
+      key: ComponentKey.named('button_shoot'),
       type: ButtonType.shoot, 
       position: shootPos, 
       radius: radius, 
@@ -246,7 +297,6 @@ class Asteroids extends FlameGame
       isMobileGame: isMobile,
     ));
   }
-
 
   void generateRandomAsteroid() {
     // generate random velocity value
@@ -291,6 +341,7 @@ class Asteroids extends FlameGame
        asteroidSize.x = testCfg.smallAsteroidSize; 
        asteroidSize.y = testCfg.smallAsteroidSize; 
     }
+
     world.add(Asteroid(
       objType: AsteroidType.values[rand.nextInt(3)],
       objSize: asteroidSizeEnum,
@@ -301,7 +352,7 @@ class Asteroids extends FlameGame
     ));
   }
 
-
+  // generate background asteroids for Ze Aesthetique
   void animateBackground (bool isFirstRun) {
 
     if (isFirstRun) {
@@ -362,52 +413,24 @@ class Asteroids extends FlameGame
     countdown.start();
   }
 
-  // tracks which tap accessed button
-  int shootButtonTapId = 0;
+  void startReplay() {
 
-  @override 
-  void onTapDown(int pointerId, TapDownInfo info) {
-    super.onTapDown(pointerId, info);
+    // pull all the asteroids off the screen before we start
+    world.removeAll(world.children.query<Asteroid>());
 
-    // gameplay input controls
-    if (buttonShoot.containsPoint(info.eventPosition.widget)) {
-      buttonShoot.isPressed = true;
-      shootButtonTapId = pointerId;
+    playState = PlayState.play;
 
-    } else if (!isJoystickActive) {
-      joystick.position = info.eventPosition.widget;
-      joystick.isVisible = true;
-      isJoystickActive = true;
-    }
+    score = 0;
+    lives = game_settings.playerLives;
+    numAsteroids = 0;
+    countdown.stop();
+
+    // lives tracker
+    addLivesTracker();
+
+    // add player
+    addPlayerShip();
   }
-
-  @override
-  void onTapCancel(int pointerId) {
-    super.onTapCancel(pointerId);
-
-    // gameplay input controls
-    if (pointerId == shootButtonTapId && buttonShoot.isPressed == true) {
-      buttonShoot.isPressed = false;
-      shootButtonTapId = 0;
-    }
-  }
-
-  @override
-  void onTapUp(int pointerId, TapUpInfo info) {
-    super.onTapUp(pointerId, info);
-
-    // start game if running in background on tap
-    if (_playState == PlayState.background) {
-      startGame();
-    }
-
-    // gameplay input controls
-    if (pointerId == shootButtonTapId && buttonShoot.isPressed == true) {
-      buttonShoot.isPressed = false;
-      shootButtonTapId = 0;
-    }
-  }
-
 
   // main gameplay loop
   @override 
@@ -415,10 +438,29 @@ class Asteroids extends FlameGame
     super.update(dt);
 
     switch (_playState) {
+
       case PlayState.debug:
         break;
 
       case PlayState.background:
+        countdown.update(dt);
+        animateBackground(false);
+        numAsteroids = world.children.query<Asteroid>().length;
+        break;
+
+      case PlayState.mainMenu:
+        countdown.update(dt);
+        animateBackground(false);
+        numAsteroids = world.children.query<Asteroid>().length;
+        break;
+
+      case PlayState.leaderboard:
+        countdown.update(dt);
+        animateBackground(false);
+        numAsteroids = world.children.query<Asteroid>().length;
+        break;
+
+      case PlayState.tutorial:
         countdown.update(dt);
         animateBackground(false);
         numAsteroids = world.children.query<Asteroid>().length;
@@ -431,25 +473,145 @@ class Asteroids extends FlameGame
         numAsteroids = world.children.query<Asteroid>().length;
         break;
 
-      case PlayState.gameOver:
+      case PlayState.replay:
+        startReplay();
         break;
 
-      case PlayState.gameWon:
+      case PlayState.gameOverAddScore:
+        if (isMobile) {
+          joystick.isVisible = false;
+          isJoystickActive = false;
+        }
+        break;
+
+      case PlayState.gameOver:
+        if (isMobile) {
+          joystick.isVisible = false;
+          isJoystickActive = false;
+        }
         break;
 
     }
   }
 
-  // TODO: Implement hyperdrive!
+  // tracks which tap accessed button
+  int shootButtonTapId = 0;
+  @override 
+  void onTapDown(int pointerId, TapDownInfo info) {
+    super.onTapDown(pointerId, info);
+
+    switch (_playState) {
+      case PlayState.debug:
+        return;
+      case PlayState.background:
+        return;
+      case PlayState.mainMenu:
+        return;
+      case PlayState.leaderboard:
+        return;
+      case PlayState.tutorial:
+        return;
+      case PlayState.play:
+        // gameplay input controls
+        if (buttonShoot.containsPoint(info.eventPosition.widget)) {
+          buttonShoot.isPressed = true;
+          shootButtonTapId = pointerId;
+
+        } else if (!isJoystickActive) {
+          joystick.position = info.eventPosition.widget;
+          joystick.isVisible = true;
+          isJoystickActive = true;
+        }
+        return;
+      case PlayState.replay:
+        shootButtonTapId = 0;
+        return;
+      case PlayState.gameOverAddScore:
+        buttonShoot.isPressed = false;
+        return;
+      case PlayState.gameOver:
+        buttonShoot.isPressed = false;
+        return;
+    }
+  }
+
+  @override
+  void onTapCancel(int pointerId) {
+    super.onTapCancel(pointerId);
+
+    switch (_playState) {
+      case PlayState.debug:
+        return;
+      case PlayState.background:
+        return;
+      case PlayState.mainMenu:
+        return;
+      case PlayState.leaderboard:
+        return;
+      case PlayState.tutorial:
+        return;
+      case PlayState.play:
+        // gameplay input controls
+        if (pointerId == shootButtonTapId && buttonShoot.isPressed == true) {
+          buttonShoot.isPressed = false;
+          shootButtonTapId = 0;
+        }
+        return;
+      case PlayState.replay:
+        return;
+      case PlayState.gameOverAddScore:
+        buttonShoot.isPressed = false;
+        return;
+      case PlayState.gameOver:
+        buttonShoot.isPressed = false;
+        return;
+    }
+  }
+
+  @override
+  void onTapUp(int pointerId, TapUpInfo info) {
+    super.onTapUp(pointerId, info);
+
+    switch (_playState) {
+      case PlayState.debug:
+        return;
+      case PlayState.background:
+        startGame();
+        return;
+      case PlayState.mainMenu:
+        return;
+      case PlayState.leaderboard:
+        return;
+      case PlayState.tutorial:
+        startGame();
+        return;
+      case PlayState.play:
+        // gameplay input controls
+        if (pointerId == shootButtonTapId && buttonShoot.isPressed == true) {
+          buttonShoot.isPressed = false;
+          shootButtonTapId = 0;
+        }
+        return;
+      case PlayState.replay:
+        return;
+      case PlayState.gameOverAddScore:
+        buttonShoot.isPressed = false;
+        return;
+      case PlayState.gameOver:
+        buttonShoot.isPressed = false;
+        return;
+    }
+  }
+
   @override
   KeyEventResult onKeyEvent( 
-    RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     super.onKeyEvent(event, keysPressed);
 
-    final isKeyDown = event is RawKeyDownEvent;
-    final isKeyUp = event is RawKeyUpEvent;
+    final isKeyDown = event is KeyDownEvent;
+    final isKeyUp = event is KeyUpEvent;
 
-    if (event.repeat) {
+    if (event is KeyRepeatEvent) {
       return KeyEventResult.handled;
     }
 
@@ -458,8 +620,7 @@ class Asteroids extends FlameGame
         // movement
         case LogicalKeyboardKey.keyW: 
           if (_playState == PlayState.play) {
-            findByKeyName<Player>('player')!.moveForward = true; }
-
+            findByKeyName<Player>('player')!.moveForward = true; } 
         // rotation
         case LogicalKeyboardKey.keyA: 
           if (_playState == PlayState.play) {
@@ -473,8 +634,6 @@ class Asteroids extends FlameGame
         case LogicalKeyboardKey.space: 
           if (_playState == PlayState.play) {
             findByKeyName<Player>('player')!.fireShot = true; }
-          else if (_playState == PlayState.background) {
-            startGame(); }
 
       } 
     } else if (isKeyUp) {
@@ -498,13 +657,11 @@ class Asteroids extends FlameGame
         case LogicalKeyboardKey.space: 
           if (_playState == PlayState.play) {
             findByKeyName<Player>('player')!.fireShot = false; }
-          else if (_playState == PlayState.background) {
+          else if (_playState == PlayState.tutorial) {
             startGame(); }
 
-        // start playing game
-        // WARN: only works for background -> start, no support for new game
         case LogicalKeyboardKey.enter:
-          if (_playState == PlayState.background) {
+          if (_playState == PlayState.tutorial) {
             startGame(); }
 
       }
@@ -514,5 +671,4 @@ class Asteroids extends FlameGame
 
   @override 
   Color backgroundColor() => const Color(0xFF000000);
-
 }

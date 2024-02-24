@@ -1,7 +1,6 @@
 // flame-specific
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/effects.dart';
 import 'package:flame/extensions.dart';
 
 // flutter-specific
@@ -9,6 +8,9 @@ import 'package:flutter/material.dart';
 
 // dart-specific
 import 'dart:math';
+
+// record-keeping
+import '../api/site_state.dart';
 
 // local components
 import '../asteroids.dart';
@@ -360,7 +362,13 @@ class Player extends PositionComponent
       _godmodeTimer.start();
 
     } else {
-      game.playState = PlayState.gameOver;
+      String keyName = 'life${game.lives - 1}';
+      game.world.remove(game.findByKeyName<Lives>(keyName)!);
+      if (getIt<Leaderboard>().verifyScore(game.score)) {
+        game.playState = PlayState.gameOverAddScore;
+      } else {
+        game.playState = PlayState.gameOver;
+      }
       removeFromParent();
     }
   }

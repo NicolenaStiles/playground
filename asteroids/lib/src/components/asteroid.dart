@@ -1,10 +1,15 @@
+// flame game-related stuff
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
+
+// general flutter stuff 
 import 'package:flutter/material.dart';
 
+// general dart stuff
 import 'dart:math';
 
+// custom game componenets
 import '../asteroids.dart';
 import '../config.dart' as game_settings;
 import '../components/components.dart';
@@ -242,23 +247,15 @@ class Asteroid extends PositionComponent
     super.onCollisionEnd(other);
 
     if (other is Shot) {
-      if (game.score > game_settings.maxScore) {
-        game.score = game_settings.maxScore;
-        game.playState = PlayState.gameWon;
-        game.world.removeAll(game.world.children.query<Player>());
-        game.world.removeAll(game.world.children.query<Shot>());
-      } else {
-        game.world.addAll(_asteroidChildren);
-        game.score += _points;
-        removeFromParent();
-      }
+      game.world.addAll(_asteroidChildren);
+      game.score += _points;
+      removeFromParent();
     }
   }
 
   void splitAsteroid() {
 
     switch (objSize) {
-
       case AsteroidSize.large:
 
         // for + pi / 4
