@@ -6,12 +6,14 @@ import 'package:flame/extensions.dart';
 // general flutter stuff 
 import 'package:flutter/material.dart';
 
+// global state management
+import '../../src/api/config.dart';
+
 // general dart stuff
 import 'dart:math';
 
 // custom game componenets
 import '../asteroids.dart';
-import '../config.dart' as game_settings;
 import '../components/components.dart';
 
 enum AsteroidType {asteroidO, asteroidS, asteroidX} 
@@ -64,11 +66,11 @@ class Asteroid extends PositionComponent
   int mapAsteroidValue() {
     switch (objSize) {
       case AsteroidSize.large:
-        return game_settings.largeAsteroidPoints; 
+        return getIt<GameConfig>().largeAsteroidPoints; 
       case AsteroidSize.medium:
-        return game_settings.mediumAsteroidPoints; 
+        return getIt<GameConfig>().mediumAsteroidPoints; 
       case AsteroidSize.small:
-        return game_settings.smallAsteroidPoints; 
+        return getIt<GameConfig>().smallAsteroidPoints; 
       default:
         debugPrint("Asteroid points value unset!");
         return 0; 

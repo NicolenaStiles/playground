@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+class SiteState {
+  bool isMobile = false;
+}
+
 class LeaderboardEntry {
 
   int score;
@@ -57,6 +61,3 @@ class Leaderboard {
   }
 }
 
-class SiteState {
-  bool isMobile = false;
-}
