@@ -11,10 +11,10 @@ import 'dart:math';
 
 // record-keeping
 import '../api/site_state.dart';
+import '../../src/api/config.dart';
 
 // local components
 import '../asteroids.dart';
-import '../config.dart' as game_settings;
 import '../components/components.dart';
 
 // TODO: 1. Bespoke hitbox?
@@ -165,9 +165,9 @@ class Player extends PositionComponent
     // calculate next angle
     double nA = 0;
     if (eA > 0) {
-      nA = cA + game_settings.mobilePlayerRotatationSpeed * dt;
+      nA = cA + getIt<GameConfig>().playerRotationSpeed * dt;
     } else {
-      nA = cA - game_settings.mobilePlayerRotatationSpeed * dt;
+      nA = cA - getIt<GameConfig>().playerRotationSpeed * dt;
     }
 
     // if next angle is outside of bounds,
@@ -184,13 +184,13 @@ class Player extends PositionComponent
 
   // handling rotation
   void turnLeft(double dt) {
-    angle -= game_settings.playerRotationSpeed * dt;
+    angle -= getIt<GameConfig>().playerRotationSpeed * dt;
     angle %= 2 * pi;
   }
 
   // handling rotation
   void turnRight(double dt) {
-    angle += game_settings.playerRotationSpeed * dt;
+    angle += getIt<GameConfig>().playerRotationSpeed * dt;
     angle %= 2 * pi;
   }
 
@@ -210,7 +210,7 @@ class Player extends PositionComponent
       _playerLastImpulseAngle = angle;
 
       // check if we surpass max
-      _playerVelocityFinal = _playerVelocityInitial + (game_settings.playerAcceleration * dt);
+      _playerVelocityFinal = _playerVelocityInitial + (getIt<GameConfig>().playerAcceleration * dt);
       double maxPlayerVelocity = 10;
       if (_playerVelocityFinal.x > maxPlayerVelocity) {
         _playerVelocityFinal.x = maxPlayerVelocity;
@@ -232,7 +232,7 @@ class Player extends PositionComponent
 
       if (_playerVelocityFinal[0] > 0 && _playerVelocityFinal[1] > 0) {
 
-        _playerVelocityFinal = _playerVelocityInitial - (game_settings.playerAcceleration * dt);
+        _playerVelocityFinal = _playerVelocityInitial - (getIt<GameConfig>().playerAcceleration * dt);
         _playerDisplacement[0] = sin(_playerLastImpulseAngle) * _playerVelocityFinal[0];
         _playerDisplacement[1] = (0 - cos(_playerLastImpulseAngle)) * _playerVelocityFinal[1];
         _playerVelocityInitial = _playerVelocityFinal;
@@ -262,7 +262,7 @@ class Player extends PositionComponent
     if (isJoystickActive) {
 
       _playerLastImpulseAngle = angle;
-      _playerVelocityFinal = _playerVelocityInitial + (game_settings.mobilePlayerAcceleration * dt * mobilePercent);
+      _playerVelocityFinal = _playerVelocityInitial + (getIt<GameConfig>().playerAcceleration * dt * mobilePercent);
       _playerDisplacement[0] = _playerDirection[0] * _playerVelocityFinal[0];
       _playerDisplacement[1] = _playerDirection[1] * _playerVelocityFinal[1];
       _playerVelocityInitial = _playerVelocityFinal;
@@ -274,7 +274,7 @@ class Player extends PositionComponent
 
       if (_playerVelocityFinal[0] > 0 && _playerVelocityFinal[1] > 0) {
 
-        _playerVelocityFinal = _playerVelocityInitial - (game_settings.mobilePlayerAcceleration * dt);
+        _playerVelocityFinal = _playerVelocityInitial - (getIt<GameConfig>().playerAcceleration * dt);
         _playerDisplacement[0] = sin(_playerLastImpulseAngle) * _playerVelocityFinal[0];
         _playerDisplacement[1] = (0 - cos(_playerLastImpulseAngle)) * _playerVelocityFinal[1];
         _playerVelocityInitial = _playerVelocityFinal;
@@ -341,7 +341,7 @@ class Player extends PositionComponent
     } 
 
     // check if we can shoot
-    if (!_shotReady && _currShotCooldown < game_settings.shotCooldown) {
+    if (!_shotReady && _currShotCooldown < getIt<GameConfig>().shotCooldown) {
       _currShotCooldown++;
     } else {
       _shotReady = true;
