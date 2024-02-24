@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class LeaderboardEntry {
 
   int score;
@@ -46,10 +48,10 @@ class Leaderboard {
 
   void printLeaderboard() {
     if (highScores.isEmpty) {
-      print('No scores in leaderboard!');
+      debugPrint('No scores in leaderboard!');
     } else {
       for (int i = 0; i < highScores.length; i++) {
-        print('${i+1}: ${highScores[i].score} ${highScores[i].initals}');
+        debugPrint('${i+1}: ${highScores[i].score} ${highScores[i].initals}');
       }
     }
   }

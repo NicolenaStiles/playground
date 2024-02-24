@@ -28,7 +28,6 @@ class _GameOverState extends State<GameOver> {
     // Dimensions in logical pixels (dp)
     Size size = MediaQuery.of(context).size;
     double width = size.width;
-    double height = size.height;
 
     if (width < 414) {
       _buttonTextStyle = Theme.of(context).textTheme.bodyMedium!;
@@ -87,7 +86,9 @@ class _GameOverState extends State<GameOver> {
                 // main menu 
                 OutlinedButton(
                   onPressed: () {
-                    //widget.game.world.remove(widget.game.findByKeyName('scoreboard')!);
+                    widget.game.world.remove(widget.game.findByKeyName('scoreboard')!);
+                    widget.game.world.remove(widget.game.findByKeyName('button_shoot')!);
+                    widget.game.world.remove(widget.game.findByKeyName('joystick')!);
                     widget.game.playState = PlayState.mainMenu; 
                   },
                   style: ButtonStyle(

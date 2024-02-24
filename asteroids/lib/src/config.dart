@@ -14,7 +14,6 @@ class GameCfg {
   double screenX = 0;
   double screenY = 0;
 
-  // TODO: change this into an upper and lower bound instead
   static double asteroidSpeed = 120.0;
 
   // shared
@@ -65,7 +64,7 @@ class GameCfg {
     // lives display height/width
     shipHeight = (screenY / livesMobileScalar);
     shipWidth = (livesWidth * shipHeight) / livesHeight;
-    double shipOffset = shipWidth / 2; // TODO: check if this makes any sense
+    double shipOffset = shipWidth / 2; 
     livesWidth = shipWidth;
     livesHeight = shipHeight;
     livesOffset = shipOffset;
@@ -90,7 +89,6 @@ class GameCfg {
   }
 }
 
-// TODO: change this into an upper and lower bound instead
 double asteroidSpeed = 120.0;
 
 double livesWidth = 30;

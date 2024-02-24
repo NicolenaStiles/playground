@@ -25,7 +25,6 @@ import 'config.dart' as game_settings;
 game_settings.GameCfg testCfg = game_settings.GameCfg.desktop();
 
 // debug is only temp here
-// TODO: maybe add "replay" as state?
 enum PlayState { 
   debug, 
   background, 
@@ -113,8 +112,6 @@ class Asteroids extends FlameGame
 
     camera.viewfinder.anchor = Anchor.topLeft;
  
-    // WARN: debug only
-    // populate config object with appropriate settings
     isMobile = getIt<SiteState>().isMobile;
 
     if (!isMobile) {
@@ -273,6 +270,7 @@ class Asteroids extends FlameGame
                           size.y - (margin + radius));
 
     buttonShoot = GameButton(
+      key: ComponentKey.named('button_shoot'),
       type: ButtonType.shoot, 
       position: shootPos, 
       radius: radius, 
@@ -299,7 +297,6 @@ class Asteroids extends FlameGame
       isMobileGame: isMobile,
     ));
   }
-
 
   void generateRandomAsteroid() {
     // generate random velocity value

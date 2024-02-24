@@ -82,6 +82,7 @@ class MobileAsteroids extends FlameGame
     world.add(joystick);
 
     button = GameButton(
+      key: ComponentKey.named('button_shoot'),
       type: ButtonType.shoot,
       radius: 50,
       position: Vector2(100, size.y - 100),
