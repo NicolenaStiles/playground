@@ -8,7 +8,7 @@ class GameConfig {
 
   // basic game settings
   // these are not dependent on mobile/desktop
-  int playerLives = 3;
+  int playerLives = 1;
   int largeAsteroidPoints = 200;        // points for each size of asteroid
   int mediumAsteroidPoints = 100;
   int smallAsteroidPoints = 50;

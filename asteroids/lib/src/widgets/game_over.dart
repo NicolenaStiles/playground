@@ -70,8 +70,7 @@ class _GameOverState extends State<GameOver> {
                 // replay 
                 OutlinedButton(
                   onPressed: () {
-                    widget.game.isReplay = true;
-                    widget.game.playState = PlayState.play; 
+                    widget.game.startGame();
                   },
                   style: ButtonStyle(
                     padding: MaterialStatePropertyAll(EdgeInsets.all(_buttonPaddingInset)),
@@ -88,8 +87,10 @@ class _GameOverState extends State<GameOver> {
                 OutlinedButton(
                   onPressed: () {
                     widget.game.world.remove(widget.game.findByKeyName('scoreboard')!);
-                    widget.game.world.remove(widget.game.findByKeyName('joystick')!);
-                    widget.game.world.remove(widget.game.buttonShoot);
+                    if (widget.game.isMobile) {
+                      widget.game.buttonShoot.isVisible = false;
+                      widget.game.joystick.isVisible = false;
+                    }
                     widget.game.playState = PlayState.mainMenu; 
                   },
                   style: ButtonStyle(
