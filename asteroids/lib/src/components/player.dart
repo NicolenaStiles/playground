@@ -365,10 +365,11 @@ class Player extends PositionComponent
       String keyName = 'life${game.lives - 1}';
       game.world.remove(game.findByKeyName<Lives>(keyName)!);
       if (getIt<Leaderboard>().verifyScore(game.score)) {
-        game.playState = PlayState.gameOverAddScore;
+        game.playState = PlayState.addScore;
       } else {
         game.playState = PlayState.gameOver;
       }
+      game.buttonShoot.isPressed = false;
       removeFromParent();
     }
   }

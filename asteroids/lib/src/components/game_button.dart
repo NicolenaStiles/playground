@@ -8,18 +8,14 @@ import 'components.dart';
 
 enum ButtonType {shoot, warp}
 
-
 class GameButton extends CircleComponent 
-  with HasGameRef<Asteroids> {
+  with HasGameRef<Asteroids>, HasVisibility {
 
   final ButtonType type;
   bool isPressed = false;
   
-  ComponentKey key;
-
   GameButton({
     required this.type,
-    required this.key,
     required super.position,
     required super.radius,
   }) : super ( 

@@ -21,17 +21,14 @@ import '../src/api/config.dart';
 // player, asteroid, shot 
 import 'components/components.dart';
 
-// debug is only temp here
-enum PlayState { 
-  debug, 
-  background, 
-  mainMenu, 
-  leaderboard,
-  tutorial, 
-  play, 
-  replay,
-  gameOver,
-  gameOverAddScore,
+enum PlayState {
+  idle,                 // background: animating but no engagement
+  mainMenu,             // idle with main menu overlay
+  leaderboard,          // idle with leaderboard overlay
+  tutorial,             // gameplay info. HUD and ship loaded in
+  play,                 // active play state
+  gameOver,             // no ship/lives, but score still present
+  addScore,             // same as above, but with text entry
 }
 
 // global state management
@@ -40,38 +37,38 @@ GetIt getIt = GetIt.instance;
 class Asteroids extends FlameGame
   with MultiTouchTapDetector, KeyboardEvents, HasCollisionDetection {
 
-  bool isMobile = false;
-
-  final rand = math.Random();
-  double get width => size.x;
-  double get height => size.y;
+  // core properties
+  // meta
+  bool isMobile = false;        // taken from getIt site state 
+  double get width => size.x;   // convience/clarity access
+  double get height => size.y;  // convience/clarity access
 
   // game stats
-  int score = 0;
-  int lives = 0;
+  int score = 0; 
+  int lives = 0;                // taken from getIt configs
   int numAsteroids = 0;
+  int maxAsteroids = 0;
+  bool isReplay = false;
 
-  // gesture input
+  // user input
   late final Joystick joystick;
   late final GameButton buttonShoot;
 
-  // gesture state
+  // ... and corresponding state
   bool isJoystickActive = false;
   bool isShootActive = false;
-  bool isWarpActive = false;
 
-  // timer things
+  // asteroid generation (background, game state, everything)
+  final rand = math.Random();
   late Timer countdown;
 
-  // managing overlay state
+  // master game state logic (overlays and etc.)
   late PlayState _playState;
   PlayState get playState => _playState;
   set playState(PlayState playState) {
     _playState = playState;
     switch (playState) {
-      case PlayState.debug:
-        break;
-      case PlayState.background:
+      case PlayState.idle:
         break;
       case PlayState.mainMenu:
         overlays.remove(PlayState.leaderboard.name);
@@ -90,13 +87,13 @@ class Asteroids extends FlameGame
         overlays.remove(PlayState.tutorial.name);
         overlays.remove(PlayState.gameOver.name);
         break;
-      case PlayState.replay:
-        overlays.remove(PlayState.gameOver.name);
-        break;
-      case PlayState.gameOverAddScore:
-        overlays.add(playState.name);
+      // TODO: add overlay logic (rename?)
       case PlayState.gameOver:
-        overlays.remove(PlayState.gameOverAddScore.name);
+        overlays.remove(PlayState.addScore.name);
+        overlays.add(playState.name);
+        break;
+      // TODO: add overlay
+      case PlayState.addScore:
         overlays.add(playState.name);
         break;
     }
@@ -109,7 +106,8 @@ class Asteroids extends FlameGame
     camera.viewfinder.anchor = Anchor.topLeft;
  
     isMobile = getIt<SiteState>().isMobile;
-
+  
+    // define game configs based on play mode
     if (!isMobile) {
       getIt.registerSingleton<GameConfig>(GameConfig.desktop());
     } else {
@@ -117,83 +115,15 @@ class Asteroids extends FlameGame
     }
     
     lives = getIt<GameConfig>().playerLives;
-
+    maxAsteroids = getIt<GameConfig>().maxAsteroids;
+    
+    // TODO: change the start mode to idle on port to website
     playState = PlayState.mainMenu;
-    animateBackground(true);
-  }
-
-  // testing gesture layout stuff
-  void layoutHUDDebug() {
-
-    // HUD stats
-    addScoreboard();
-    addLivesTracker();
-
-    // HUD controls
-    addJoystick();
-    addHudButtons();
-
-    // and finally player ship
-    addPlayerShip();
-  }
-
-  // layout all the assets to determine if screen sizing is trash or not
-  void layoutDebug() {
-    
-    // player's ship
-    Vector2 shipPos = Vector2(0, 0);
-    shipPos.x = size.x * (1/2);
-    shipPos.y = size.y * (4/5);
-    world.add(Player(
-      key: ComponentKey.named('player'),
-      position: shipPos,
-      size : Vector2(
-                getIt<GameConfig>().playerWidth, 
-                getIt<GameConfig>().playerHeight),
-      isMobileGame: isMobile,
-    ));
-
-    // test alien
-    Vector2 alienPos = Vector2(0, 0);
-    alienPos.x = size.x * (1/3);
-    alienPos.y = size.y * (4/5);
-    world.add(Alien(
-      key: ComponentKey.named('alien'),
-      size: Vector2(64, 48), 
-      position: alienPos
-    ));
-    
-    // asteroids
-    for (var j = 3; j > 0; j--) {
-      Vector2 asteroidPos = Vector2(0, 0);
-      asteroidPos.y = (j / 5) * size.y;
-      for (var i = 1; i < 4; i++) {
-        asteroidPos.x = (i / 4) * size.x;
-        Vector2 asteroidSize = Vector2(0, 0);
-        switch (AsteroidSize.values[j - 1]) {
-          case AsteroidSize.large:
-           asteroidSize.x = getIt<GameConfig>().largeAsteroidSize; 
-           asteroidSize.y = getIt<GameConfig>().largeAsteroidSize; 
-          case AsteroidSize.medium:
-           asteroidSize.x = getIt<GameConfig>().mediumAsteroidSize; 
-           asteroidSize.y = getIt<GameConfig>().mediumAsteroidSize; 
-          case AsteroidSize.small:
-           asteroidSize.x = getIt<GameConfig>().smallAsteroidSize; 
-           asteroidSize.y = getIt<GameConfig>().smallAsteroidSize; 
-        }
-        world.add(Asteroid(
-          objType: AsteroidType.values[i - 1],
-          objSize: AsteroidSize.values[j - 1],
-          velocity: 0,
-          size: asteroidSize,
-          position: asteroidPos, 
-          angle: 0,
-        ));
-      }
-    }
+    // animateBackground
   }
 
   // HUD elements: scoreboard, lives
+  // --------------------------------
   // adding the scoreboard to the HUD
   // font size is inhereted from getIt<GameConfig>()
   //
@@ -240,7 +170,7 @@ class Asteroids extends FlameGame
       );
     }
   }
-  
+
   // Mobile only: Add gesture control elements
   // adding joystick
   //
@@ -267,13 +197,45 @@ class Asteroids extends FlameGame
                           size.y - (margin + radius));
 
     buttonShoot = GameButton(
-      key: ComponentKey.named('button_shoot'),
       type: ButtonType.shoot, 
       position: shootPos, 
       radius: radius, 
     );
     
     world.add(buttonShoot);
+  }
+
+  // ensure all HUD components are loaded and zeroed out
+  // if a component is already loaded, it just sets it back to default
+  void resetHUD() {
+    // scoreboard
+    // TODO: magic number for score sig fig?
+    if (findByKeyName<TextComponent>('scoreboard') != null) {
+      findByKeyName<TextComponent>('scoreboard')!.text = score.toString().padLeft(4, '0');
+    } else {
+      addScoreboard();
+    }
+
+    // player lives
+    world.removeAll(world.children.query<Lives>());
+    addLivesTracker();
+
+    if (isMobile) {
+      // joystick
+      // add if there isn't one, otherwise we're good
+      if (findByKeyName<Joystick>('joystick') == null) {
+        addJoystick();
+      } 
+
+      // shoot button
+      // add if there isn't one, otherwise just hide it and make inactive 
+      if (world.children.query<GameButton>().isEmpty) {
+        addHudButtons();
+      } else {
+        buttonShoot.isVisible = false;
+        buttonShoot.isPressed = false;
+      }
+    }
   }
 
   // Game components: player, joystick, etc.
@@ -349,26 +311,7 @@ class Asteroids extends FlameGame
     ));
   }
 
-  // generate background asteroids for Ze Aesthetique
-  void animateBackground (bool isFirstRun) {
-
-    if (isFirstRun) {
-      generateRandomAsteroid();
-      countdown = Timer(5);
-      countdown.start();
-
-    } else {
-      if (countdown.finished && numAsteroids < getIt<GameConfig>().maxAsteroids) {
-        generateRandomAsteroid();
-        countdown = Timer(5);
-        countdown.start();
-      }
-    }
-  }
-
-  // stand up and start game
   void startGame() {
-
     // ignore call here if already playing
     if (playState == PlayState.play) return;
 
@@ -377,56 +320,28 @@ class Asteroids extends FlameGame
 
     playState = PlayState.play;
 
+    // reset basic gameplay trackers first 
     score = 0;
     lives = getIt<GameConfig>().playerLives;
     numAsteroids = 0;
     countdown.stop();
 
-    // display score
-    addScoreboard();
-
-    // lives tracker
-    addLivesTracker();
-
-    // add controls for mobile
-    if (isMobile) {
-      addJoystick();
-      addHudButtons();
-    }
+    // set up HUD
+    resetHUD();
 
     // add player
     addPlayerShip();
   }
 
-  // main loop for gameplay
-  int maxAsteroids = 5;
+  // standard gameplay loop
+  // just generates new asteroids after whatever duration for now
   void gameplayLoop() {
-
     if (countdown.isRunning()) return;
     if (numAsteroids > maxAsteroids) return;
 
     countdown = Timer(rand.nextInt(16).toDouble());
     generateRandomAsteroid();
     countdown.start();
-  }
-
-  void startReplay() {
-
-    // pull all the asteroids off the screen before we start
-    world.removeAll(world.children.query<Asteroid>());
-
-    playState = PlayState.play;
-
-    score = 0;
-    lives = getIt<GameConfig>().playerLives;
-    numAsteroids = 0;
-    countdown.stop();
-
-    // lives tracker
-    addLivesTracker();
-
-    // add player
-    addPlayerShip();
   }
 
   // main gameplay loop
@@ -436,45 +351,35 @@ class Asteroids extends FlameGame
 
     switch (_playState) {
 
-      case PlayState.debug:
-        break;
-
-      case PlayState.background:
+      // TODO: implement idle 
+      case PlayState.idle:
         countdown.update(dt);
-        animateBackground(false);
         numAsteroids = world.children.query<Asteroid>().length;
         break;
 
       case PlayState.mainMenu:
         countdown.update(dt);
-        animateBackground(false);
         numAsteroids = world.children.query<Asteroid>().length;
         break;
 
       case PlayState.leaderboard:
         countdown.update(dt);
-        animateBackground(false);
         numAsteroids = world.children.query<Asteroid>().length;
         break;
 
       case PlayState.tutorial:
-        countdown.update(dt);
-        animateBackground(false);
         numAsteroids = world.children.query<Asteroid>().length;
         break;
 
       case PlayState.play:
         countdown.update(dt);
+        startGame();
         gameplayLoop();
         findByKeyName<TextComponent>('scoreboard')!.text = score.toString().padLeft(4, '0');
         numAsteroids = world.children.query<Asteroid>().length;
         break;
 
-      case PlayState.replay:
-        startReplay();
-        break;
-
-      case PlayState.gameOverAddScore:
+      case PlayState.addScore:
         if (isMobile) {
           joystick.isVisible = false;
           isJoystickActive = false;
@@ -495,12 +400,11 @@ class Asteroids extends FlameGame
   int shootButtonTapId = 0;
   @override 
   void onTapDown(int pointerId, TapDownInfo info) {
+    if (getIt<SiteState>().isMobile == false) return;
     super.onTapDown(pointerId, info);
 
     switch (_playState) {
-      case PlayState.debug:
-        return;
-      case PlayState.background:
+      case PlayState.idle:
         return;
       case PlayState.mainMenu:
         return;
@@ -520,10 +424,8 @@ class Asteroids extends FlameGame
           isJoystickActive = true;
         }
         return;
-      case PlayState.replay:
-        shootButtonTapId = 0;
-        return;
-      case PlayState.gameOverAddScore:
+      // TODO: decide if this should be hidden?
+      case PlayState.addScore:
         buttonShoot.isPressed = false;
         return;
       case PlayState.gameOver:
@@ -534,12 +436,11 @@ class Asteroids extends FlameGame
 
   @override
   void onTapCancel(int pointerId) {
+    if (getIt<SiteState>().isMobile == false) return;
     super.onTapCancel(pointerId);
 
     switch (_playState) {
-      case PlayState.debug:
-        return;
-      case PlayState.background:
+      case PlayState.idle:
         return;
       case PlayState.mainMenu:
         return;
@@ -554,26 +455,24 @@ class Asteroids extends FlameGame
           shootButtonTapId = 0;
         }
         return;
-      case PlayState.replay:
-        return;
-      case PlayState.gameOverAddScore:
+      case PlayState.addScore:
         buttonShoot.isPressed = false;
+        joystick.isVisible = false;
         return;
       case PlayState.gameOver:
         buttonShoot.isPressed = false;
+        joystick.isVisible = false;
         return;
     }
   }
 
   @override
   void onTapUp(int pointerId, TapUpInfo info) {
+    if (getIt<SiteState>().isMobile == false) return;
     super.onTapUp(pointerId, info);
 
     switch (_playState) {
-      case PlayState.debug:
-        return;
-      case PlayState.background:
-        startGame();
+      case PlayState.idle:
         return;
       case PlayState.mainMenu:
         return;
@@ -589,26 +488,26 @@ class Asteroids extends FlameGame
           shootButtonTapId = 0;
         }
         return;
-      case PlayState.replay:
-        return;
-      case PlayState.gameOverAddScore:
+      case PlayState.addScore:
         buttonShoot.isPressed = false;
+        joystick.isVisible = false;
         return;
       case PlayState.gameOver:
         buttonShoot.isPressed = false;
+        joystick.isVisible = false;
         return;
     }
   }
 
   @override
   KeyEventResult onKeyEvent( 
-    KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     super.onKeyEvent(event, keysPressed);
 
-    final isKeyDown = event is KeyDownEvent;
-    final isKeyUp = event is KeyUpEvent;
+    final isKeyDown = event is RawKeyDownEvent;
+    final isKeyUp = event is RawKeyUpEvent;
 
-    if (event is KeyRepeatEvent) {
+    if (event.repeat) {
       return KeyEventResult.handled;
     }
 

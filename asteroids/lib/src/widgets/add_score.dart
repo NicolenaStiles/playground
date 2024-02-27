@@ -6,16 +6,16 @@ import '../asteroids.dart';
 // global state management
 import '../api/site_state.dart';
 
-class GameOverAddScore extends StatefulWidget {
+class AddScore extends StatefulWidget {
 
-  const GameOverAddScore({ 
+  const AddScore({ 
     super.key,
     required this.game,
   });
   final Asteroids game;
 
   @override
-  State<GameOverAddScore> createState() => _GameOverAddScoreState();
+  State<AddScore> createState() => _AddScoreState();
 }
 
 // TODO: Cleanup form handling (low priority tho)
@@ -26,7 +26,7 @@ class UpperCaseTextFormatter extends TextInputFormatter {
   }
 }
 
-class _GameOverAddScoreState extends State<GameOverAddScore> {
+class _AddScoreState extends State<AddScore> {
 
   // Text form handling
   String _initalInput = "";

@@ -8,7 +8,7 @@ import '../asteroids.dart';
 import 'components.dart';
 
 class Joystick extends JoystickComponent
-  with HasVisibility, TapCallbacks {
+  with HasVisibility, TapCallbacks, HasGameReference<Asteroids> {
 
   Joystick({
     required super.key,
@@ -32,10 +32,10 @@ class Joystick extends JoystickComponent
   bool onDragStart(DragStartEvent event) {
     super.onDragStart(event);
     super.findRootGame().runtimeType;
-    if ((game as Asteroids).playState != PlayState.play) return false;
+    if (game.playState != PlayState.play) return false;
     if (game.findByKeyName<Player>('player') == null) return false;
     game.findByKeyName<Player>('player')!.isJoystickActive = true;
-    (game as Asteroids).isJoystickActive = true;
+    game.isJoystickActive = true;
     isVisible = true;
     return false;
   }
@@ -43,21 +43,21 @@ class Joystick extends JoystickComponent
   @override
   bool onDragUpdate(DragUpdateEvent event) {
     super.onDragUpdate(event);
-    if ((game as Asteroids).playState != PlayState.play) return false;
-    if ((game as Asteroids).findByKeyName<Player>('player') == null) return false;
-    (game as Asteroids).findByKeyName<Player>('player')!.mobileMove = relativeDelta;
-    (game as Asteroids).findByKeyName<Player>('player')!.mobilePercent = intensity;
-    (game as Asteroids).findByKeyName<Player>('player')!.angleRequest = relativeDelta.screenAngle();
+    if (game.playState != PlayState.play) return false;
+    if (game.findByKeyName<Player>('player') == null) return false;
+    game.findByKeyName<Player>('player')!.mobileMove = relativeDelta;
+    game.findByKeyName<Player>('player')!.mobilePercent = intensity;
+    game.findByKeyName<Player>('player')!.angleRequest = relativeDelta.screenAngle();
     return false;
   }
 
   @override
   void onDragStop() {
     super.onDragStop();
-    if ((game as Asteroids).playState != PlayState.play) return;
-    if ((game as Asteroids).findByKeyName<Player>('player') == null) return;
-    (game as Asteroids).findByKeyName<Player>('player')!.isJoystickActive = false;
-    (game as Asteroids).isJoystickActive = false;
+    if (game.playState != PlayState.play) return;
+    if (game.findByKeyName<Player>('player') == null) return;
+    game.findByKeyName<Player>('player')!.isJoystickActive = false;
+    game.isJoystickActive = false;
     isVisible = false;
   }
 }
