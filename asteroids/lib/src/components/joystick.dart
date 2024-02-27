@@ -27,11 +27,9 @@ class Joystick extends JoystickComponent
                     ..style = PaintingStyle.fill),
   );
 
-
   @override
   bool onDragStart(DragStartEvent event) {
     super.onDragStart(event);
-    super.findRootGame().runtimeType;
     if (game.playState != PlayState.play) return false;
     if (game.findByKeyName<Player>('player') == null) return false;
     game.findByKeyName<Player>('player')!.isJoystickActive = true;
