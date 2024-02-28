@@ -70,6 +70,8 @@ class _MainMenuState extends State<MainMenu> {
                 // start button
                 OutlinedButton(
                   onPressed: () {
+                    FocusNode? _focusNode = FocusScope.of(context).focusedChild;
+                    print(_focusNode);
                     widget.game.playState = PlayState.tutorial; 
                   },
                   style: ButtonStyle(

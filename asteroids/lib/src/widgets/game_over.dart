@@ -25,6 +25,9 @@ class _GameOverState extends State<GameOver> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
+    FocusNode? _focusNode = FocusScope.of(context).focusedChild;
+    print('on load: $_focusNode');
+
     // Dimensions in logical pixels (dp)
     Size size = MediaQuery.of(context).size;
     double width = size.width;

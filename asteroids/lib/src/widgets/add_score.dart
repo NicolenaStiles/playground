@@ -48,6 +48,9 @@ class _AddScoreState extends State<AddScore> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
+    FocusNode? _focusNode = FocusScope.of(context).focusedChild;
+    print('on load: $_focusNode');
+
     // Dimensions in logical pixels (dp)
     Size size = MediaQuery.of(context).size;
     double width = size.width;
@@ -91,6 +94,7 @@ class _AddScoreState extends State<AddScore> {
               child: TextField(
                 maxLines: 1,
                 maxLength: 3,
+                autofocus: false,
 
                 textCapitalization: TextCapitalization.characters,
                 textAlign: TextAlign.center,
@@ -127,6 +131,7 @@ class _AddScoreState extends State<AddScore> {
                     LeaderboardEntry(
                       score: widget.game.score, 
                       initals: _initalInput));
+                  FocusScope.of(context).previousFocus();
                   widget.game.playState = PlayState.gameOver;
                 }
               },

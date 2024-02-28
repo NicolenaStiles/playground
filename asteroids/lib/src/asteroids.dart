@@ -521,13 +521,13 @@ class Asteroids extends FlameGame
 
   @override
   KeyEventResult onKeyEvent( 
-    RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     super.onKeyEvent(event, keysPressed);
 
-    final isKeyDown = event is RawKeyDownEvent;
-    final isKeyUp = event is RawKeyUpEvent;
+    final isKeyDown = event is KeyDownEvent;
+    final isKeyUp = event is KeyUpEvent;
 
-    if (event.repeat) {
+    if (event is KeyRepeatEvent) {
       return KeyEventResult.handled;
     }
 
