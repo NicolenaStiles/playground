@@ -18,10 +18,12 @@ class MainMenu extends StatefulWidget {
 class _MainMenuState extends State<MainMenu> {
   late final KeyboardExample game;
 
+  static FocusManager get instance => WidgetsBinding.instance.focusManager;
   @override 
   void initState() {
     super.initState();
     game = KeyboardExample();
+    print('${instance.primaryFocus}');
   }
 
   @override 

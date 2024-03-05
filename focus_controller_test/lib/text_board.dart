@@ -22,10 +22,19 @@ class _TextBoardState extends State<TextBoard> {
   List<String> textEntries = [];
   String _textInput = "";
 
+  final FocusNode focusNode = FocusNode(debugLabel: 'text entry node');
   @override 
   void initState() {
     super.initState();
     game = KeyboardExample();
+    focusNode.addListener(() => print('focusNode textfield updated: hasFocus: ${focusNode.hasFocus}'));
+  }
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    FocusScope.of(context).dispose();
+    super.dispose();
   }
 
   @override 
@@ -47,6 +56,7 @@ class _TextBoardState extends State<TextBoard> {
               child: OutlinedButton(
                 onPressed: () {
                   widget.game.gameState = GameState.mainMenu;
+                  Focus.of(context).unfocus();
                 },
                 child: const Text('<'),
               )
@@ -71,21 +81,27 @@ class _TextBoardState extends State<TextBoard> {
               children: [
   
                 Expanded( 
-                  
-                  child: TextField(
-                    // properties
-                    maxLines: 1,
-                    textAlign: TextAlign.left,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder( 
-                        borderRadius: BorderRadius.circular(5),
-                      )
+
+                  // WARN: testing focus management stuff 
+                    child: TextField(
+                      // properties
+                      autofocus: false,
+                      focusNode: focusNode,
+                      maxLines: 1,
+                      textAlign: TextAlign.left,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder( 
+                          borderRadius: BorderRadius.circular(5),
+                        )
+                      ),
+                      onTap: () {
+                        FocusScope.of(context).requestFocus(focusNode);
+                      },
+                      // update value 
+                      onChanged: (inputValue) {
+                        _textInput = inputValue;
+                      },
                     ),
-                    // update value 
-                    onChanged: (inputValue) {
-                      _textInput = inputValue;
-                    },
-                  ),
                 ),
 
                 OutlinedButton(
